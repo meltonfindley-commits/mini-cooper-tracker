@@ -1,0 +1,336 @@
+import { useState, useEffect } from "react";
+import { supabase } from "./supabase";
+
+const CATEGORIES_ORDER = [
+  "Engine & Drivetrain",
+  "Fluids & Filters",
+  "Brakes & Suspension",
+  "Tires & Wheels",
+  "Electrical & Battery",
+  "Convertible Top",
+  "Interior",
+  "Exterior & Body",
+];
+
+const PRIORITIES = ["High", "Medium", "Low"];
+const STATUSES = ["Not Started", "In Progress", "Done"];
+
+const STATUS_COLOR = {
+  "Not Started": "#6b7280",
+  "In Progress": "#f59e0b",
+  "Done": "#10b981",
+};
+const PRIORITY_COLOR = {
+  "High": "#ef4444",
+  "Medium": "#f97316",
+  "Low": "#3b82f6",
+};
+const CAT_ICONS = {
+  "Engine & Drivetrain": "⚙️",
+  "Fluids & Filters": "🛢️",
+  "Brakes & Suspension": "🔧",
+  "Tires & Wheels": "🛞",
+  "Electrical & Battery": "⚡",
+  "Convertible Top": "🔄",
+  "Interior": "🪑",
+  "Exterior & Body": "🚗",
+};
+
+export default function MiniCooperTracker() {
+  const [tasks, setTasks] = useState([]);
+  const [filter, setFilter] = useState({ category: "All", status: "All", priority: "All" });
+  const [expandedTask, setExpandedTask] = useState(null);
+  const [activeTab, setActiveTab] = useState("tasks");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    supabase
+      .from("tasks")
+      .select("*")
+      .order("id")
+      .then(({ data, error }) => {
+        if (error) {
+          setError(error.message);
+        } else {
+          setTasks(data || []);
+        }
+        setLoading(false);
+      });
+  }, []);
+
+  const updateTask = async (id, changes) => {
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, ...changes } : t));
+    await supabase.from("tasks").update(changes).eq("id", id);
+  };
+
+  const filtered = tasks.filter(t =>
+    (filter.category === "All" || t.category === filter.category) &&
+    (filter.status === "All" || t.status === filter.status) &&
+    (filter.priority === "All" || t.priority === filter.priority)
+  );
+
+  const totalCost = tasks.reduce((sum, t) => sum + (parseFloat(t.cost) || 0), 0);
+  const doneCost = tasks.filter(t => t.status === "Done").reduce((sum, t) => sum + (parseFloat(t.cost) || 0), 0);
+  const doneCount = tasks.filter(t => t.status === "Done").length;
+  const inProgressCount = tasks.filter(t => t.status === "In Progress").length;
+  const highPendingCount = tasks.filter(t => t.priority === "High" && t.status !== "Done").length;
+  const progressPct = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 0;
+
+  const grouped = CATEGORIES_ORDER.reduce((acc, cat) => {
+    acc[cat] = filtered.filter(t => t.category === cat);
+    return acc;
+  }, {});
+
+  if (loading) return (
+    <div style={{ background: "#0d0d0f", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "monospace", color: "#f59e0b" }}>
+      Loading...
+    </div>
+  );
+
+  if (error) return (
+    <div style={{ background: "#0d0d0f", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "monospace", color: "#ef4444", padding: "24px" }}>
+      <div>
+        <div style={{ fontSize: "14px", marginBottom: "8px" }}>Connection error:</div>
+        <div style={{ fontSize: "12px", color: "#6b7280" }}>{error}</div>
+        <div style={{ fontSize: "11px", color: "#4b5563", marginTop: "12px" }}>Check that your .env.local file has the correct Supabase URL and key.</div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{
+      fontFamily: "'DM Mono', 'Courier New', monospace",
+      background: "#0d0d0f",
+      minHeight: "100vh",
+      color: "#e2e8f0",
+      padding: "0",
+    }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap');
+        * { box-sizing: border-box; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #1a1a1f; }
+        ::-webkit-scrollbar-thumb { background: #3a3a45; border-radius: 3px; }
+        .task-row:hover { background: #1a1a22 !important; }
+        .tab-btn { transition: all 0.15s; }
+        .tab-btn:hover { opacity: 0.85; }
+        select, input { outline: none; }
+        .pill { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 500; letter-spacing: 0.05em; }
+        .expand-row { animation: slideDown 0.15s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+        .progress-bar-inner { transition: width 0.5s ease; }
+      `}</style>
+
+      {/* Header */}
+      <div style={{ background: "#111116", borderBottom: "1px solid #2a2a35", padding: "20px 24px 16px" }}>
+        <div style={{ display: "flex", alignItems: "flex-end", gap: "16px", flexWrap: "wrap" }}>
+          <div>
+            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "32px", letterSpacing: "0.08em", color: "#fff", lineHeight: 1 }}>
+              🏎 MINI COOPER REVIVAL
+            </div>
+            <div style={{ fontSize: "11px", color: "#6b7280", letterSpacing: "0.12em", marginTop: "4px" }}>
+              2009 CONVERTIBLE — RESTORATION PROJECT TRACKER
+            </div>
+          </div>
+          <div style={{ marginLeft: "auto", textAlign: "right" }}>
+            <div style={{ fontSize: "11px", color: "#6b7280" }}>OVERALL PROGRESS</div>
+            <div style={{ fontSize: "22px", fontFamily: "'Bebas Neue', sans-serif", color: progressPct === 100 ? "#10b981" : "#f59e0b" }}>
+              {progressPct}%
+            </div>
+          </div>
+        </div>
+
+        <div style={{ marginTop: "12px", background: "#2a2a35", borderRadius: "2px", height: "4px", overflow: "hidden" }}>
+          <div className="progress-bar-inner" style={{ width: `${progressPct}%`, height: "100%", background: "linear-gradient(90deg, #f59e0b, #10b981)", borderRadius: "2px" }} />
+        </div>
+
+        <div style={{ display: "flex", gap: "24px", marginTop: "14px", flexWrap: "wrap" }}>
+          {[
+            { label: "TOTAL TASKS", value: tasks.length, color: "#94a3b8" },
+            { label: "DONE", value: doneCount, color: "#10b981" },
+            { label: "IN PROGRESS", value: inProgressCount, color: "#f59e0b" },
+            { label: "HIGH PRIORITY PENDING", value: highPendingCount, color: "#ef4444" },
+            { label: "ESTIMATED SPEND", value: `$${totalCost.toLocaleString()}`, color: "#818cf8" },
+            { label: "SPENT (DONE)", value: `$${doneCost.toLocaleString()}`, color: "#34d399" },
+          ].map(s => (
+            <div key={s.label}>
+              <div style={{ fontSize: "9px", color: "#4b5563", letterSpacing: "0.12em" }}>{s.label}</div>
+              <div style={{ fontSize: "18px", fontFamily: "'Bebas Neue', sans-serif", color: s.color }}>{s.value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div style={{ background: "#111116", borderBottom: "1px solid #2a2a35", padding: "0 24px", display: "flex", gap: "0" }}>
+        {["tasks", "summary"].map(tab => (
+          <button key={tab} className="tab-btn" onClick={() => setActiveTab(tab)} style={{
+            background: "none", border: "none", cursor: "pointer",
+            padding: "10px 18px", fontSize: "11px", letterSpacing: "0.1em",
+            color: activeTab === tab ? "#f59e0b" : "#6b7280",
+            borderBottom: activeTab === tab ? "2px solid #f59e0b" : "2px solid transparent",
+            fontFamily: "inherit",
+          }}>
+            {tab.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ padding: "20px 24px" }}>
+        {activeTab === "tasks" && (
+          <>
+            <div style={{ display: "flex", gap: "10px", marginBottom: "20px", flexWrap: "wrap" }}>
+              {[
+                { label: "Category", key: "category", options: ["All", ...CATEGORIES_ORDER] },
+                { label: "Status", key: "status", options: ["All", ...STATUSES] },
+                { label: "Priority", key: "priority", options: ["All", ...PRIORITIES] },
+              ].map(f => (
+                <select key={f.key} value={filter[f.key]}
+                  onChange={e => setFilter(p => ({ ...p, [f.key]: e.target.value }))}
+                  style={{
+                    background: "#1a1a22", border: "1px solid #2a2a35", color: "#cbd5e1",
+                    padding: "6px 10px", borderRadius: "4px", fontSize: "11px",
+                    fontFamily: "inherit", cursor: "pointer",
+                  }}>
+                  {f.options.map(o => <option key={o}>{o}</option>)}
+                </select>
+              ))}
+              <button onClick={() => setFilter({ category: "All", status: "All", priority: "All" })}
+                style={{ background: "none", border: "1px solid #3a3a45", color: "#6b7280", padding: "6px 12px", borderRadius: "4px", fontSize: "11px", fontFamily: "inherit", cursor: "pointer" }}>
+                Clear
+              </button>
+            </div>
+
+            {CATEGORIES_ORDER.map(cat => {
+              const catTasks = grouped[cat];
+              if (!catTasks || catTasks.length === 0) return null;
+              const catDone = catTasks.filter(t => t.status === "Done").length;
+              return (
+                <div key={cat} style={{ marginBottom: "20px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", paddingBottom: "6px", borderBottom: "1px solid #1e1e28" }}>
+                    <span style={{ fontSize: "14px" }}>{CAT_ICONS[cat]}</span>
+                    <span style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: "0.1em", color: "#94a3b8", fontSize: "13px" }}>{cat}</span>
+                    <span style={{ marginLeft: "auto", fontSize: "10px", color: "#4b5563" }}>{catDone}/{catTasks.length} done</span>
+                  </div>
+                  {catTasks.map(task => (
+                    <div key={task.id}>
+                      <div className="task-row" onClick={() => setExpandedTask(expandedTask === task.id ? null : task.id)}
+                        style={{
+                          display: "flex", alignItems: "center", gap: "10px",
+                          padding: "8px 10px", borderRadius: "4px", cursor: "pointer",
+                          background: expandedTask === task.id ? "#1a1a22" : "transparent",
+                          borderLeft: `3px solid ${STATUS_COLOR[task.status]}`,
+                          marginBottom: "2px",
+                        }}>
+                        <select value={task.status}
+                          onClick={e => e.stopPropagation()}
+                          onChange={e => updateTask(task.id, { status: e.target.value })}
+                          style={{
+                            background: "#0d0d0f", border: "1px solid #2a2a35",
+                            color: STATUS_COLOR[task.status], padding: "2px 6px",
+                            borderRadius: "3px", fontSize: "10px", fontFamily: "inherit", cursor: "pointer", minWidth: "100px",
+                          }}>
+                          {STATUSES.map(s => <option key={s}>{s}</option>)}
+                        </select>
+                        <span className="pill" style={{ background: PRIORITY_COLOR[task.priority] + "22", color: PRIORITY_COLOR[task.priority], minWidth: "46px", textAlign: "center" }}>
+                          {task.priority}
+                        </span>
+                        <span style={{ flex: 1, fontSize: "12px", color: task.status === "Done" ? "#4b5563" : "#cbd5e1", textDecoration: task.status === "Done" ? "line-through" : "none" }}>
+                          {task.task}
+                        </span>
+                        {task.cost && (
+                          <span style={{ fontSize: "11px", color: "#818cf8" }}>${parseFloat(task.cost).toLocaleString()}</span>
+                        )}
+                        <span style={{ fontSize: "10px", color: "#3a3a45" }}>{expandedTask === task.id ? "▲" : "▼"}</span>
+                      </div>
+
+                      {expandedTask === task.id && (
+                        <div className="expand-row" style={{ background: "#13131a", border: "1px solid #2a2a35", borderRadius: "0 4px 4px 4px", padding: "12px 14px", marginBottom: "4px" }}>
+                          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+                            <div style={{ flex: 1, minWidth: "160px" }}>
+                              <div style={{ fontSize: "9px", color: "#4b5563", letterSpacing: "0.1em", marginBottom: "4px" }}>ESTIMATED COST ($)</div>
+                              <input type="number" placeholder="0" value={task.cost}
+                                onChange={e => updateTask(task.id, { cost: e.target.value })}
+                                style={{
+                                  background: "#0d0d0f", border: "1px solid #2a2a35", color: "#818cf8",
+                                  padding: "5px 8px", borderRadius: "3px", fontSize: "12px",
+                                  fontFamily: "inherit", width: "100%",
+                                }} />
+                            </div>
+                            <div style={{ flex: 3, minWidth: "200px" }}>
+                              <div style={{ fontSize: "9px", color: "#4b5563", letterSpacing: "0.1em", marginBottom: "4px" }}>NOTES</div>
+                              <input type="text" placeholder="Add notes, shop quotes, part numbers..." value={task.notes}
+                                onChange={e => updateTask(task.id, { notes: e.target.value })}
+                                style={{
+                                  background: "#0d0d0f", border: "1px solid #2a2a35", color: "#cbd5e1",
+                                  padding: "5px 8px", borderRadius: "3px", fontSize: "12px",
+                                  fontFamily: "inherit", width: "100%",
+                                }} />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+          </>
+        )}
+
+        {activeTab === "summary" && (
+          <div style={{ maxWidth: "600px" }}>
+            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "18px", letterSpacing: "0.1em", color: "#94a3b8", marginBottom: "16px" }}>
+              CATEGORY BREAKDOWN
+            </div>
+            {CATEGORIES_ORDER.map(cat => {
+              const catTasks = tasks.filter(t => t.category === cat);
+              if (catTasks.length === 0) return null;
+              const done = catTasks.filter(t => t.status === "Done").length;
+              const inProg = catTasks.filter(t => t.status === "In Progress").length;
+              const pct = Math.round((done / catTasks.length) * 100);
+              const catCost = catTasks.reduce((s, t) => s + (parseFloat(t.cost) || 0), 0);
+              return (
+                <div key={cat} style={{ marginBottom: "14px", background: "#111116", border: "1px solid #1e1e28", borderRadius: "6px", padding: "12px 14px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                    <span>{CAT_ICONS[cat]}</span>
+                    <span style={{ fontFamily: "'Bebas Neue', sans-serif", letterSpacing: "0.08em", fontSize: "14px" }}>{cat}</span>
+                    <span style={{ marginLeft: "auto", fontSize: "10px", color: "#4b5563" }}>{done}/{catTasks.length}</span>
+                    {catCost > 0 && <span style={{ fontSize: "11px", color: "#818cf8" }}>${catCost.toLocaleString()}</span>}
+                  </div>
+                  <div style={{ background: "#1a1a22", borderRadius: "2px", height: "3px", overflow: "hidden" }}>
+                    <div style={{ width: `${pct}%`, height: "100%", background: pct === 100 ? "#10b981" : "#f59e0b", borderRadius: "2px", transition: "width 0.4s" }} />
+                  </div>
+                  <div style={{ display: "flex", gap: "12px", marginTop: "6px" }}>
+                    <span style={{ fontSize: "10px", color: "#10b981" }}>✓ {done} done</span>
+                    {inProg > 0 && <span style={{ fontSize: "10px", color: "#f59e0b" }}>◐ {inProg} in progress</span>}
+                    <span style={{ fontSize: "10px", color: "#6b7280" }}>{catTasks.length - done - inProg} remaining</span>
+                  </div>
+                </div>
+              );
+            })}
+
+            <div style={{ marginTop: "20px", background: "#111116", border: "1px solid #2a2a35", borderRadius: "6px", padding: "14px" }}>
+              <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "14px", letterSpacing: "0.1em", color: "#94a3b8", marginBottom: "10px" }}>COST SUMMARY</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px" }}>
+                  <span style={{ color: "#6b7280" }}>Total estimated</span>
+                  <span style={{ color: "#818cf8" }}>${totalCost.toLocaleString()}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px" }}>
+                  <span style={{ color: "#6b7280" }}>Spent (completed tasks)</span>
+                  <span style={{ color: "#34d399" }}>${doneCost.toLocaleString()}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", borderTop: "1px solid #2a2a35", paddingTop: "6px" }}>
+                  <span style={{ color: "#6b7280" }}>Remaining budget</span>
+                  <span style={{ color: "#f59e0b" }}>${(totalCost - doneCost).toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
