@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabase";
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+
 const CATEGORIES_ORDER = [
   "Engine & Drivetrain",
   "Fluids & Filters",
@@ -44,6 +46,13 @@ export default function MiniCooperTracker() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const [isAdmin, setIsAdmin] = useState(() => sessionStorage.getItem("adminSession") === "true");
+  const [adminPassword, setAdminPassword] = useState(() => sessionStorage.getItem("adminPass") || "");
+  const [showLogin, setShowLogin] = useState(false);
+  const [loginInput, setLoginInput] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [loginLoading, setLoginLoading] = useState(false);
+
   useEffect(() => {
     supabase
       .from("tasks")
@@ -59,9 +68,47 @@ export default function MiniCooperTracker() {
       });
   }, []);
 
+  const handleLogin = async () => {
+    setLoginLoading(true);
+    setLoginError("");
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-verify`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: loginInput }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setIsAdmin(true);
+        setAdminPassword(loginInput);
+        sessionStorage.setItem("adminSession", "true");
+        sessionStorage.setItem("adminPass", loginInput);
+        setShowLogin(false);
+        setLoginInput("");
+      } else {
+        setLoginError("Incorrect password.");
+      }
+    } catch {
+      setLoginError("Login failed. Try again.");
+    }
+    setLoginLoading(false);
+  };
+
+  const handleLogout = () => {
+    setIsAdmin(false);
+    setAdminPassword("");
+    sessionStorage.removeItem("adminSession");
+    sessionStorage.removeItem("adminPass");
+  };
+
   const updateTask = async (id, changes) => {
+    if (!isAdmin) return;
     setTasks(prev => prev.map(t => t.id === id ? { ...t, ...changes } : t));
-    await supabase.from("tasks").update(changes).eq("id", id);
+    await fetch(`${SUPABASE_URL}/functions/v1/admin-update`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: adminPassword, taskId: id, changes }),
+    });
   };
 
   const filtered = tasks.filter(t =>
@@ -120,7 +167,67 @@ export default function MiniCooperTracker() {
         .expand-row { animation: slideDown 0.15s ease; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
         .progress-bar-inner { transition: width 0.5s ease; }
+        select:disabled { opacity: 0.4; cursor: not-allowed; }
+        input:disabled { opacity: 0.4; cursor: not-allowed; }
+        .admin-btn { background: none; border: none; cursor: pointer; font-family: inherit; transition: opacity 0.15s; padding: 0; }
+        .admin-btn:hover { opacity: 0.6; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 100; }
       `}</style>
+
+      {/* Admin login modal */}
+      {showLogin && (
+        <div className="modal-overlay" onClick={() => { setShowLogin(false); setLoginInput(""); setLoginError(""); }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            background: "#111116", border: "1px solid #2a2a35", borderRadius: "8px",
+            padding: "24px 28px", width: "300px",
+          }}>
+            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "18px", letterSpacing: "0.1em", color: "#f59e0b", marginBottom: "16px" }}>
+              ADMIN LOGIN
+            </div>
+            <input
+              type="password"
+              autoFocus
+              placeholder="Password"
+              value={loginInput}
+              onChange={e => setLoginInput(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === "Enter") handleLogin();
+                if (e.key === "Escape") { setShowLogin(false); setLoginInput(""); setLoginError(""); }
+              }}
+              style={{
+                width: "100%", background: "#0d0d0f", border: "1px solid #2a2a35",
+                color: "#e2e8f0", padding: "8px 10px", borderRadius: "4px",
+                fontSize: "13px", fontFamily: "inherit", marginBottom: "8px",
+              }}
+            />
+            {loginError && (
+              <div style={{ fontSize: "11px", color: "#ef4444", marginBottom: "10px" }}>{loginError}</div>
+            )}
+            <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end", marginTop: "4px" }}>
+              <button
+                onClick={() => { setShowLogin(false); setLoginInput(""); setLoginError(""); }}
+                style={{
+                  background: "none", border: "1px solid #3a3a45", color: "#6b7280",
+                  padding: "6px 14px", borderRadius: "4px", fontSize: "11px",
+                  fontFamily: "inherit", cursor: "pointer",
+                }}>
+                Cancel
+              </button>
+              <button
+                onClick={handleLogin}
+                disabled={loginLoading}
+                style={{
+                  background: "#f59e0b", border: "none", color: "#0d0d0f",
+                  padding: "6px 16px", borderRadius: "4px", fontSize: "11px",
+                  fontFamily: "inherit", cursor: "pointer", fontWeight: 500,
+                  opacity: loginLoading ? 0.6 : 1,
+                }}>
+                {loginLoading ? "..." : "Login"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <div style={{ background: "#111116", borderBottom: "1px solid #2a2a35", padding: "20px 24px 16px" }}>
@@ -137,6 +244,22 @@ export default function MiniCooperTracker() {
             <div style={{ fontSize: "11px", color: "#6b7280" }}>OVERALL PROGRESS</div>
             <div style={{ fontSize: "22px", fontFamily: "'Bebas Neue', sans-serif", color: progressPct === 100 ? "#10b981" : "#f59e0b" }}>
               {progressPct}%
+            </div>
+            <div style={{ marginTop: "6px" }}>
+              {isAdmin ? (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "flex-end" }}>
+                  <span style={{ fontSize: "9px", letterSpacing: "0.1em", color: "#10b981", border: "1px solid #10b981", padding: "2px 6px", borderRadius: "3px" }}>
+                    ADMIN
+                  </span>
+                  <button className="admin-btn" onClick={handleLogout} style={{ fontSize: "10px", color: "#4b5563" }}>
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <button className="admin-btn" onClick={() => setShowLogin(true)} style={{ fontSize: "10px", color: "#3a3a45" }}>
+                  Admin Login
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -223,13 +346,16 @@ export default function MiniCooperTracker() {
                           borderLeft: `3px solid ${STATUS_COLOR[task.status]}`,
                           marginBottom: "2px",
                         }}>
-                        <select value={task.status}
+                        <select
+                          value={task.status}
+                          disabled={!isAdmin}
                           onClick={e => e.stopPropagation()}
                           onChange={e => updateTask(task.id, { status: e.target.value })}
                           style={{
                             background: "#0d0d0f", border: "1px solid #2a2a35",
                             color: STATUS_COLOR[task.status], padding: "2px 6px",
-                            borderRadius: "3px", fontSize: "10px", fontFamily: "inherit", cursor: "pointer", minWidth: "100px",
+                            borderRadius: "3px", fontSize: "10px", fontFamily: "inherit",
+                            cursor: isAdmin ? "pointer" : "not-allowed", minWidth: "100px",
                           }}>
                           {STATUSES.map(s => <option key={s}>{s}</option>)}
                         </select>
@@ -250,22 +376,32 @@ export default function MiniCooperTracker() {
                           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
                             <div style={{ flex: 1, minWidth: "160px" }}>
                               <div style={{ fontSize: "9px", color: "#4b5563", letterSpacing: "0.1em", marginBottom: "4px" }}>ESTIMATED COST ($)</div>
-                              <input type="number" placeholder="0" value={task.cost}
+                              <input
+                                type="number"
+                                placeholder="0"
+                                value={task.cost}
+                                disabled={!isAdmin}
                                 onChange={e => updateTask(task.id, { cost: e.target.value })}
                                 style={{
                                   background: "#0d0d0f", border: "1px solid #2a2a35", color: "#818cf8",
                                   padding: "5px 8px", borderRadius: "3px", fontSize: "12px",
                                   fontFamily: "inherit", width: "100%",
+                                  cursor: isAdmin ? "text" : "not-allowed",
                                 }} />
                             </div>
                             <div style={{ flex: 3, minWidth: "200px" }}>
                               <div style={{ fontSize: "9px", color: "#4b5563", letterSpacing: "0.1em", marginBottom: "4px" }}>NOTES</div>
-                              <input type="text" placeholder="Add notes, shop quotes, part numbers..." value={task.notes}
+                              <input
+                                type="text"
+                                placeholder={isAdmin ? "Add notes, shop quotes, part numbers..." : ""}
+                                value={task.notes || ""}
+                                disabled={!isAdmin}
                                 onChange={e => updateTask(task.id, { notes: e.target.value })}
                                 style={{
                                   background: "#0d0d0f", border: "1px solid #2a2a35", color: "#cbd5e1",
                                   padding: "5px 8px", borderRadius: "3px", fontSize: "12px",
                                   fontFamily: "inherit", width: "100%",
+                                  cursor: isAdmin ? "text" : "not-allowed",
                                 }} />
                             </div>
                           </div>
