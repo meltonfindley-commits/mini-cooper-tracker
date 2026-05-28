@@ -27,9 +27,20 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // Derive a safe integer ID — the column has no sequence, so we compute max+1
+    const { data: maxRow } = await supabaseAdmin
+      .from("tasks")
+      .select("id")
+      .order("id", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const newId = ((maxRow?.id) ?? -1) + 1;
+
     const { data, error } = await supabaseAdmin
       .from("tasks")
       .insert({
+        id: newId,
         task: task.task,
         category: task.category,
         priority: task.priority,
