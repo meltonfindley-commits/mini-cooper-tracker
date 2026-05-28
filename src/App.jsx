@@ -83,6 +83,10 @@ export default function MiniCooperTracker() {
   // Delete confirm — stores the id of the task pending deletion
   const [confirmDelete, setConfirmDelete] = useState(null);
 
+  // Edit task modal
+  const [editTask, setEditTask] = useState(null);
+  const [editForm, setEditForm] = useState({});
+
   useEffect(() => {
     supabase
       .from("tasks")
@@ -184,6 +188,31 @@ export default function MiniCooperTracker() {
     });
   };
 
+  const openEdit = (task) => {
+    setEditForm({
+      task:     task.task     || "",
+      category: task.category || CATEGORIES_ORDER[0],
+      priority: task.priority || "Medium",
+      status:   task.status   || "Not Started",
+      cost:     task.cost  ?? "",
+      notes:    task.notes || "",
+    });
+    setEditTask(task);
+  };
+
+  const saveEdit = () => {
+    if (!editTask || !editForm.task.trim()) return;
+    updateTask(editTask.id, {
+      task:     editForm.task.trim(),
+      category: editForm.category,
+      priority: editForm.priority,
+      status:   editForm.status,
+      cost:     editForm.cost !== "" ? editForm.cost : null,
+      notes:    editForm.notes || null,
+    });
+    setEditTask(null);
+  };
+
   // ── Derived state ─────────────────────────────────────────────────────────
 
   const filtered = tasks.filter(t =>
@@ -251,6 +280,8 @@ export default function MiniCooperTracker() {
         .del-btn { background: none; border: 1px solid #3a3a45; color: #6b7280; padding: 4px 10px; border-radius: 3px; font-size: 10px; font-family: inherit; cursor: pointer; transition: all 0.15s; letter-spacing: 0.04em; }
         .del-btn:hover { border-color: #ef4444; color: #ef4444; }
         .del-confirm-btn { border: none; padding: 4px 12px; border-radius: 3px; font-size: 10px; font-family: inherit; cursor: pointer; font-weight: 500; }
+        .edit-btn { background: none; border: 1px solid #3a3a45; color: #6b7280; padding: 4px 10px; border-radius: 3px; font-size: 10px; font-family: inherit; cursor: pointer; transition: all 0.15s; letter-spacing: 0.04em; }
+        .edit-btn:hover { border-color: #f59e0b; color: #f59e0b; }
       `}</style>
 
       {/* ── Admin login modal ─────────────────────────────────────────────── */}
@@ -355,6 +386,86 @@ export default function MiniCooperTracker() {
               <button onClick={createTask} disabled={!newTask.task.trim() || saving}
                 style={{ background: newTask.task.trim() ? "#f59e0b" : "#2a2a35", border: "none", color: newTask.task.trim() ? "#0d0d0f" : "#4b5563", padding: "7px 20px", borderRadius: "4px", fontSize: "11px", fontFamily: "inherit", cursor: newTask.task.trim() ? "pointer" : "not-allowed", fontWeight: 500, transition: "all 0.15s" }}>
                 {saving ? "Saving..." : "Add Task"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Edit task modal ──────────────────────────────────────────────── */}
+      {editTask && (
+        <div className="modal-overlay" onClick={() => setEditTask(null)}>
+          <div onClick={e => e.stopPropagation()} style={{ background: "#111116", border: "1px solid #2a2a35", borderRadius: "8px", padding: "24px 28px", width: "min(520px, 95vw)", maxHeight: "90vh", overflowY: "auto" }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "10px", marginBottom: "20px" }}>
+              <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "18px", letterSpacing: "0.1em", color: "#f59e0b" }}>
+                EDIT TASK
+              </div>
+              <div style={{ fontSize: "10px", color: "#3a3a45", letterSpacing: "0.06em" }}>#{editTask.id}</div>
+            </div>
+
+            {/* Task name */}
+            <div style={{ marginBottom: "14px" }}>
+              <label style={labelStyle}>TASK NAME *</label>
+              <input
+                autoFocus type="text" placeholder="Describe the task..."
+                value={editForm.task}
+                onChange={e => setEditForm(p => ({ ...p, task: e.target.value }))}
+                onKeyDown={e => { if (e.key === "Enter") saveEdit(); if (e.key === "Escape") setEditTask(null); }}
+                style={inputStyle()}
+              />
+            </div>
+
+            {/* Category / Priority / Status */}
+            <div style={{ display: "flex", gap: "10px", marginBottom: "14px", flexWrap: "wrap" }}>
+              <div style={{ flex: "2 1 160px" }}>
+                <label style={labelStyle}>CATEGORY</label>
+                <select value={editForm.category} onChange={e => setEditForm(p => ({ ...p, category: e.target.value }))} style={selectStyle()}>
+                  {CATEGORIES_ORDER.map(c => <option key={c}>{c}</option>)}
+                </select>
+              </div>
+              <div style={{ flex: "1 1 100px" }}>
+                <label style={labelStyle}>PRIORITY</label>
+                <select value={editForm.priority} onChange={e => setEditForm(p => ({ ...p, priority: e.target.value }))} style={selectStyle()}>
+                  {PRIORITIES.map(p => <option key={p}>{p}</option>)}
+                </select>
+              </div>
+              <div style={{ flex: "1 1 110px" }}>
+                <label style={labelStyle}>STATUS</label>
+                <select value={editForm.status} onChange={e => setEditForm(p => ({ ...p, status: e.target.value }))} style={selectStyle()}>
+                  {STATUSES.map(s => <option key={s}>{s}</option>)}
+                </select>
+              </div>
+            </div>
+
+            {/* Cost / Notes */}
+            <div style={{ display: "flex", gap: "10px", marginBottom: "22px", flexWrap: "wrap" }}>
+              <div style={{ flex: "1 1 110px" }}>
+                <label style={labelStyle}>ESTIMATED COST ($)</label>
+                <input type="number" placeholder="0" value={editForm.cost}
+                  onChange={e => setEditForm(p => ({ ...p, cost: e.target.value }))}
+                  style={inputStyle({ color: "#818cf8" })}
+                />
+              </div>
+              <div style={{ flex: "3 1 200px" }}>
+                <label style={labelStyle}>NOTES</label>
+                <input type="text" placeholder="Shop quotes, part numbers..."
+                  value={editForm.notes}
+                  onChange={e => setEditForm(p => ({ ...p, notes: e.target.value }))}
+                  onKeyDown={e => { if (e.key === "Enter") saveEdit(); if (e.key === "Escape") setEditTask(null); }}
+                  style={inputStyle()}
+                />
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+              <button onClick={() => setEditTask(null)}
+                style={{ background: "none", border: "1px solid #3a3a45", color: "#6b7280", padding: "7px 16px", borderRadius: "4px", fontSize: "11px", fontFamily: "inherit", cursor: "pointer" }}>
+                Cancel
+              </button>
+              <button onClick={saveEdit} disabled={!editForm.task?.trim()}
+                style={{ background: editForm.task?.trim() ? "#f59e0b" : "#2a2a35", border: "none", color: editForm.task?.trim() ? "#0d0d0f" : "#4b5563", padding: "7px 20px", borderRadius: "4px", fontSize: "11px", fontFamily: "inherit", cursor: editForm.task?.trim() ? "pointer" : "not-allowed", fontWeight: 500, transition: "all 0.15s" }}>
+                Save Changes
               </button>
             </div>
           </div>
@@ -469,8 +580,8 @@ export default function MiniCooperTracker() {
                       {/* Task row */}
                       <div className="task-row"
                         onClick={() => {
-                          if (expandedTask === task.id) { setExpandedTask(null); setConfirmDelete(null); }
-                          else setExpandedTask(task.id);
+                          if (expandedTask === task.id) { setExpandedTask(null); setConfirmDelete(null); setEditTask(null); }
+                          else { setExpandedTask(task.id); setConfirmDelete(null); }
                         }}
                         style={{
                           display: "flex", alignItems: "center", gap: "10px",
@@ -526,29 +637,38 @@ export default function MiniCooperTracker() {
                             </div>
                           </div>
 
-                          {/* Delete row — admin only */}
+                          {/* Admin action row — Edit (left) · Delete (right) */}
                           {isAdmin && (
-                            <div style={{ marginTop: "12px", paddingTop: "10px", borderTop: "1px solid #1e1e28", display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "8px" }}>
-                              {confirmDelete === task.id ? (
-                                <>
-                                  <span style={{ fontSize: "11px", color: "#6b7280" }}>Delete this task?</span>
-                                  <button className="del-confirm-btn"
-                                    onClick={() => setConfirmDelete(null)}
-                                    style={{ background: "#1a1a22", color: "#6b7280" }}>
-                                    Cancel
+                            <div style={{ marginTop: "12px", paddingTop: "10px", borderTop: "1px solid #1e1e28", display: "flex", justifyContent: "space-between", alignItems: "center", gap: "8px" }}>
+                              {/* Edit */}
+                              <button className="edit-btn"
+                                onClick={e => { e.stopPropagation(); setConfirmDelete(null); openEdit(task); }}>
+                                Edit task
+                              </button>
+
+                              {/* Delete / confirm */}
+                              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                {confirmDelete === task.id ? (
+                                  <>
+                                    <span style={{ fontSize: "11px", color: "#6b7280" }}>Delete this task?</span>
+                                    <button className="del-confirm-btn"
+                                      onClick={() => setConfirmDelete(null)}
+                                      style={{ background: "#1a1a22", color: "#6b7280" }}>
+                                      Cancel
+                                    </button>
+                                    <button className="del-confirm-btn"
+                                      onClick={() => deleteTask(task.id)}
+                                      style={{ background: "#ef4444", color: "#fff" }}>
+                                      Yes, delete
+                                    </button>
+                                  </>
+                                ) : (
+                                  <button className="del-btn"
+                                    onClick={e => { e.stopPropagation(); setConfirmDelete(task.id); }}>
+                                    Delete task
                                   </button>
-                                  <button className="del-confirm-btn"
-                                    onClick={() => deleteTask(task.id)}
-                                    style={{ background: "#ef4444", color: "#fff" }}>
-                                    Yes, delete
-                                  </button>
-                                </>
-                              ) : (
-                                <button className="del-btn"
-                                  onClick={e => { e.stopPropagation(); setConfirmDelete(task.id); }}>
-                                  Delete task
-                                </button>
-                              )}
+                                )}
+                              </div>
                             </div>
                           )}
                         </div>
