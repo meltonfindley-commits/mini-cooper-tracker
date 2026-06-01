@@ -1,11 +1,10 @@
 {
   "name": "mini-cooper",
   "private": true,
-  "workspaces": ["apps/*", "packages/*"],
   "scripts": {
-    "dev:dashboard": "npm -w apps/dashboard run dev",
-    "dev:fuel": "npm -w apps/fuel-tracker run dev",
-    "build:dashboard": "npm -w apps/dashboard run build",
-    "build:fuel": "npm -w apps/fuel-tracker run build"
+    "dev:dashboard": "npm --prefix apps/dashboard run dev",
+    "dev:fuel": "npm --prefix apps/fuel-tracker run dev",
+    "build:dashboard": "npm --prefix apps/dashboard run build",
+    "build:fuel": "npm --prefix apps/fuel-tracker run build"
   }
 }
