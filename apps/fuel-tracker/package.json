@@ -1,0 +1,24 @@
+{
+  "name": "mini-fuel-tracker",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mini/shared": "*",
+    "@supabase/supabase-js": "^2.106.1",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "recharts": "^2.12.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.0.1",
+    "vite": "^8.0.12",
+    "eslint": "^10.3.0"
+  }
+}
