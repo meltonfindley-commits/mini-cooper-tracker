@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts'
 import { supabase } from './supabase.js'
-import Nav from '@mini/shared/Nav.jsx'
+import Nav from './Nav.jsx'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const DASHBOARD_URL = import.meta.env.VITE_DASHBOARD_URL || '#'

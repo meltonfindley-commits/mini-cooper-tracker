@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './supabase.js'
-import Nav from '@mini/shared/Nav.jsx'
+import Nav from './Nav.jsx'
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const FUEL_URL = import.meta.env.VITE_FUEL_URL || '#'
