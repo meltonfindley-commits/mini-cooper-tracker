@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from './supabase.js'
 import Nav from './Nav.jsx'
 
@@ -65,6 +65,8 @@ const CAT_ICONS = {
   'Interior': '🪑', 'Exterior & Body': '🚗',
 }
 
+const CSV_TEMPLATE = 'task,category,priority,status,cost,notes\nReplace coolant expansion tank,Engine & Drivetrain,High,Not Started,45,Plastic tanks crack with age\nInspect brake booster vacuum hose,Brakes & Suspension,Medium,Not Started,15,Common source of hard brake pedal'
+
 const inputStyle = (extra = {}) => ({
   background: '#0d0d0f', border: '1px solid #2a2a35', color: '#e2e8f0',
   padding: '7px 10px', borderRadius: '4px', fontSize: '12px',
@@ -79,6 +81,88 @@ const labelStyle = {
   display: 'block', fontSize: '9px', color: '#4b5563',
   letterSpacing: '0.1em', marginBottom: '5px',
 }
+
+// ─── CSV parser (handles quoted fields with commas inside) ───────────────────
+function parseCSV(text) {
+  const lines = text.trim().split(/\r?\n/)
+  if (lines.length < 2) return { headers: [], rows: [], error: 'File must have a header row and at least one data row.' }
+
+  const parseRow = (line) => {
+    const result = []
+    let cur = ''
+    let inQuotes = false
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i]
+      if (ch === '"') {
+        if (inQuotes && line[i + 1] === '"') { cur += '"'; i++ }
+        else inQuotes = !inQuotes
+      } else if (ch === ',' && !inQuotes) {
+        result.push(cur.trim())
+        cur = ''
+      } else {
+        cur += ch
+      }
+    }
+    result.push(cur.trim())
+    return result
+  }
+
+  const headers = parseRow(lines[0]).map(h => h.toLowerCase().replace(/\s+/g, '_'))
+  const rows = lines.slice(1).filter(l => l.trim()).map(l => parseRow(l))
+  return { headers, rows }
+}
+
+function normalizeRows(headers, rawRows) {
+  const taskIdx = headers.indexOf('task')
+  const catIdx = headers.indexOf('category')
+  const priIdx = headers.indexOf('priority')
+  const statusIdx = headers.indexOf('status')
+  const costIdx = headers.indexOf('cost')
+  const notesIdx = headers.indexOf('notes')
+
+  const errors = []
+  if (taskIdx === -1) errors.push('Missing required column: task')
+  if (catIdx === -1) errors.push('Missing required column: category')
+  if (errors.length) return { rows: [], errors }
+
+  const normalized = []
+  rawRows.forEach((cols, i) => {
+    const rowNum = i + 2 // 1-indexed, +1 for header
+    const task = cols[taskIdx] || ''
+    const category = cols[catIdx] || ''
+
+    if (!task.trim()) { errors.push(`Row ${rowNum}: missing task name — skipped`); return }
+    if (!category.trim()) { errors.push(`Row ${rowNum}: missing category — skipped`); return }
+
+    const rawPriority = priIdx >= 0 ? (cols[priIdx] || '') : ''
+    const priority = PRIORITIES.includes(rawPriority) ? rawPriority : 'Medium'
+
+    const rawStatus = statusIdx >= 0 ? (cols[statusIdx] || '') : ''
+    const status = STATUSES.includes(rawStatus) ? rawStatus : 'Not Started'
+
+    const rawCost = costIdx >= 0 ? (cols[costIdx] || '') : ''
+    const cost = rawCost && !isNaN(parseFloat(rawCost)) ? rawCost : ''
+
+    const notes = notesIdx >= 0 ? (cols[notesIdx] || '') : ''
+
+    normalized.push({
+      task: task.trim(),
+      category: category.trim(),
+      priority,
+      status,
+      cost,
+      notes: notes.trim(),
+      _warnings: [
+        !PRIORITIES.includes(rawPriority) && rawPriority ? `priority "${rawPriority}" → defaulted to Medium` : null,
+        !STATUSES.includes(rawStatus) && rawStatus ? `status "${rawStatus}" → defaulted to Not Started` : null,
+      ].filter(Boolean),
+    })
+  })
+
+  return { rows: normalized, errors }
+}
+
+// ─── Components ───────────────────────────────────────────────────────────────
 
 function Toast({ message, onDone }) {
   useEffect(() => { const t = setTimeout(onDone, 2800); return () => clearTimeout(t) }, [onDone])
@@ -231,6 +315,290 @@ function TaskModal({ task, onClose, onSave }) {
   )
 }
 
+// ─── Bulk Upload Modal ────────────────────────────────────────────────────────
+function BulkUploadModal({ onClose, onUpload }) {
+  const [stage, setStage] = useState('drop') // 'drop' | 'preview' | 'uploading' | 'done'
+  const [dragging, setDragging] = useState(false)
+  const [parseErrors, setParseErrors] = useState([])
+  const [previewRows, setPreviewRows] = useState([])
+  const [uploadCount, setUploadCount] = useState(0)
+  const [uploadError, setUploadError] = useState('')
+  const fileRef = useRef()
+
+  const downloadTemplate = () => {
+    const blob = new Blob([CSV_TEMPLATE], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'tasks-template.csv'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const processFile = (file) => {
+    if (!file) return
+    if (!file.name.endsWith('.csv') && file.type !== 'text/csv') {
+      setParseErrors(['File must be a .csv file.'])
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      const text = e.target.result
+      const { headers, rows, error } = parseCSV(text)
+      if (error) { setParseErrors([error]); return }
+      const { rows: normalized, errors } = normalizeRows(headers, rows)
+      setParseErrors(errors)
+      setPreviewRows(normalized)
+      if (normalized.length > 0) setStage('preview')
+    }
+    reader.readAsText(file)
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+    setDragging(false)
+    const file = e.dataTransfer.files[0]
+    processFile(file)
+  }
+
+  const handleFileChange = (e) => {
+    processFile(e.target.files[0])
+    e.target.value = ''
+  }
+
+  const handleConfirm = async () => {
+    setStage('uploading')
+    setUploadError('')
+    // Strip internal _warnings key before sending
+    const rows = previewRows.map(({ _warnings, ...r }) => r)
+    try {
+      const result = await onUpload(rows)
+      if (result.ok) {
+        setUploadCount(result.count ?? rows.length)
+        setStage('done')
+      } else {
+        setUploadError(result.error?.message || 'Upload failed. Check console for details.')
+        setStage('preview')
+      }
+    } catch (err) {
+      setUploadError('Network error — upload failed.')
+      setStage('preview')
+    }
+  }
+
+  const reset = () => {
+    setStage('drop')
+    setPreviewRows([])
+    setParseErrors([])
+    setUploadError('')
+  }
+
+  const allWarnings = previewRows.flatMap(r => r._warnings || [])
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: '#111116', border: '1px solid #2a2a35', borderRadius: '6px',
+        padding: '28px', width: '680px', maxWidth: '95vw', maxHeight: '90vh',
+        display: 'flex', flexDirection: 'column', gap: '0',
+      }}>
+
+        {/* Header */}
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '22px', color: '#f59e0b', letterSpacing: '0.08em' }}>
+            BULK UPLOAD TASKS
+          </div>
+          <button onClick={downloadTemplate} style={{
+            background: 'none', border: '1px solid #2a2a35', color: '#6b7280',
+            padding: '4px 10px', borderRadius: '3px', fontSize: '9px',
+            fontFamily: 'inherit', cursor: 'pointer', letterSpacing: '0.08em',
+          }}>
+            ↓ DOWNLOAD TEMPLATE
+          </button>
+        </div>
+
+        {/* Column spec */}
+        {stage === 'drop' && (
+          <div style={{ marginBottom: '16px', background: '#13131a', border: '1px solid #1e1e28', borderRadius: '4px', padding: '10px 14px' }}>
+            <div style={{ fontSize: '9px', color: '#4b5563', letterSpacing: '0.1em', marginBottom: '6px' }}>REQUIRED CSV COLUMNS</div>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {[
+                { col: 'task', note: 'required', color: '#ef4444' },
+                { col: 'category', note: 'required', color: '#ef4444' },
+                { col: 'priority', note: 'High / Medium / Low', color: '#6b7280' },
+                { col: 'status', note: 'Not Started / In Progress / Done', color: '#6b7280' },
+                { col: 'cost', note: 'number', color: '#6b7280' },
+                { col: 'notes', note: 'text', color: '#6b7280' },
+              ].map(({ col, note, color }) => (
+                <div key={col} style={{ background: '#0d0d0f', border: '1px solid #2a2a35', borderRadius: '3px', padding: '3px 8px' }}>
+                  <span style={{ fontSize: '10px', color: '#e2e8f0', fontWeight: 500 }}>{col}</span>
+                  <span style={{ fontSize: '9px', color, marginLeft: '5px' }}>{note}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Drop zone */}
+        {stage === 'drop' && (
+          <div
+            onDragOver={e => { e.preventDefault(); setDragging(true) }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={handleDrop}
+            onClick={() => fileRef.current?.click()}
+            style={{
+              border: `2px dashed ${dragging ? '#f59e0b' : '#2a2a35'}`,
+              borderRadius: '6px',
+              padding: '40px 24px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              background: dragging ? 'rgba(245,158,11,0.04)' : '#0d0d0f',
+              transition: 'all 0.15s',
+              marginBottom: '16px',
+            }}
+          >
+            <div style={{ fontSize: '32px', marginBottom: '10px' }}>📂</div>
+            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '16px', color: '#94a3b8', letterSpacing: '0.08em' }}>
+              DROP CSV FILE HERE
+            </div>
+            <div style={{ fontSize: '10px', color: '#4b5563', marginTop: '6px' }}>or click to browse</div>
+            <input ref={fileRef} type="file" accept=".csv,text/csv" onChange={handleFileChange} style={{ display: 'none' }} />
+          </div>
+        )}
+
+        {/* Parse errors */}
+        {parseErrors.length > 0 && stage !== 'done' && (
+          <div style={{ marginBottom: '14px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '4px', padding: '10px 14px' }}>
+            <div style={{ fontSize: '9px', color: '#ef4444', letterSpacing: '0.1em', marginBottom: '5px' }}>
+              {stage === 'drop' ? 'ERRORS' : `SKIPPED ROWS (${parseErrors.length})`}
+            </div>
+            {parseErrors.map((e, i) => (
+              <div key={i} style={{ fontSize: '10px', color: '#ef4444', marginBottom: '2px' }}>• {e}</div>
+            ))}
+          </div>
+        )}
+
+        {/* Warnings */}
+        {allWarnings.length > 0 && stage === 'preview' && (
+          <div style={{ marginBottom: '14px', background: 'rgba(249,115,22,0.08)', border: '1px solid rgba(249,115,22,0.3)', borderRadius: '4px', padding: '10px 14px' }}>
+            <div style={{ fontSize: '9px', color: '#f97316', letterSpacing: '0.1em', marginBottom: '5px' }}>WARNINGS — VALUES DEFAULTED</div>
+            {allWarnings.map((w, i) => (
+              <div key={i} style={{ fontSize: '10px', color: '#f97316', marginBottom: '2px' }}>• {w}</div>
+            ))}
+          </div>
+        )}
+
+        {/* Upload error */}
+        {uploadError && (
+          <div style={{ marginBottom: '14px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '4px', padding: '10px 14px' }}>
+            <div style={{ fontSize: '10px', color: '#ef4444' }}>⚠ {uploadError}</div>
+          </div>
+        )}
+
+        {/* Preview table */}
+        {stage === 'preview' && previewRows.length > 0 && (
+          <div style={{ flex: 1, overflowY: 'auto', marginBottom: '16px' }}>
+            <div style={{ fontSize: '9px', color: '#4b5563', letterSpacing: '0.1em', marginBottom: '8px' }}>
+              PREVIEW — {previewRows.length} {previewRows.length === 1 ? 'TASK' : 'TASKS'} READY TO IMPORT
+            </div>
+            <div style={{ background: '#13131a', border: '1px solid #1e1e28', borderRadius: '4px', overflow: 'hidden' }}>
+              {/* Table header */}
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.4fr 70px 90px 60px', gap: 0, padding: '7px 12px', borderBottom: '1px solid #1e1e28' }}>
+                {['TASK', 'CATEGORY', 'PRIORITY', 'STATUS', 'COST'].map(h => (
+                  <div key={h} style={{ fontSize: '9px', color: '#4b5563', letterSpacing: '0.1em' }}>{h}</div>
+                ))}
+              </div>
+              {/* Rows */}
+              {previewRows.map((row, i) => (
+                <div key={i} style={{
+                  display: 'grid', gridTemplateColumns: '2fr 1.4fr 70px 90px 60px',
+                  gap: 0, padding: '7px 12px',
+                  borderBottom: i < previewRows.length - 1 ? '1px solid #1e1e28' : 'none',
+                  background: row._warnings?.length ? 'rgba(249,115,22,0.04)' : 'transparent',
+                }}>
+                  <div style={{ fontSize: '10px', color: '#cbd5e1', paddingRight: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                    title={row.task}>
+                    {row.task}
+                  </div>
+                  <div style={{ fontSize: '10px', color: '#94a3b8', paddingRight: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {row.category}
+                  </div>
+                  <div>
+                    <span className="pill" style={{ background: PRIORITY_COLOR[row.priority] + '22', color: PRIORITY_COLOR[row.priority] }}>
+                      {row.priority}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: '10px', color: STATUS_COLOR[row.status] }}>{row.status}</div>
+                  <div style={{ fontSize: '10px', color: row.cost ? '#818cf8' : '#3a3a45' }}>
+                    {row.cost ? `$${row.cost}` : '—'}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Uploading spinner */}
+        {stage === 'uploading' && (
+          <div style={{ textAlign: 'center', padding: '32px', color: '#6b7280', fontSize: '12px' }}>
+            Uploading {previewRows.length} tasks...
+          </div>
+        )}
+
+        {/* Done state */}
+        {stage === 'done' && (
+          <div style={{ textAlign: 'center', padding: '32px' }}>
+            <div style={{ fontSize: '36px', marginBottom: '12px' }}>✅</div>
+            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '20px', color: '#10b981', letterSpacing: '0.08em' }}>
+              {uploadCount} {uploadCount === 1 ? 'TASK' : 'TASKS'} ADDED
+            </div>
+          </div>
+        )}
+
+        {/* Footer buttons */}
+        <div style={{ display: 'flex', gap: '8px', paddingTop: '4px' }}>
+          {stage === 'preview' && (
+            <>
+              <button onClick={handleConfirm} style={{
+                flex: 1, background: '#f59e0b', color: '#0d0d0f', border: 'none',
+                borderRadius: '4px', padding: '9px', fontSize: '11px', fontFamily: 'inherit',
+                fontWeight: 600, cursor: 'pointer', letterSpacing: '0.05em',
+              }}>
+                IMPORT {previewRows.length} {previewRows.length === 1 ? 'TASK' : 'TASKS'}
+              </button>
+              <button onClick={reset} style={{
+                background: 'none', border: '1px solid #2a2a35', color: '#6b7280',
+                borderRadius: '4px', padding: '9px 16px', fontSize: '11px', fontFamily: 'inherit', cursor: 'pointer',
+              }}>
+                BACK
+              </button>
+            </>
+          )}
+          {stage === 'done' && (
+            <button onClick={onClose} style={{
+              flex: 1, background: '#10b981', color: '#0d0d0f', border: 'none',
+              borderRadius: '4px', padding: '9px', fontSize: '11px', fontFamily: 'inherit',
+              fontWeight: 600, cursor: 'pointer', letterSpacing: '0.05em',
+            }}>
+              DONE
+            </button>
+          )}
+          {(stage === 'drop' || stage === 'uploading') && (
+            <button onClick={onClose} disabled={stage === 'uploading'} style={{
+              flex: 1, background: 'none', border: '1px solid #2a2a35', color: '#6b7280',
+              borderRadius: '4px', padding: '9px', fontSize: '11px', fontFamily: 'inherit',
+              cursor: stage === 'uploading' ? 'default' : 'pointer',
+            }}>
+              CANCEL
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Main App ─────────────────────────────────────────────────────────────────
 export default function App() {
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(true)
@@ -241,6 +609,7 @@ export default function App() {
   const [adminPassword, setAdminPassword] = useState(() => sessionStorage.getItem('adminPass') || '')
   const [showLogin, setShowLogin] = useState(false)
   const [showAddTask, setShowAddTask] = useState(false)
+  const [showBulkUpload, setShowBulkUpload] = useState(false)
   const [editingTask, setEditingTask] = useState(null)
   const [toast, setToast] = useState(null)
   const [confirmDelete, setConfirmDelete] = useState(null)
@@ -306,6 +675,15 @@ export default function App() {
     setConfirmDelete(null)
   }
 
+  const handleBulkUpload = async (rows) => {
+    const result = await callFn('admin-bulk-insert', { rows })
+    if (result.ok) {
+      fetchTasks()
+      showToast(`${result.count ?? rows.length} tasks imported`)
+    }
+    return result
+  }
+
   const handleAdminSuccess = (pass) => {
     setIsAdmin(true)
     setAdminPassword(pass)
@@ -354,6 +732,7 @@ export default function App() {
         @keyframes slideDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
         .expand-row { animation: slideDown 0.15s ease; }
         .progress-bar-inner { transition: width 0.5s ease; }
+        .upload-btn:hover { border-color: #f59e0b !important; color: #f59e0b !important; }
       `}</style>
 
       <Nav activeApp="dashboard" dashboardUrl="/" fuelUrl={FUEL_URL} />
@@ -423,7 +802,8 @@ export default function App() {
           <div style={{ color: '#4b5563', fontSize: '12px', textAlign: 'center', padding: '48px' }}>Loading tasks...</div>
         ) : activeTab === 'tasks' ? (
           <>
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
+            {/* Filter bar + bulk upload button */}
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
               {[
                 { label: 'Category', key: 'category', options: ['All', ...CATEGORIES] },
                 { label: 'Status', key: 'status', options: ['All', ...STATUSES] },
@@ -438,6 +818,18 @@ export default function App() {
                 style={{ background: 'none', border: '1px solid #3a3a45', color: '#6b7280', padding: '6px 12px', borderRadius: '4px', fontSize: '11px', fontFamily: 'inherit', cursor: 'pointer' }}>
                 Clear
               </button>
+
+              {/* Bulk upload — admin only */}
+              {isAdmin && (
+                <button className="upload-btn" onClick={() => setShowBulkUpload(true)} style={{
+                  background: 'none', border: '1px solid #3a3a45', color: '#6b7280',
+                  padding: '6px 12px', borderRadius: '4px', fontSize: '11px',
+                  fontFamily: 'inherit', cursor: 'pointer', letterSpacing: '0.05em',
+                  marginLeft: 'auto', transition: 'all 0.15s',
+                }}>
+                  ↑ BULK UPLOAD CSV
+                </button>
+              )}
             </div>
 
             {tasks.length === 0 && (
@@ -445,13 +837,22 @@ export default function App() {
                 <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔧</div>
                 <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '22px', color: '#6b7280', letterSpacing: '0.1em' }}>NO TASKS YET</div>
                 {isAdmin && (
-                  <button onClick={() => setShowAddTask(true)} style={{
-                    marginTop: '16px', background: '#f59e0b', color: '#0d0d0f', border: 'none',
-                    borderRadius: '4px', padding: '8px 20px', fontSize: '11px', fontFamily: 'inherit',
-                    fontWeight: 600, cursor: 'pointer', letterSpacing: '0.05em',
-                  }}>
-                    ADD FIRST TASK
-                  </button>
+                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '16px' }}>
+                    <button onClick={() => setShowAddTask(true)} style={{
+                      background: '#f59e0b', color: '#0d0d0f', border: 'none',
+                      borderRadius: '4px', padding: '8px 20px', fontSize: '11px', fontFamily: 'inherit',
+                      fontWeight: 600, cursor: 'pointer', letterSpacing: '0.05em',
+                    }}>
+                      ADD FIRST TASK
+                    </button>
+                    <button onClick={() => setShowBulkUpload(true)} style={{
+                      background: 'none', border: '1px solid #3a3a45', color: '#6b7280',
+                      borderRadius: '4px', padding: '8px 20px', fontSize: '11px', fontFamily: 'inherit',
+                      cursor: 'pointer', letterSpacing: '0.05em',
+                    }}>
+                      ↑ BULK UPLOAD CSV
+                    </button>
+                  </div>
                 )}
               </div>
             )}
@@ -585,7 +986,7 @@ export default function App() {
         )}
       </div>
 
-      {/* FAB — add task (admin only) */}
+      {/* FAB — add single task (admin only) */}
       {isAdmin && activeTab === 'tasks' && (
         <button className="fab" onClick={() => setShowAddTask(true)} style={{
           position: 'fixed', bottom: '28px', right: '28px',
@@ -601,6 +1002,7 @@ export default function App() {
       {showLogin && <AdminLoginModal onClose={() => setShowLogin(false)} onSuccess={handleAdminSuccess} />}
       {showAddTask && <TaskModal onClose={() => setShowAddTask(false)} onSave={handleAddTask} />}
       {editingTask && <TaskModal task={editingTask} onClose={() => setEditingTask(null)} onSave={handleEditTask} />}
+      {showBulkUpload && <BulkUploadModal onClose={() => setShowBulkUpload(false)} onUpload={handleBulkUpload} />}
       {toast && <Toast message={toast} onDone={() => setToast(null)} />}
     </div>
   )
