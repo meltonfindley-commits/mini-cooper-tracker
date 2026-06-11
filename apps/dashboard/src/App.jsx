@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { supabase } from './supabase.js'
 import Nav from './Nav.jsx'
 
@@ -65,7 +65,7 @@ const CAT_ICONS = {
   'Interior': '🪑', 'Exterior & Body': '🚗',
 }
 
-const CSV_TEMPLATE = 'task,category,priority,status,cost,notes\nReplace coolant expansion tank,Engine & Drivetrain,High,Not Started,45,Plastic tanks crack with age\nInspect brake booster vacuum hose,Brakes & Suspension,Medium,Not Started,15,Common source of hard brake pedal'
+const CSV_TEMPLATE = 'task,category,priority,status,cost,notes,vehicle\nReplace coolant expansion tank,Engine & Drivetrain,High,Not Started,45,Plastic tanks crack with age,2009 Mini Cooper S\nInspect brake booster vacuum hose,Brakes & Suspension,Medium,Not Started,15,Common source of hard brake pedal,2009 Mini Cooper S'
 
 const inputStyle = (extra = {}) => ({
   background: '#0d0d0f', border: '1px solid #2a2a35', color: '#e2e8f0',
@@ -119,6 +119,7 @@ function normalizeRows(headers, rawRows) {
   const statusIdx = headers.indexOf('status')
   const costIdx = headers.indexOf('cost')
   const notesIdx = headers.indexOf('notes')
+  const vehicleIdx = headers.indexOf('vehicle')
 
   const errors = []
   if (taskIdx === -1) errors.push('Missing required column: task')
@@ -127,7 +128,7 @@ function normalizeRows(headers, rawRows) {
 
   const normalized = []
   rawRows.forEach((cols, i) => {
-    const rowNum = i + 2 // 1-indexed, +1 for header
+    const rowNum = i + 2
     const task = cols[taskIdx] || ''
     const category = cols[catIdx] || ''
 
@@ -144,6 +145,7 @@ function normalizeRows(headers, rawRows) {
     const cost = rawCost && !isNaN(parseFloat(rawCost)) ? rawCost : ''
 
     const notes = notesIdx >= 0 ? (cols[notesIdx] || '') : ''
+    const vehicle = vehicleIdx >= 0 ? (cols[vehicleIdx] || '') : ''
 
     normalized.push({
       task: task.trim(),
@@ -152,6 +154,7 @@ function normalizeRows(headers, rawRows) {
       status,
       cost,
       notes: notes.trim(),
+      vehicle: vehicle.trim() || null,
       _warnings: [
         !PRIORITIES.includes(rawPriority) && rawPriority ? `priority "${rawPriority}" → defaulted to Medium` : null,
         !STATUSES.includes(rawStatus) && rawStatus ? `status "${rawStatus}" → defaulted to Not Started` : null,
@@ -245,9 +248,192 @@ function AdminLoginModal({ onClose, onSuccess }) {
   )
 }
 
-function TaskModal({ task, onClose, onSave }) {
+// ─── Rename Vehicle Modal ─────────────────────────────────────────────────────
+function RenameVehicleModal({ vehicle, vehicles, onClose, onSave }) {
+  const [name, setName] = useState(vehicle.name)
+  const [error, setError] = useState('')
+
+  const handle = () => {
+    const trimmed = name.trim()
+    if (!trimmed) { setError('Name cannot be empty'); return }
+    if (trimmed === vehicle.name) { onClose(); return }
+    if (vehicles.some(v => v.id !== vehicle.id && v.name === trimmed)) {
+      setError('A vehicle with that name already exists'); return
+    }
+    onSave(vehicle.id, vehicle.name, trimmed)
+  }
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: '#111116', border: '1px solid #2a2a35', borderRadius: '6px', padding: '28px', width: '360px',
+      }}>
+        <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '20px', color: '#f59e0b', letterSpacing: '0.08em', marginBottom: '18px' }}>
+          RENAME VEHICLE
+        </div>
+        <label style={labelStyle}>VEHICLE NAME</label>
+        <input value={name} onChange={e => setName(e.target.value)}
+          onKeyDown={e => e.key === 'Enter' && handle()} style={inputStyle()} autoFocus />
+        {error && <div style={{ color: '#ef4444', fontSize: '11px', marginTop: '6px' }}>{error}</div>}
+        <div style={{ fontSize: '10px', color: '#6b7280', marginTop: '10px', lineHeight: 1.5 }}>
+          All existing tasks assigned to this vehicle will be updated to the new name.
+        </div>
+        <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
+          <button onClick={handle} style={{
+            flex: 1, background: '#f59e0b', color: '#0d0d0f', border: 'none', borderRadius: '4px',
+            padding: '8px', fontSize: '11px', fontFamily: 'inherit', fontWeight: 600, cursor: 'pointer', letterSpacing: '0.05em',
+          }}>SAVE &amp; UPDATE RECORDS</button>
+          <button onClick={onClose} style={{
+            flex: 1, background: 'none', border: '1px solid #2a2a35', color: '#6b7280',
+            borderRadius: '4px', padding: '8px', fontSize: '11px', fontFamily: 'inherit', cursor: 'pointer',
+          }}>CANCEL</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Delete Vehicle Confirm Modal ─────────────────────────────────────────────
+function DeleteVehicleModal({ vehicle, taskCount, onClose, onConfirm }) {
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: '#111116', border: '1px solid #2a2a35', borderRadius: '6px', padding: '28px', width: '360px',
+      }}>
+        <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '20px', color: '#ef4444', letterSpacing: '0.08em', marginBottom: '16px' }}>
+          DELETE VEHICLE
+        </div>
+        <div style={{ fontSize: '12px', color: '#cbd5e1', marginBottom: '10px' }}>
+          Remove <strong style={{ color: '#f59e0b' }}>{vehicle.name}</strong> from your vehicle list?
+        </div>
+        {taskCount > 0 ? (
+          <div style={{ fontSize: '11px', color: '#6b7280', background: '#13131a', border: '1px solid #1e1e28', borderRadius: '4px', padding: '10px 12px', lineHeight: 1.6 }}>
+            This vehicle has <strong style={{ color: '#f97316' }}>{taskCount} {taskCount === 1 ? 'task' : 'tasks'}</strong> assigned. Those tasks will be kept — only the vehicle name is removed from the list.
+          </div>
+        ) : (
+          <div style={{ fontSize: '11px', color: '#6b7280' }}>This vehicle has no tasks assigned.</div>
+        )}
+        <div style={{ display: 'flex', gap: '8px', marginTop: '18px' }}>
+          <button onClick={onConfirm} style={{
+            flex: 1, background: 'none', border: '1px solid #ef4444', color: '#ef4444',
+            borderRadius: '4px', padding: '8px', fontSize: '11px', fontFamily: 'inherit', cursor: 'pointer',
+          }}>CONFIRM DELETE</button>
+          <button onClick={onClose} style={{
+            flex: 1, background: 'none', border: '1px solid #2a2a35', color: '#6b7280',
+            borderRadius: '4px', padding: '8px', fontSize: '11px', fontFamily: 'inherit', cursor: 'pointer',
+          }}>CANCEL</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Vehicles Panel ───────────────────────────────────────────────────────────
+function VehiclesPanel({ vehicles, tasks, isAdmin, onAdd, onRename, onDelete }) {
+  const [newName, setNewName] = useState('')
+  const [addError, setAddError] = useState('')
+  const [renamingVehicle, setRenamingVehicle] = useState(null)
+  const [deletingVehicle, setDeletingVehicle] = useState(null)
+  const inputRef = useRef()
+
+  const handleAdd = () => {
+    const trimmed = newName.trim()
+    if (!trimmed) { setAddError('Enter a vehicle name'); return }
+    if (vehicles.some(v => v.name === trimmed)) { setAddError('That name already exists'); return }
+    setAddError('')
+    setNewName('')
+    onAdd(trimmed)
+  }
+
+  const taskCount = (vehicleName) => tasks.filter(t => t.vehicle === vehicleName).length
+
+  return (
+    <>
+      <div style={{ background: '#111116', border: '1px solid #1e1e28', borderRadius: '6px', padding: '14px 16px', marginBottom: '20px' }}>
+        <div style={{ fontSize: '9px', color: '#4b5563', letterSpacing: '0.12em', marginBottom: '10px' }}>MY VEHICLES</div>
+
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: isAdmin ? '12px' : '0' }}>
+          {vehicles.length === 0 && (
+            <span style={{ fontSize: '11px', color: '#3a3a45' }}>
+              {isAdmin ? 'No vehicles yet — add one below.' : 'No vehicles configured.'}
+            </span>
+          )}
+          {vehicles.map(v => (
+            <span key={v.id} style={{
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+              background: '#13131a', border: '1px solid #2a2a35',
+              borderRadius: '4px', padding: '5px 10px', fontSize: '11px', color: '#cbd5e1',
+            }}>
+              {v.name}
+              {isAdmin && (
+                <>
+                  <button
+                    onClick={() => setRenamingVehicle(v)}
+                    title="Rename vehicle"
+                    style={{ background: 'none', border: 'none', color: '#4b5563', cursor: 'pointer', padding: '0 2px', fontSize: '11px', lineHeight: 1 }}
+                    className="vehicle-icon-btn"
+                  >✏</button>
+                  <button
+                    onClick={() => setDeletingVehicle(v)}
+                    title="Remove vehicle"
+                    style={{ background: 'none', border: 'none', color: '#4b5563', cursor: 'pointer', padding: '0 2px', fontSize: '13px', lineHeight: 1 }}
+                    className="vehicle-icon-btn"
+                  >×</button>
+                </>
+              )}
+            </span>
+          ))}
+        </div>
+
+        {isAdmin && (
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', flexDirection: 'column' }}>
+            <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
+              <input
+                ref={inputRef}
+                value={newName}
+                onChange={e => { setNewName(e.target.value); setAddError('') }}
+                onKeyDown={e => e.key === 'Enter' && handleAdd()}
+                placeholder="Vehicle name (e.g. 2009 Mini Cooper S)"
+                style={inputStyle({ flex: 1 })}
+              />
+              <button onClick={handleAdd} style={{
+                background: 'none', border: '1px solid #2a2a35', color: '#94a3b8',
+                borderRadius: '4px', padding: '7px 14px', fontSize: '10px',
+                fontFamily: 'inherit', cursor: 'pointer', whiteSpace: 'nowrap', letterSpacing: '0.05em',
+              }}
+                className="add-vehicle-btn"
+              >
+                + ADD VEHICLE
+              </button>
+            </div>
+            {addError && <div style={{ fontSize: '10px', color: '#ef4444' }}>{addError}</div>}
+          </div>
+        )}
+      </div>
+
+      {renamingVehicle && (
+        <RenameVehicleModal
+          vehicle={renamingVehicle}
+          vehicles={vehicles}
+          onClose={() => setRenamingVehicle(null)}
+          onSave={(id, oldName, newName) => { onRename(id, oldName, newName); setRenamingVehicle(null) }}
+        />
+      )}
+      {deletingVehicle && (
+        <DeleteVehicleModal
+          vehicle={deletingVehicle}
+          taskCount={taskCount(deletingVehicle.name)}
+          onClose={() => setDeletingVehicle(null)}
+          onConfirm={() => { onDelete(deletingVehicle.id, deletingVehicle.name); setDeletingVehicle(null) }}
+        />
+      )}
+    </>
+  )
+}
+
+function TaskModal({ task, vehicles, onClose, onSave }) {
   const [form, setForm] = useState(task || {
-    category: CATEGORIES[0], task: '', priority: 'Medium', status: 'Not Started', cost: '', notes: '',
+    category: CATEGORIES[0], task: '', priority: 'Medium', status: 'Not Started', cost: '', notes: '', vehicle: '',
   })
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
@@ -262,6 +448,13 @@ function TaskModal({ task, onClose, onSave }) {
           {task ? 'EDIT TASK' : 'ADD TASK'}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div>
+            <label style={labelStyle}>VEHICLE</label>
+            <select value={form.vehicle || ''} onChange={e => set('vehicle', e.target.value || null)} style={selectStyle()}>
+              <option value="">— No vehicle —</option>
+              {vehicles.map(v => <option key={v.id} value={v.name}>{v.name}</option>)}
+            </select>
+          </div>
           <div>
             <label style={labelStyle}>CATEGORY *</label>
             <select value={form.category} onChange={e => set('category', e.target.value)} style={selectStyle()}>
@@ -317,7 +510,7 @@ function TaskModal({ task, onClose, onSave }) {
 
 // ─── Bulk Upload Modal ────────────────────────────────────────────────────────
 function BulkUploadModal({ onClose, onUpload }) {
-  const [stage, setStage] = useState('drop') // 'drop' | 'preview' | 'uploading' | 'done'
+  const [stage, setStage] = useState('drop')
   const [dragging, setDragging] = useState(false)
   const [parseErrors, setParseErrors] = useState([])
   const [previewRows, setPreviewRows] = useState([])
@@ -369,7 +562,6 @@ function BulkUploadModal({ onClose, onUpload }) {
   const handleConfirm = async () => {
     setStage('uploading')
     setUploadError('')
-    // Strip internal _warnings key before sending
     const rows = previewRows.map(({ _warnings, ...r }) => r)
     try {
       const result = await onUpload(rows)
@@ -399,11 +591,10 @@ function BulkUploadModal({ onClose, onUpload }) {
     <div className="modal-overlay" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{
         background: '#111116', border: '1px solid #2a2a35', borderRadius: '6px',
-        padding: '28px', width: '680px', maxWidth: '95vw', maxHeight: '90vh',
+        padding: '28px', width: '720px', maxWidth: '95vw', maxHeight: '90vh',
         display: 'flex', flexDirection: 'column', gap: '0',
       }}>
 
-        {/* Header */}
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: '20px' }}>
           <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '22px', color: '#f59e0b', letterSpacing: '0.08em' }}>
             BULK UPLOAD TASKS
@@ -417,7 +608,6 @@ function BulkUploadModal({ onClose, onUpload }) {
           </button>
         </div>
 
-        {/* Column spec */}
         {stage === 'drop' && (
           <div style={{ marginBottom: '16px', background: '#13131a', border: '1px solid #1e1e28', borderRadius: '4px', padding: '10px 14px' }}>
             <div style={{ fontSize: '9px', color: '#4b5563', letterSpacing: '0.1em', marginBottom: '6px' }}>REQUIRED CSV COLUMNS</div>
@@ -429,6 +619,7 @@ function BulkUploadModal({ onClose, onUpload }) {
                 { col: 'status', note: 'Not Started / In Progress / Done', color: '#6b7280' },
                 { col: 'cost', note: 'number', color: '#6b7280' },
                 { col: 'notes', note: 'text', color: '#6b7280' },
+                { col: 'vehicle', note: 'optional', color: '#6b7280' },
               ].map(({ col, note, color }) => (
                 <div key={col} style={{ background: '#0d0d0f', border: '1px solid #2a2a35', borderRadius: '3px', padding: '3px 8px' }}>
                   <span style={{ fontSize: '10px', color: '#e2e8f0', fontWeight: 500 }}>{col}</span>
@@ -439,7 +630,6 @@ function BulkUploadModal({ onClose, onUpload }) {
           </div>
         )}
 
-        {/* Drop zone */}
         {stage === 'drop' && (
           <div
             onDragOver={e => { e.preventDefault(); setDragging(true) }}
@@ -466,7 +656,6 @@ function BulkUploadModal({ onClose, onUpload }) {
           </div>
         )}
 
-        {/* Parse errors */}
         {parseErrors.length > 0 && stage !== 'done' && (
           <div style={{ marginBottom: '14px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '4px', padding: '10px 14px' }}>
             <div style={{ fontSize: '9px', color: '#ef4444', letterSpacing: '0.1em', marginBottom: '5px' }}>
@@ -478,7 +667,6 @@ function BulkUploadModal({ onClose, onUpload }) {
           </div>
         )}
 
-        {/* Warnings */}
         {allWarnings.length > 0 && stage === 'preview' && (
           <div style={{ marginBottom: '14px', background: 'rgba(249,115,22,0.08)', border: '1px solid rgba(249,115,22,0.3)', borderRadius: '4px', padding: '10px 14px' }}>
             <div style={{ fontSize: '9px', color: '#f97316', letterSpacing: '0.1em', marginBottom: '5px' }}>WARNINGS — VALUES DEFAULTED</div>
@@ -488,30 +676,26 @@ function BulkUploadModal({ onClose, onUpload }) {
           </div>
         )}
 
-        {/* Upload error */}
         {uploadError && (
           <div style={{ marginBottom: '14px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '4px', padding: '10px 14px' }}>
             <div style={{ fontSize: '10px', color: '#ef4444' }}>⚠ {uploadError}</div>
           </div>
         )}
 
-        {/* Preview table */}
         {stage === 'preview' && previewRows.length > 0 && (
           <div style={{ flex: 1, overflowY: 'auto', marginBottom: '16px' }}>
             <div style={{ fontSize: '9px', color: '#4b5563', letterSpacing: '0.1em', marginBottom: '8px' }}>
               PREVIEW — {previewRows.length} {previewRows.length === 1 ? 'TASK' : 'TASKS'} READY TO IMPORT
             </div>
             <div style={{ background: '#13131a', border: '1px solid #1e1e28', borderRadius: '4px', overflow: 'hidden' }}>
-              {/* Table header */}
-              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.4fr 70px 90px 60px', gap: 0, padding: '7px 12px', borderBottom: '1px solid #1e1e28' }}>
-                {['TASK', 'CATEGORY', 'PRIORITY', 'STATUS', 'COST'].map(h => (
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.2fr 1fr 70px 90px 60px', gap: 0, padding: '7px 12px', borderBottom: '1px solid #1e1e28' }}>
+                {['TASK', 'CATEGORY', 'VEHICLE', 'PRIORITY', 'STATUS', 'COST'].map(h => (
                   <div key={h} style={{ fontSize: '9px', color: '#4b5563', letterSpacing: '0.1em' }}>{h}</div>
                 ))}
               </div>
-              {/* Rows */}
               {previewRows.map((row, i) => (
                 <div key={i} style={{
-                  display: 'grid', gridTemplateColumns: '2fr 1.4fr 70px 90px 60px',
+                  display: 'grid', gridTemplateColumns: '2fr 1.2fr 1fr 70px 90px 60px',
                   gap: 0, padding: '7px 12px',
                   borderBottom: i < previewRows.length - 1 ? '1px solid #1e1e28' : 'none',
                   background: row._warnings?.length ? 'rgba(249,115,22,0.04)' : 'transparent',
@@ -522,6 +706,9 @@ function BulkUploadModal({ onClose, onUpload }) {
                   </div>
                   <div style={{ fontSize: '10px', color: '#94a3b8', paddingRight: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {row.category}
+                  </div>
+                  <div style={{ fontSize: '10px', color: row.vehicle ? '#cbd5e1' : '#3a3a45', paddingRight: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {row.vehicle || '—'}
                   </div>
                   <div>
                     <span className="pill" style={{ background: PRIORITY_COLOR[row.priority] + '22', color: PRIORITY_COLOR[row.priority] }}>
@@ -538,14 +725,12 @@ function BulkUploadModal({ onClose, onUpload }) {
           </div>
         )}
 
-        {/* Uploading spinner */}
         {stage === 'uploading' && (
           <div style={{ textAlign: 'center', padding: '32px', color: '#6b7280', fontSize: '12px' }}>
             Uploading {previewRows.length} tasks...
           </div>
         )}
 
-        {/* Done state */}
         {stage === 'done' && (
           <div style={{ textAlign: 'center', padding: '32px' }}>
             <div style={{ fontSize: '36px', marginBottom: '12px' }}>✅</div>
@@ -555,7 +740,6 @@ function BulkUploadModal({ onClose, onUpload }) {
           </div>
         )}
 
-        {/* Footer buttons */}
         <div style={{ display: 'flex', gap: '8px', paddingTop: '4px' }}>
           {stage === 'preview' && (
             <>
@@ -601,8 +785,10 @@ function BulkUploadModal({ onClose, onUpload }) {
 // ─── Main App ─────────────────────────────────────────────────────────────────
 export default function App() {
   const [tasks, setTasks] = useState([])
+  const [vehicles, setVehicles] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState({ category: 'All', status: 'All', priority: 'All' })
+  const [vehicleFilter, setVehicleFilter] = useState('All')
   const [expandedTask, setExpandedTask] = useState(null)
   const [activeTab, setActiveTab] = useState('tasks')
   const [isAdmin, setIsAdmin] = useState(() => sessionStorage.getItem('adminSession') === 'true')
@@ -616,13 +802,20 @@ export default function App() {
 
   const showToast = (msg) => setToast(msg)
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     const { data, error } = await supabase.from('tasks').select('*').order('id')
     if (!error) setTasks(data || [])
     setLoading(false)
-  }
+  }, [])
 
-  useEffect(() => { fetchTasks() }, [])
+  const fetchVehicles = useCallback(async () => {
+    const { data } = await supabase.from('vehicles').select('*').order('name')
+    setVehicles(data || [])
+  }, [])
+
+  useEffect(() => {
+    Promise.all([fetchTasks(), fetchVehicles()])
+  }, [fetchTasks, fetchVehicles])
 
   // Real-time subscription
   useEffect(() => {
@@ -630,7 +823,7 @@ export default function App() {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, fetchTasks)
       .subscribe()
     return () => supabase.removeChannel(channel)
-  }, [])
+  }, [fetchTasks])
 
   const callFn = async (fnName, payload) => {
     const res = await fetch(`${SUPABASE_URL}/functions/v1/${fnName}`, {
@@ -638,9 +831,35 @@ export default function App() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: adminPassword, ...payload }),
     })
-    return res.json()
+    const text = await res.text()
+    try { return JSON.parse(text) } catch {
+      console.error(`[callFn] ${fnName} returned non-JSON (${res.status}):`, text)
+      return { ok: false, error: { message: `Server error (${res.status})` } }
+    }
   }
 
+  // ── Vehicle CRUD ─────────────────────────────────────────────────────────
+  const handleAddVehicle = async (name) => {
+    const result = await callFn('admin-vehicle-insert', { name })
+    if (result.ok) { showToast(`Vehicle "${name}" added`); fetchVehicles() }
+    else showToast(result.error?.message || 'Failed to add vehicle')
+  }
+
+  const handleRenameVehicle = async (id, oldName, newName) => {
+    const result = await callFn('admin-vehicle-update', { id, oldName, newName })
+    if (result.ok) {
+      showToast(`Renamed "${oldName}" → "${newName}" (${result.updatedTasks ?? 0} tasks updated)`)
+      fetchVehicles(); fetchTasks()
+    } else showToast(result.error?.message || 'Rename failed')
+  }
+
+  const handleDeleteVehicle = async (id, name) => {
+    const result = await callFn('admin-vehicle-delete', { id })
+    if (result.ok) { showToast(`Vehicle "${name}" removed`); fetchVehicles() }
+    else showToast('Delete failed')
+  }
+
+  // ── Task CRUD ─────────────────────────────────────────────────────────────
   const handleStatusChange = async (id, status) => {
     setTasks(prev => prev.map(t => t.id === id ? { ...t, status } : t))
     await callFn('admin-update', { id, fields: { status } })
@@ -655,14 +874,15 @@ export default function App() {
 
   const handleAddTask = async (form) => {
     if (!form.task.trim()) return
-    const data = await callFn('admin-insert', { row: form })
+    const data = await callFn('admin-insert', { row: { ...form, vehicle: form.vehicle || null } })
     if (data.ok) { showToast('Task added'); fetchTasks() }
+    else { showToast('Error: ' + (data.error?.message || data.error || 'could not add task')) }
     setShowAddTask(false)
   }
 
   const handleEditTask = async (form) => {
     const { id, ...fields } = form
-    await callFn('admin-update', { id: editingTask.id, fields })
+    await callFn('admin-update', { id: editingTask.id, fields: { ...fields, vehicle: fields.vehicle || null } })
     showToast('Task updated')
     fetchTasks()
     setEditingTask(null)
@@ -691,14 +911,20 @@ export default function App() {
     showToast('Admin access granted')
   }
 
-  const totalCost = tasks.reduce((s, t) => s + (parseFloat(t.cost) || 0), 0)
-  const doneCost = tasks.filter(t => t.status === 'Done').reduce((s, t) => s + (parseFloat(t.cost) || 0), 0)
-  const doneCount = tasks.filter(t => t.status === 'Done').length
-  const inProgressCount = tasks.filter(t => t.status === 'In Progress').length
-  const highPendingCount = tasks.filter(t => t.priority === 'High' && t.status !== 'Done').length
-  const progressPct = tasks.length ? Math.round((doneCount / tasks.length) * 100) : 0
+  // ── Computed data ────────────────────────────────────────────────────────
+  const vehicleOptions = ['All', ...vehicles.map(v => v.name)]
 
-  const filtered = tasks.filter(t =>
+  // Stats and summary respect vehicle filter
+  const filteredByVehicle = vehicleFilter === 'All' ? tasks : tasks.filter(t => t.vehicle === vehicleFilter)
+
+  const totalCost = filteredByVehicle.reduce((s, t) => s + (parseFloat(t.cost) || 0), 0)
+  const doneCost = filteredByVehicle.filter(t => t.status === 'Done').reduce((s, t) => s + (parseFloat(t.cost) || 0), 0)
+  const doneCount = filteredByVehicle.filter(t => t.status === 'Done').length
+  const inProgressCount = filteredByVehicle.filter(t => t.status === 'In Progress').length
+  const highPendingCount = filteredByVehicle.filter(t => t.priority === 'High' && t.status !== 'Done').length
+  const progressPct = filteredByVehicle.length ? Math.round((doneCount / filteredByVehicle.length) * 100) : 0
+
+  const filtered = filteredByVehicle.filter(t =>
     (filter.category === 'All' || t.category === filter.category) &&
     (filter.status === 'All' || t.status === filter.status) &&
     (filter.priority === 'All' || t.priority === filter.priority)
@@ -733,16 +959,35 @@ export default function App() {
         .expand-row { animation: slideDown 0.15s ease; }
         .progress-bar-inner { transition: width 0.5s ease; }
         .upload-btn:hover { border-color: #f59e0b !important; color: #f59e0b !important; }
+        .vehicle-icon-btn:hover { color: #94a3b8 !important; }
+        .add-vehicle-btn:hover { border-color: #f59e0b !important; color: #f59e0b !important; }
       `}</style>
 
       <Nav activeApp="dashboard" dashboardUrl="/" fuelUrl={FUEL_URL} />
 
       {/* Stats Header */}
       <div style={{ background: '#111116', borderBottom: '1px solid #2a2a35', padding: '16px 24px' }}>
+        {/* Vehicle filter */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px', flexWrap: 'wrap' }}>
+          <div style={{ fontSize: '9px', color: '#4b5563', letterSpacing: '0.1em' }}>VEHICLE</div>
+          <select
+            value={vehicleFilter}
+            onChange={e => setVehicleFilter(e.target.value)}
+            style={{ background: '#1a1a22', border: '1px solid #2a2a35', color: '#cbd5e1', padding: '4px 8px', borderRadius: '4px', fontSize: '10px', fontFamily: 'inherit', cursor: 'pointer' }}
+          >
+            {vehicleOptions.map(v => <option key={v}>{v}</option>)}
+          </select>
+          {vehicleFilter !== 'All' && (
+            <span style={{ fontSize: '10px', color: '#4b5563' }}>
+              — {filteredByVehicle.length} {filteredByVehicle.length === 1 ? 'task' : 'tasks'}
+            </span>
+          )}
+        </div>
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', marginBottom: '12px' }}>
           <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', flex: 1 }}>
             {[
-              { label: 'TOTAL TASKS', value: tasks.length, color: '#94a3b8' },
+              { label: 'TOTAL TASKS', value: filteredByVehicle.length, color: '#94a3b8' },
               { label: 'DONE', value: doneCount, color: '#10b981' },
               { label: 'IN PROGRESS', value: inProgressCount, color: '#f59e0b' },
               { label: 'HIGH PRIORITY PENDING', value: highPendingCount, color: '#ef4444' },
@@ -802,7 +1047,19 @@ export default function App() {
           <div style={{ color: '#4b5563', fontSize: '12px', textAlign: 'center', padding: '48px' }}>Loading tasks...</div>
         ) : activeTab === 'tasks' ? (
           <>
-            {/* Filter bar + bulk upload button */}
+            {/* Vehicles panel — admin only */}
+            {isAdmin && (
+              <VehiclesPanel
+                vehicles={vehicles}
+                tasks={tasks}
+                isAdmin={isAdmin}
+                onAdd={handleAddVehicle}
+                onRename={handleRenameVehicle}
+                onDelete={handleDeleteVehicle}
+              />
+            )}
+
+            {/* Filter bar + bulk upload */}
             <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
               {[
                 { label: 'Category', key: 'category', options: ['All', ...CATEGORIES] },
@@ -819,7 +1076,6 @@ export default function App() {
                 Clear
               </button>
 
-              {/* Bulk upload — admin only */}
               {isAdmin && (
                 <button className="upload-btn" onClick={() => setShowBulkUpload(true)} style={{
                   background: 'none', border: '1px solid #3a3a45', color: '#6b7280',
@@ -857,6 +1113,12 @@ export default function App() {
               </div>
             )}
 
+            {filtered.length === 0 && tasks.length > 0 && (
+              <div style={{ textAlign: 'center', padding: '32px', color: '#4b5563', fontSize: '12px' }}>
+                No tasks match the current filters
+              </div>
+            )}
+
             {CATEGORIES.map(cat => {
               const catTasks = grouped[cat]
               if (!catTasks || catTasks.length === 0) return null
@@ -890,6 +1152,11 @@ export default function App() {
                         <span style={{ flex: 1, fontSize: '12px', color: task.status === 'Done' ? '#4b5563' : '#cbd5e1', textDecoration: task.status === 'Done' ? 'line-through' : 'none' }}>
                           {task.task}
                         </span>
+                        {task.vehicle && vehicleFilter === 'All' && (
+                          <span style={{ fontSize: '9px', color: '#4b5563', background: '#13131a', border: '1px solid #1e1e28', borderRadius: '3px', padding: '2px 6px', whiteSpace: 'nowrap' }}>
+                            {task.vehicle}
+                          </span>
+                        )}
                         {task.cost && <span style={{ fontSize: '11px', color: '#818cf8' }}>${parseFloat(task.cost).toLocaleString()}</span>}
                         {isAdmin && (
                           <>
@@ -935,12 +1202,13 @@ export default function App() {
             })}
           </>
         ) : (
+          /* ── SUMMARY TAB ────────────────────────────────────────────────────── */
           <div style={{ maxWidth: '600px' }}>
             <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '18px', letterSpacing: '0.1em', color: '#94a3b8', marginBottom: '16px' }}>
-              CATEGORY BREAKDOWN
+              CATEGORY BREAKDOWN{vehicleFilter !== 'All' ? ` — ${vehicleFilter}` : ''}
             </div>
             {CATEGORIES.map(cat => {
-              const catTasks = tasks.filter(t => t.category === cat)
+              const catTasks = filteredByVehicle.filter(t => t.category === cat)
               if (!catTasks.length) return null
               const done = catTasks.filter(t => t.status === 'Done').length
               const inProg = catTasks.filter(t => t.status === 'In Progress').length
@@ -965,8 +1233,39 @@ export default function App() {
                 </div>
               )
             })}
+
+            {/* Per-vehicle breakdown (only shown when viewing all vehicles) */}
+            {vehicleFilter === 'All' && vehicles.length > 0 && (
+              <div style={{ marginTop: '24px' }}>
+                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '18px', letterSpacing: '0.1em', color: '#94a3b8', marginBottom: '16px' }}>
+                  BY VEHICLE
+                </div>
+                {[...vehicles, { id: 0, name: null }].map(v => {
+                  const vTasks = v.name ? tasks.filter(t => t.vehicle === v.name) : tasks.filter(t => !t.vehicle)
+                  if (!vTasks.length) return null
+                  const vDone = vTasks.filter(t => t.status === 'Done').length
+                  const vPct = Math.round((vDone / vTasks.length) * 100)
+                  const vCost = vTasks.reduce((s, t) => s + (parseFloat(t.cost) || 0), 0)
+                  return (
+                    <div key={v.id} style={{ marginBottom: '10px', background: '#111116', border: '1px solid #1e1e28', borderRadius: '6px', padding: '10px 14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                        <span style={{ fontSize: '12px', color: v.name ? '#cbd5e1' : '#4b5563', fontWeight: 500 }}>{v.name || '(no vehicle)'}</span>
+                        <span style={{ marginLeft: 'auto', fontSize: '10px', color: '#4b5563' }}>{vDone}/{vTasks.length}</span>
+                        {vCost > 0 && <span style={{ fontSize: '11px', color: '#818cf8' }}>${vCost.toLocaleString()}</span>}
+                      </div>
+                      <div style={{ background: '#1a1a22', borderRadius: '2px', height: '3px', overflow: 'hidden' }}>
+                        <div style={{ width: `${vPct}%`, height: '100%', background: vPct === 100 ? '#10b981' : '#f59e0b', borderRadius: '2px', transition: 'width 0.4s' }} />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
             <div style={{ marginTop: '20px', background: '#111116', border: '1px solid #2a2a35', borderRadius: '6px', padding: '14px' }}>
-              <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '14px', letterSpacing: '0.1em', color: '#94a3b8', marginBottom: '10px' }}>COST SUMMARY</div>
+              <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '14px', letterSpacing: '0.1em', color: '#94a3b8', marginBottom: '10px' }}>
+                COST SUMMARY{vehicleFilter !== 'All' ? ` — ${vehicleFilter}` : ''}
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
                   <span style={{ color: '#6b7280' }}>Total estimated</span>
@@ -1000,8 +1299,8 @@ export default function App() {
       )}
 
       {showLogin && <AdminLoginModal onClose={() => setShowLogin(false)} onSuccess={handleAdminSuccess} />}
-      {showAddTask && <TaskModal onClose={() => setShowAddTask(false)} onSave={handleAddTask} />}
-      {editingTask && <TaskModal task={editingTask} onClose={() => setEditingTask(null)} onSave={handleEditTask} />}
+      {showAddTask && <TaskModal vehicles={vehicles} onClose={() => setShowAddTask(false)} onSave={handleAddTask} />}
+      {editingTask && <TaskModal task={editingTask} vehicles={vehicles} onClose={() => setEditingTask(null)} onSave={handleEditTask} />}
       {showBulkUpload && <BulkUploadModal onClose={() => setShowBulkUpload(false)} onUpload={handleBulkUpload} />}
       {toast && <Toast message={toast} onDone={() => setToast(null)} />}
     </div>
