@@ -323,11 +323,25 @@ const CustomTooltip = ({ active, payload }) => {
 // ─── Vehicle Form Modal (Add + Edit) ─────────────────────────────────────────
 function VehicleFormModal({ vehicle, vehicles, onClose, onSave }) {
   const isEdit = !!vehicle
+
+  // For vehicles created before the extended-fields migration, year/make/model/trim_level
+  // are NULL. Fall back to parsing the composed name (e.g. "2009 Mini Cooper S").
+  const parsedFromName = (() => {
+    if (!isEdit || (vehicle.year || vehicle.make || vehicle.model)) return {}
+    const parts = (vehicle.name || '').trim().split(/\s+/)
+    const year = parts[0] && /^\d{4}$/.test(parts[0]) ? parts[0] : ''
+    const rest = year ? parts.slice(1) : parts
+    const make = rest[0] || ''
+    const model = rest[1] || ''
+    const trim = rest.slice(2).join(' ')
+    return { year, make, model, trim }
+  })()
+
   const [form, setForm] = useState({
-    year: vehicle?.year ?? '',
-    make: vehicle?.make ?? '',
-    model: vehicle?.model ?? '',
-    trim: vehicle?.trim_level ?? '',
+    year: vehicle?.year ?? parsedFromName.year ?? '',
+    make: vehicle?.make ?? parsedFromName.make ?? '',
+    model: vehicle?.model ?? parsedFromName.model ?? '',
+    trim: vehicle?.trim_level ?? parsedFromName.trim ?? '',
     color: vehicle?.color ?? '',
     originalMileage: vehicle?.original_mileage ?? '',
     mileage: vehicle?.current_mileage ?? '',
@@ -533,7 +547,8 @@ export default function App() {
     else showToast(result.error?.message || 'Failed to add vehicle')
   }
   const handleEditVehicle = async (id, oldName, fields) => {
-    const result = await callFn('fuel-vehicle-update', { id, oldName, ...fields })
+    const { name, ...rest } = fields
+    const result = await callFn('fuel-vehicle-update', { id, oldName, newName: name, ...rest })
     if (result.ok) {
       const renamed = fields.name !== oldName
       showToast(renamed ? `Updated & renamed → "${fields.name}" (${result.updatedLogs ?? 0} entries updated)` : `Vehicle "${fields.name}" updated`)
