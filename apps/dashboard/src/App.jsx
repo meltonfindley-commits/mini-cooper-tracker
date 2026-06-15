@@ -1110,7 +1110,7 @@ export default function App() {
                       <BarChart data={catBarData} layout="vertical" margin={{ top: 0, right: 30, bottom: 0, left: 56 }}>
                         <XAxis type="number" domain={[0, 100]} tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} tickFormatter={v => `${v}%`} axisLine={false} tickLine={false} />
                         <YAxis type="category" dataKey="name" tick={{ fill: '#9E9894', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} width={56} />
-                        <Tooltip formatter={(v, _, p) => [`${v}%`, p.payload.full]} contentStyle={{ background: '#2C2926', border: '1px solid #3D3530', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: '#D9D0C1' }} labelStyle={{ color: '#F0EBE1', fontWeight: 500 }} itemStyle={{ color: '#D9D0C1' }} />
+                        <Tooltip formatter={(v, _, p) => [`${v}%`, p.payload.full]} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
                         <Bar dataKey="pct" radius={[0, 4, 4, 0]}>
                           {catBarData.map((d, i) => <Cell key={i} fill={d.pct === 100 ? '#34D399' : '#E8943A'} />)}
                         </Bar>
@@ -1126,7 +1126,7 @@ export default function App() {
                         <BarChart data={costBarData} layout="vertical" margin={{ top: 0, right: 30, bottom: 0, left: 56 }}>
                           <XAxis type="number" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} tickFormatter={v => `$${v}`} axisLine={false} tickLine={false} />
                           <YAxis type="category" dataKey="name" tick={{ fill: '#9E9894', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} width={56} />
-                          <Tooltip formatter={v => [`$${v.toLocaleString()}`, 'Estimated']} contentStyle={{ background: '#2C2926', border: '1px solid #3D3530', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: '#D9D0C1' }} />
+                          <Tooltip formatter={v => [`$${v.toLocaleString()}`, 'Estimated']} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
                           <Bar dataKey="cost" fill="#818CF8" radius={[0, 4, 4, 0]} />
                         </BarChart>
                       </ResponsiveContainer>
