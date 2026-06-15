@@ -62,6 +62,16 @@ function today() {
   return new Date().toISOString().split('T')[0]
 }
 
+const FUEL_GRADES = ['Regular', 'Mid-Grade', 'Premium', 'Premium Plus', 'Diesel']
+
+function gradeColor(grade) {
+  if (!grade) return '#4b5563'
+  if (grade === 'Premium' || grade === 'Premium Plus') return '#f59e0b'
+  if (grade === 'Mid-Grade') return '#94a3b8'
+  if (grade === 'Diesel') return '#10b981'
+  return '#6b7280' // Regular
+}
+
 const DATE_FILTERS = ['All', 'This Week', 'This Month', 'This Year']
 
 function filterByDate(logs, range) {
@@ -234,11 +244,12 @@ function FillUpModal({ entry, vehicles, onClose, onSave }) {
     fuel_amount: entry.fuel_amount ?? '',
     fuel_cost: entry.fuel_cost ?? '',
     price_per_gal: entry.price_per_gal ?? '',
+    fuel_grade: entry.fuel_grade ?? '',
     location: entry.location ?? '',
     notes: entry.notes ?? '',
   } : {
     vehicle: defaultVehicle, date: today(), odometer: '',
-    fuel_amount: '', fuel_cost: '', price_per_gal: '', location: '', notes: '',
+    fuel_amount: '', fuel_cost: '', price_per_gal: '', fuel_grade: '', location: '', notes: '',
   })
 
   const set = (k, v) => setForm(f => {
@@ -322,6 +333,19 @@ function FillUpModal({ entry, vehicles, onClose, onSave }) {
               <label style={labelStyle}>PRICE/GAL ($)</label>
               <input type="number" step="0.001" value={form.price_per_gal} onChange={e => set('price_per_gal', e.target.value)} style={inputStyle()} placeholder="e.g. 3.459" />
             </div>
+          </div>
+
+          {/* Fuel Grade */}
+          <div>
+            <label style={labelStyle}>FUEL GRADE</label>
+            <select value={form.fuel_grade} onChange={e => set('fuel_grade', e.target.value)} style={selectStyle()}>
+              <option value="">— Select grade —</option>
+              <option value="Regular">Regular (87)</option>
+              <option value="Mid-Grade">Mid-Grade (89)</option>
+              <option value="Premium">Premium (91)</option>
+              <option value="Premium Plus">Premium Plus (93)</option>
+              <option value="Diesel">Diesel</option>
+            </select>
           </div>
 
           <div>
@@ -509,11 +533,21 @@ export default function App() {
   }, [fetchLogs, fetchVehicles])
 
   const callFn = async (fnName, payload) => {
-    const res = await fetch(`${SUPABASE_URL}/functions/v1/${fnName}`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: adminPassword, ...payload }),
-    })
-    return res.json()
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/${fnName}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: adminPassword, ...payload }),
+      })
+      // Guard against non-JSON responses (HTML error pages, gateway 404s, etc.)
+      const text = await res.text()
+      try { return JSON.parse(text) } catch {
+        console.error(`[callFn] ${fnName} returned non-JSON (${res.status}):`, text)
+        return { ok: false, error: { message: `Server error (${res.status}) — is the edge function deployed?` } }
+      }
+    } catch (err) {
+      console.error(`[callFn] ${fnName} network error:`, err)
+      return { ok: false, error: { message: 'Network error — check your connection' } }
+    }
   }
 
   // ── Vehicle CRUD ─────────────────────────────────────────────────────────
@@ -528,7 +562,7 @@ export default function App() {
     if (result.ok) {
       showToast(`Renamed "${oldName}" → "${newName}" (${result.updatedLogs ?? 0} entries updated)`)
       fetchVehicles(); fetchLogs()
-    } else showToast('Rename failed')
+    } else showToast(result.error?.message || 'Rename failed')
   }
 
   const handleDeleteVehicle = async (id, name) => {
@@ -546,6 +580,7 @@ export default function App() {
       fuel_amount: parseFloat(form.fuel_amount),
       fuel_cost: form.fuel_cost ? parseFloat(form.fuel_cost) : null,
       price_per_gal: form.price_per_gal ? parseFloat(form.price_per_gal) : null,
+      fuel_grade: form.fuel_grade || null,
       location: form.location || null,
       notes: form.notes || null,
     }
@@ -756,14 +791,14 @@ export default function App() {
                   RECENT FILL-UPS
                 </div>
                 <div style={{ background: '#111116', border: '1px solid #1e1e28', borderRadius: '6px', overflow: 'hidden' }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '90px 1fr 110px 80px 70px 80px 1fr', gap: 0, padding: '8px 14px', borderBottom: '1px solid #1e1e28' }}>
-                    {['DATE', 'VEHICLE', 'ODOMETER', 'GALLONS', 'MPG', 'COST', 'LOCATION'].map(h => (
+                  <div style={{ display: 'grid', gridTemplateColumns: '90px 1fr 110px 80px 70px 80px 75px 1fr', gap: 0, padding: '8px 14px', borderBottom: '1px solid #1e1e28' }}>
+                    {['DATE', 'VEHICLE', 'ODOMETER', 'GALLONS', 'MPG', 'COST', 'GRADE', 'LOCATION'].map(h => (
                       <div key={h} style={{ fontSize: '9px', color: '#4b5563', letterSpacing: '0.1em' }}>{h}</div>
                     ))}
                   </div>
                   {displayLogs.slice(0, 5).map((log, i) => (
                     <div key={log.id} className="task-row" style={{
-                      display: 'grid', gridTemplateColumns: '90px 1fr 110px 80px 70px 80px 1fr',
+                      display: 'grid', gridTemplateColumns: '90px 1fr 110px 80px 70px 80px 75px 1fr',
                       gap: 0, padding: '9px 14px',
                       borderBottom: i < Math.min(displayLogs.length, 5) - 1 ? '1px solid #1e1e28' : 'none',
                       background: 'transparent',
@@ -779,6 +814,9 @@ export default function App() {
                       </div>
                       <div style={{ fontSize: '11px', color: log.fuel_cost != null ? '#818cf8' : '#4b5563' }}>
                         {log.fuel_cost != null ? `$${log.fuel_cost.toFixed(2)}` : '—'}
+                      </div>
+                      <div style={{ fontSize: '10px', color: gradeColor(log.fuel_grade) }}>
+                        {log.fuel_grade || '—'}
                       </div>
                       <div style={{ fontSize: '11px', color: '#6b7280', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {log.location || '—'}
@@ -814,8 +852,8 @@ export default function App() {
 
             <div style={{ background: '#111116', border: '1px solid #1e1e28', borderRadius: '6px', overflow: 'hidden' }}>
               {/* Header */}
-              <div style={{ display: 'grid', gridTemplateColumns: '90px 1fr 110px 80px 60px 80px 70px 1fr auto', gap: 0, padding: '8px 14px', borderBottom: '1px solid #1e1e28' }}>
-                {['DATE', 'VEHICLE', 'ODOMETER', 'GALLONS', 'MPG', 'COST', '$/GAL', 'LOCATION', ''].map((h, i) => (
+              <div style={{ display: 'grid', gridTemplateColumns: '90px 1fr 110px 80px 60px 80px 70px 70px 1fr auto', gap: 0, padding: '8px 14px', borderBottom: '1px solid #1e1e28' }}>
+                {['DATE', 'VEHICLE', 'ODOMETER', 'GALLONS', 'MPG', 'COST', '$/GAL', 'GRADE', 'LOCATION', ''].map((h, i) => (
                   <div key={i} style={{ fontSize: '9px', color: '#4b5563', letterSpacing: '0.1em' }}>{h}</div>
                 ))}
               </div>
@@ -826,7 +864,7 @@ export default function App() {
                 </div>
               ) : historyLogs.map((log, i) => (
                 <div key={log.id} className="task-row" style={{
-                  display: 'grid', gridTemplateColumns: '90px 1fr 110px 80px 60px 80px 70px 1fr auto',
+                  display: 'grid', gridTemplateColumns: '90px 1fr 110px 80px 60px 80px 70px 70px 1fr auto',
                   gap: 0, padding: '9px 14px', alignItems: 'center',
                   borderBottom: i < historyLogs.length - 1 ? '1px solid #1e1e28' : 'none',
                   background: 'transparent',
@@ -845,6 +883,9 @@ export default function App() {
                   </div>
                   <div style={{ fontSize: '11px', color: '#6b7280' }}>
                     {log.price_per_gal != null ? `$${fmt(log.price_per_gal, 3)}` : '—'}
+                  </div>
+                  <div style={{ fontSize: '10px', color: gradeColor(log.fuel_grade) }}>
+                    {log.fuel_grade || '—'}
                   </div>
                   <div style={{ fontSize: '11px', color: '#6b7280', paddingRight: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {log.location || '—'}
