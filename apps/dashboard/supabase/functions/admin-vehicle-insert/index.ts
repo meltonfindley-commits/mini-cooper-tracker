@@ -12,7 +12,7 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders })
   }
 
-  const { password, name } = await req.json()
+  const { password, name, year, make, model, trim_level, color, original_mileage, current_mileage } = await req.json()
 
   if (password !== Deno.env.get("ADMIN_PASSWORD")) {
     return new Response(JSON.stringify({ ok: false, error: "Unauthorized" }), {
@@ -35,7 +35,16 @@ serve(async (req) => {
 
   const { data, error } = await supabase
     .from("vehicles")
-    .insert({ name: name.trim() })
+    .insert({
+      name: name.trim(),
+      year: year ? parseInt(year) : null,
+      make: make?.trim() || null,
+      model: model?.trim() || null,
+      trim_level: trim_level?.trim() || null,
+      color: color?.trim() || null,
+      original_mileage: original_mileage ? parseFloat(original_mileage) : null,
+      current_mileage: current_mileage ? parseFloat(current_mileage) : null,
+    })
     .select()
     .single()
 

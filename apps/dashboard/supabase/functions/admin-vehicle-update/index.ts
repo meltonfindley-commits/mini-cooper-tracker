@@ -12,7 +12,7 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders })
   }
 
-  const { password, id, oldName, newName } = await req.json()
+  const { password, id, oldName, newName, year, make, model, trim_level, color, original_mileage, current_mileage } = await req.json()
 
   if (password !== Deno.env.get("ADMIN_PASSWORD")) {
     return new Response(JSON.stringify({ ok: false, error: "Unauthorized" }), {
@@ -22,7 +22,7 @@ serve(async (req) => {
   }
 
   if (!newName?.trim()) {
-    return new Response(JSON.stringify({ ok: false, error: "New name is required" }), {
+    return new Response(JSON.stringify({ ok: false, error: "Vehicle name is required" }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 400,
     })
@@ -33,10 +33,19 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
   )
 
-  // 1. Rename in vehicles table
+  // Update vehicle row with all fields
   const { error: vehicleError } = await supabase
     .from("vehicles")
-    .update({ name: newName.trim() })
+    .update({
+      name: newName.trim(),
+      year: year ? parseInt(year) : null,
+      make: make?.trim() || null,
+      model: model?.trim() || null,
+      trim_level: trim_level?.trim() || null,
+      color: color?.trim() || null,
+      original_mileage: original_mileage ? parseFloat(original_mileage) : null,
+      current_mileage: current_mileage ? parseFloat(current_mileage) : null,
+    })
     .eq("id", id)
 
   if (vehicleError) {
@@ -46,13 +55,17 @@ serve(async (req) => {
     })
   }
 
-  // 2. Propagate rename to all tasks entries
-  const { count, error: tasksError } = await supabase
-    .from("tasks")
-    .update({ vehicle: newName.trim() })
-    .eq("vehicle", oldName)
+  // Propagate name change to services only if name actually changed
+  let updatedTasks = 0
+  if (oldName && newName.trim() !== oldName) {
+    const { count } = await supabase
+      .from("services")
+      .update({ vehicle: newName.trim() })
+      .eq("vehicle", oldName)
+    updatedTasks = count ?? 0
+  }
 
-  return new Response(JSON.stringify({ ok: !tasksError, updatedTasks: count ?? 0, error: tasksError }), {
+  return new Response(JSON.stringify({ ok: true, updatedTasks }), {
     headers: { ...corsHeaders, "Content-Type": "application/json" },
     status: 200,
   })

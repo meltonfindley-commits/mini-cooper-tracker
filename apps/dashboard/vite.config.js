@@ -8,5 +8,6 @@ export default defineConfig({
     alias: {
       '@mini/shared': resolve(__dirname, '../../packages/shared/src'),
     },
+    dedupe: ['react', 'react-dom'],
   },
 })

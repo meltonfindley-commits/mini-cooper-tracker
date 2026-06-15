@@ -26,7 +26,7 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
   )
 
-  const { error } = await supabase.from("tasks").delete().eq("id", id)
+  const { error } = await supabase.from("services").delete().eq("id", id)
 
   return new Response(JSON.stringify({ ok: !error, error }), {
     headers: { ...corsHeaders, "Content-Type": "application/json" },

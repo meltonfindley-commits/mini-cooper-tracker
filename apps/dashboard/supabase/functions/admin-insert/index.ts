@@ -26,7 +26,7 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
   )
 
-  const { data, error } = await supabase.from("tasks").insert(row).select().single()
+  const { data, error } = await supabase.from("services").insert(row).select().single()
 
   return new Response(JSON.stringify({ ok: !error, data, error }), {
     headers: { ...corsHeaders, "Content-Type": "application/json" },

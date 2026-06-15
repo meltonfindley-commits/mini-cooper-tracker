@@ -1,142 +1,63 @@
 import { useState, useEffect } from 'react'
 
+function getTheme() {
+  return localStorage.getItem('ly-theme') || 'dark'
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme)
+  localStorage.setItem('ly-theme', theme)
+}
+
 export default function Nav({ activeApp, dashboardUrl, fuelUrl }) {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
+  const [theme, setTheme] = useState(getTheme)
 
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 640)
-    check()
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
+  useEffect(() => { applyTheme(theme) }, [theme])
 
-  const linkStyle = (app) => ({
-    color: activeApp === app ? '#f59e0b' : '#6b7280',
-    borderBottom: activeApp === app ? '2px solid #f59e0b' : '2px solid transparent',
-    textDecoration: 'none',
-    fontSize: '10px',
-    fontFamily: "'DM Mono', 'Courier New', monospace",
-    letterSpacing: '0.1em',
-    padding: '4px 0',
-    cursor: 'pointer',
-    transition: 'color 0.15s',
-  })
+  const toggle = () => setTheme(t => t === 'dark' ? 'light' : 'dark')
 
   return (
     <div style={{
-      position: 'sticky',
-      top: 0,
-      zIndex: 50,
-      background: '#111116',
-      borderBottom: '1px solid #2a2a35',
-      backdropFilter: 'blur(8px)',
-      padding: '12px 24px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
+      position: 'sticky', top: 0, zIndex: 50,
+      background: 'var(--d-surf)', borderBottom: '1px solid var(--d-border)',
+      padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
     }}>
-      {/* Logo / Brand */}
+      {/* Logyard wordmark */}
       <a href={dashboardUrl || '/'} style={{ textDecoration: 'none' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ fontSize: '18px' }}>🚗</span>
-          <div>
-            <div style={{
-              fontFamily: "'Bebas Neue', sans-serif",
-              fontSize: '20px',
-              letterSpacing: '0.08em',
-              color: '#f59e0b',
-              lineHeight: 1,
-            }}>
-              MINI COOPER REVIVAL
-            </div>
-            <div style={{
-              fontFamily: "'DM Mono', 'Courier New', monospace",
-              fontSize: '9px',
-              color: '#6b7280',
-              letterSpacing: '0.12em',
-              marginTop: '2px',
-            }}>
-              2009 CONVERTIBLE
-            </div>
-          </div>
+        <div style={{ lineHeight: 1, marginBottom: '2px' }}>
+          <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--d-text)' }}>Log</span>
+          <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--rust)' }}>yard</span>
+        </div>
+        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--d-sub)' }}>
+          YOUR CARS. THEIR WHOLE STORY.
         </div>
       </a>
 
-      {/* Desktop nav links */}
-      {!isMobile && (
-        <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-          <a href={dashboardUrl || '/'} style={linkStyle('dashboard')}>
-            RESTORATION
-          </a>
-          <a href={fuelUrl || '/fuel'} style={linkStyle('fuel')}>
-            FUEL TRACKER
-          </a>
-        </div>
-      )}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        {/* Theme toggle */}
+        <button onClick={toggle} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} style={{
+          background: 'none', border: '1px solid var(--d-border)', borderRadius: '6px',
+          color: 'var(--d-sub)', cursor: 'pointer', padding: '5px 8px', fontSize: '13px', lineHeight: 1,
+        }}>
+          {theme === 'dark' ? '☀' : '🌙'}
+        </button>
 
-      {/* Mobile hamburger */}
-      {isMobile && (
-        <div style={{ position: 'relative' }}>
-          <button
-            onClick={() => setMenuOpen(o => !o)}
-            style={{
-              background: 'none',
-              border: '1px solid #2a2a35',
-              color: '#6b7280',
-              padding: '4px 10px',
-              borderRadius: '4px',
-              fontSize: '14px',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-            }}
-          >
-            ☰
-          </button>
-          {menuOpen && (
-            <div style={{
-              position: 'absolute',
-              top: '36px',
-              right: 0,
-              background: '#111116',
-              border: '1px solid #2a2a35',
-              borderRadius: '6px',
-              padding: '8px 0',
-              minWidth: '160px',
-              zIndex: 100,
-            }}>
-              <a
-                href={dashboardUrl || '/'}
-                style={{
-                  display: 'block',
-                  padding: '8px 16px',
-                  fontSize: '11px',
-                  fontFamily: "'DM Mono', 'Courier New', monospace",
-                  letterSpacing: '0.1em',
-                  color: activeApp === 'dashboard' ? '#f59e0b' : '#94a3b8',
-                  textDecoration: 'none',
-                }}
-              >
-                RESTORATION
-              </a>
-              <a
-                href={fuelUrl || '/fuel'}
-                style={{
-                  display: 'block',
-                  padding: '8px 16px',
-                  fontSize: '11px',
-                  fontFamily: "'DM Mono', 'Courier New', monospace",
-                  letterSpacing: '0.1em',
-                  color: activeApp === 'fuel' ? '#f59e0b' : '#94a3b8',
-                  textDecoration: 'none',
-                }}
-              >
-                FUEL TRACKER
-              </a>
-            </div>
-          )}
-        </div>
-      )}
+        {/* App switcher */}
+        <a href={dashboardUrl || '/'} style={{
+          fontFamily: "'DM Mono', monospace", fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em',
+          color: activeApp === 'dashboard' ? 'var(--rust)' : 'var(--d-sub)',
+          textDecoration: 'none', padding: '5px 10px', borderRadius: '6px',
+          background: activeApp === 'dashboard' ? 'rgba(204,74,15,0.12)' : 'transparent',
+          border: activeApp === 'dashboard' ? '1px solid var(--rust)' : '1px solid var(--d-border)',
+        }}>Dashboard</a>
+        <a href={fuelUrl || '/fuel'} style={{
+          fontFamily: "'DM Mono', monospace", fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em',
+          color: activeApp === 'fuel' ? 'var(--rust)' : 'var(--d-sub)',
+          textDecoration: 'none', padding: '5px 10px', borderRadius: '6px',
+          background: activeApp === 'fuel' ? 'rgba(204,74,15,0.12)' : 'transparent',
+          border: activeApp === 'fuel' ? '1px solid var(--rust)' : '1px solid var(--d-border)',
+        }}>Fuel</a>
+      </div>
     </div>
   )
 }
