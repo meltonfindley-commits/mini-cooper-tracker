@@ -1,0 +1,34 @@
+project_id = "vxqghyxzxgcyieefszmp"
+
+# ── Edge Functions ────────────────────────────────────────────────────────────
+# verify_jwt = false on every function because the React app calls them
+# without a Supabase JWT — authentication is handled inside each function
+# via the ADMIN_PASSWORD secret check.
+#
+# Any new function added to supabase/functions/ MUST get its own block here,
+# otherwise Supabase defaults to verify_jwt = true and all calls from the
+# app will be rejected with 401 before the function code even runs.
+
+[functions.admin-verify]
+verify_jwt = false
+
+[functions.admin-insert]
+verify_jwt = false
+
+[functions.admin-update]
+verify_jwt = false
+
+[functions.admin-delete]
+verify_jwt = false
+
+[functions.admin-bulk-insert]
+verify_jwt = false
+
+[functions.admin-vehicle-insert]
+verify_jwt = false
+
+[functions.admin-vehicle-update]
+verify_jwt = false
+
+[functions.admin-vehicle-delete]
+verify_jwt = false
