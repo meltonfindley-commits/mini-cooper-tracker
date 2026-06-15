@@ -1,0 +1,131 @@
+/* ─── Logyard Shared Theme ──────────────────────────────────────────────────
+   Single source of truth for colors, typography, base resets, and utility
+   classes shared across the Dashboard and Fuel Tracker apps.
+   Import this file at the top of each app's entry component:
+     import '@mini/shared/theme.css'
+──────────────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+/* ── Color & Typography Variables ──────────────────────────────────────── */
+:root {
+  /* Brand palette */
+  --rust:         #CC4A0F;
+  --amber:        #E8943A;
+  --amber-text:   #8B5A00;
+  --green:        #34D399;
+  --green-text:   #166B52;
+  --purple:       #818CF8;
+  --purple-text:  #4A50C4;
+
+  /* Dark-mode surface scale (default) */
+  --d-bg:     #1A1714;
+  --d-surf:   #242120;
+  --d-card:   #2C2926;
+  --d-border: #3D3530;
+
+  /* Dark-mode text scale */
+  --d-text:   #F0EBE1;
+  --d-muted:  #D9D0C1;
+  --d-sub:    #9E9894;
+  --d-faint:  #857F7A;
+
+  /* Light-mode surface scale */
+  --l-bg:     #F4EFE6;
+  --l-surf:   #EDE7DC;
+  --l-card:   #E8E1D4;
+  --l-border: #CFC6B8;
+
+  /* Light-mode text scale */
+  --l-text:   #1E1A17;
+  --l-muted:  #3D3530;
+  --l-sub:    #6F6358;
+  --l-faint:  #6B5C53;
+
+  /* ── Font-size floor (508 / readability) ──────────────────────────────
+     Nothing renders below these sizes. Inline styles reference these
+     variables so a single change here propagates everywhere.
+     WCAG 2.1 AA does not mandate a pixel minimum but 10px for compact
+     metadata labels and 12px for body content are our chosen floors.   */
+  --fs-label:  10px;   /* DM Mono uppercase tracking labels             */
+  --fs-body:   12px;   /* Barlow body / readable prose                  */
+  --fs-chip:   10px;   /* Filter chips, badge text                      */
+  --fs-btn:    11px;   /* Button / action text                          */
+  --fs-mono:   11px;   /* Inline mono values (cost, odometer)           */
+}
+
+/* ── Light-mode override ────────────────────────────────────────────── */
+[data-theme="light"] {
+  --d-bg:     var(--l-bg);
+  --d-surf:   var(--l-surf);
+  --d-card:   var(--l-card);
+  --d-border: var(--l-border);
+  --d-text:   var(--l-text);
+  --d-muted:  var(--l-muted);
+  --d-sub:    var(--l-sub);
+  --d-faint:  var(--l-faint);
+}
+
+/* ── Base reset ─────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+input, textarea, select {
+  outline: none;
+  font-family: inherit;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 4px; }
+::-webkit-scrollbar-track  { background: var(--d-surf); }
+::-webkit-scrollbar-thumb  { background: var(--d-border); border-radius: 3px; }
+.chip-scroll::-webkit-scrollbar { display: none; }
+
+/* ── Modal overlay ──────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+/* ── Progress bar ───────────────────────────────────────────────────── */
+.progress-bar-inner { transition: width 0.5s ease; }
+
+/* ── Expand row (service list) ──────────────────────────────────────── */
+.expand-row { animation: slideDown 0.15s ease; }
+
+/* ── Interactive hovers ─────────────────────────────────────────────── */
+.vehicle-icon-btn:hover  { color: var(--d-muted) !important; }
+.add-vehicle-btn:hover   { border-color: var(--rust) !important; color: var(--rust) !important; }
+
+/* ── Animations ─────────────────────────────────────────────────────── */
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Recharts tooltip ───────────────────────────────────────────────── */
+/* Ensures tooltip label text (category / axis value) is readable against
+   the dark card background used in contentStyle.                        */
+.recharts-tooltip-label {
+  color: var(--d-text) !important;
+  font-family: 'DM Mono', monospace !important;
+  font-size: var(--fs-label) !important;
+}
+.recharts-tooltip-item-name,
+.recharts-tooltip-item-value {
+  color: var(--d-muted) !important;
+  font-size: var(--fs-label) !important;
+}

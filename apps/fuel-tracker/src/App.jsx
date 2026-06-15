@@ -1,3 +1,4 @@
+import '@mini/shared/theme.css'
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { supabase } from './supabase.js'
@@ -18,7 +19,7 @@ const selectStyle = (extra = {}) => ({
   fontFamily: "'Barlow', sans-serif", width: '100%', cursor: 'pointer', outline: 'none', ...extra,
 })
 const labelStyle = {
-  display: 'block', fontFamily: "'DM Mono', monospace", fontSize: '8px', color: 'var(--d-faint)',
+  display: 'block', fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)',
   letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '5px',
 }
 
@@ -89,7 +90,7 @@ function Toast({ message, onDone }) {
     <div style={{
       position: 'fixed', bottom: '96px', right: '20px', zIndex: 200,
       background: 'var(--green)', color: '#1A1714', padding: '10px 18px',
-      borderRadius: '8px', fontFamily: "'DM Mono', monospace", fontSize: '11px',
+      borderRadius: '8px', fontFamily: "'DM Mono', monospace", fontSize: '12px',
       fontWeight: 500, animation: 'toastIn 0.2s ease', letterSpacing: '0.04em',
     }}>
       ✓ {message}
@@ -127,7 +128,7 @@ function AdminLoginModal({ onClose, onSuccess }) {
         <label style={labelStyle}>Password</label>
         <input type="password" value={password} onChange={e => setPassword(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleLogin()} style={inputStyle()} autoFocus />
-        {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '11px', marginTop: '6px' }}>{error}</div>}
+        {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '12px', marginTop: '6px' }}>{error}</div>}
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
           <button onClick={handleLogin} disabled={loading} style={{ flex: 1, background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: 'pointer', opacity: loading ? 0.6 : 1 }}>{loading ? 'Checking...' : 'Login'}</button>
           <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
@@ -154,7 +155,7 @@ function RenameVehicleModal({ vehicle, vehicles, onClose, onSave }) {
         <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--amber)', marginBottom: '18px' }}>Rename Vehicle</div>
         <label style={labelStyle}>Vehicle Name</label>
         <input value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handle()} style={inputStyle()} autoFocus />
-        {error && <div style={{ color: 'var(--rust)', fontSize: '11px', marginTop: '6px', fontFamily: "'DM Mono', monospace" }}>{error}</div>}
+        {error && <div style={{ color: 'var(--rust)', fontSize: '12px', marginTop: '6px', fontFamily: "'DM Mono', monospace" }}>{error}</div>}
         <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--d-sub)', marginTop: '10px', lineHeight: 1.5 }}>All existing fuel log entries will be updated to the new name.</div>
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
           <button onClick={handle} style={{ flex: 1, background: 'var(--amber)', color: '#1A1714', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Save &amp; Update</button>
@@ -240,7 +241,7 @@ function FillUpModal({ entry, vehicles, onClose, onSave }) {
         <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--amber)', marginBottom: '20px' }}>{entry ? 'Edit Fill-Up' : 'Add Fill-Up'}</div>
 
         {noVehicles && (
-          <div style={{ color: 'var(--rust)', fontSize: '11px', background: 'rgba(204,74,15,0.08)', border: '1px solid rgba(204,74,15,0.3)', borderRadius: '7px', padding: '10px 14px', marginBottom: '14px', fontFamily: "'DM Mono', monospace" }}>
+          <div style={{ color: 'var(--rust)', fontSize: '12px', background: 'rgba(204,74,15,0.08)', border: '1px solid rgba(204,74,15,0.3)', borderRadius: '7px', padding: '10px 14px', marginBottom: '14px', fontFamily: "'DM Mono', monospace" }}>
             No vehicles found. Add a vehicle in the My Vehicles panel first.
           </div>
         )}
@@ -311,7 +312,7 @@ const CustomTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null
   const d = payload[0].payload
   return (
-    <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', padding: '8px 12px', fontFamily: "'DM Mono', monospace", fontSize: '11px' }}>
+    <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', padding: '8px 12px', fontFamily: "'DM Mono', monospace", fontSize: '12px' }}>
       <div style={{ color: 'var(--d-sub)', marginBottom: '2px' }}>{fmtDate(d.date)}</div>
       {d.vehicle && <div style={{ color: 'var(--d-muted)', fontSize: '10px', marginBottom: '2px' }}>{d.vehicle}</div>}
       <div style={{ color: 'var(--amber)' }}>{fmt(d.mpg)} MPG</div>
@@ -410,7 +411,7 @@ function VehicleFormModal({ vehicle, vehicles, onClose, onSave }) {
           </div>
           {composedName && (
             <div style={{ background: 'var(--d-surf)', border: '1px solid var(--d-border)', borderRadius: '7px', padding: '10px 14px' }}>
-              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '4px' }}>Name Preview</div>
+              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '4px' }}>Name Preview</div>
               <div style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '15px', color: 'var(--d-text)' }}>
                 {composedName}
                 {form.color && <span style={{ color: 'var(--d-sub)', fontWeight: 400, fontSize: '13px' }}> · {form.color}</span>}
@@ -419,7 +420,7 @@ function VehicleFormModal({ vehicle, vehicles, onClose, onSave }) {
               </div>
             </div>
           )}
-          {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '11px' }}>{error}</div>}
+          {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '12px' }}>{error}</div>}
         </div>
         <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
           <button onClick={handle} disabled={saving} style={{ flex: 1, background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.6 : 1 }}>{saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Vehicle'}</button>
@@ -457,26 +458,26 @@ function VehiclesPanel({ vehicles, logs, isAdmin, onEdit, onDelete }) {
                 <div>
                   <div style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '14px', color: 'var(--d-text)' }}>{v.name}</div>
                   {(v.make || v.model || v.trim_level) && (
-                    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '9px', color: 'var(--d-sub)', marginTop: '2px', letterSpacing: '0.06em' }}>
+                    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', marginTop: '2px', letterSpacing: '0.06em' }}>
                       {[v.make, v.model, v.trim_level].filter(Boolean).join(' · ')}
                     </div>
                   )}
                 </div>
                 {isAdmin && (
                   <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
-                    <button onClick={() => setEditingVehicle(v)} title="Edit" className="vehicle-icon-btn" style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-faint)', cursor: 'pointer', padding: '3px 8px', borderRadius: '5px', fontSize: '11px', fontFamily: "'DM Mono', monospace" }}>✏ Edit</button>
-                    <button onClick={() => setDeletingVehicle(v)} title="Remove" className="vehicle-icon-btn" style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-faint)', cursor: 'pointer', padding: '3px 8px', borderRadius: '5px', fontSize: '11px', fontFamily: "'DM Mono', monospace" }}>× Del</button>
+                    <button onClick={() => setEditingVehicle(v)} title="Edit" className="vehicle-icon-btn" style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-faint)', cursor: 'pointer', padding: '3px 8px', borderRadius: '5px', fontSize: '12px', fontFamily: "'DM Mono', monospace" }}>✏ Edit</button>
+                    <button onClick={() => setDeletingVehicle(v)} title="Remove" className="vehicle-icon-btn" style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-faint)', cursor: 'pointer', padding: '3px 8px', borderRadius: '5px', fontSize: '12px', fontFamily: "'DM Mono', monospace" }}>× Del</button>
                   </div>
                 )}
               </div>
               <div style={{ display: 'flex', gap: '10px', marginTop: '8px', flexWrap: 'wrap' }}>
-                {v.color && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '9px', color: 'var(--d-sub)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>🎨 {v.color}</span>}
-                {v.current_mileage && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '9px', color: 'var(--amber)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>ODO {Number(v.current_mileage).toLocaleString()} mi</span>}
+                {v.color && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>🎨 {v.color}</span>}
+                {v.current_mileage && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--amber)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>ODO {Number(v.current_mileage).toLocaleString()} mi</span>}
               </div>
               {lastFillup && (
                 <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid var(--d-border)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '7px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>Last Fill-Up</span>
-                  <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '9px', color: 'var(--green)' }}>{fmtDate(lastFillup)}</span>
+                  <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--green)' }}>{fmtDate(lastFillup)}</span>
                 </div>
               )}
             </div>
@@ -651,32 +652,6 @@ export default function App() {
 
   return (
     <div style={{ fontFamily: "'Barlow', sans-serif", background: 'var(--d-bg)', minHeight: '100vh', color: 'var(--d-text)', paddingTop: 'env(safe-area-inset-top)' }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
-        :root {
-          --rust: #CC4A0F; --amber: #E8943A; --amber-text: #8B5A00;
-          --green: #34D399; --green-text: #166B52; --purple: #818CF8; --purple-text: #4A50C4;
-          --d-bg: #1A1714; --d-surf: #242120; --d-card: #2C2926; --d-border: #3D3530;
-          --d-text: #F0EBE1; --d-muted: #D9D0C1; --d-sub: #9E9894; --d-faint: #857F7A;
-          --l-bg: #F4EFE6; --l-surf: #EDE7DC; --l-card: #E8E1D4; --l-border: #CFC6B8;
-          --l-text: #1E1A17; --l-muted: #3D3530; --l-sub: #6F6358; --l-faint: #6B5C53;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: var(--d-surf); }
-        ::-webkit-scrollbar-thumb { background: var(--d-border); border-radius: 3px; }
-        input, select, textarea { outline: none; }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 100; }
-        @keyframes toastIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .vehicle-icon-btn:hover { color: var(--d-muted) !important; }
-        .add-vehicle-btn:hover { border-color: var(--rust) !important; color: var(--rust) !important; }
-        .chip-scroll::-webkit-scrollbar { display: none; }
-        [data-theme="light"] {
-          --d-bg: var(--l-bg); --d-surf: var(--l-surf); --d-card: var(--l-card); --d-border: var(--l-border);
-          --d-text: var(--l-text); --d-muted: var(--l-muted); --d-sub: var(--l-sub); --d-faint: var(--l-faint);
-        }
-      `}</style>
-
       <div style={{ maxWidth: '430px', margin: '0 auto' }}>
         <Nav activeApp="fuel" dashboardUrl={DASHBOARD_URL} fuelUrl={FUEL_URL} />
 
@@ -684,15 +659,15 @@ export default function App() {
         <div style={{ margin: '16px 20px', background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '16px' }}>
           {/* vehicle filter + admin/refresh */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Stats</span>
-            <select value={statsVehicleFilter} onChange={e => setStatsVehicleFilter(e.target.value)} style={{ background: 'var(--d-surf)', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '3px 8px', borderRadius: '6px', fontFamily: "'DM Mono', monospace", fontSize: '9px', cursor: 'pointer' }}>
+            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Stats</span>
+            <select value={statsVehicleFilter} onChange={e => setStatsVehicleFilter(e.target.value)} style={{ background: 'var(--d-surf)', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '3px 8px', borderRadius: '6px', fontFamily: "'DM Mono', monospace", fontSize: '10px', cursor: 'pointer' }}>
               {vehicleOptions.map(v => <option key={v}>{v}</option>)}
             </select>
-            <button onClick={handleRefresh} style={{ marginLeft: 'auto', fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-faint)', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer' }}>↻</button>
+            <button onClick={handleRefresh} style={{ marginLeft: 'auto', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-faint)', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer' }}>↻</button>
             {isAdmin ? (
-              <button onClick={() => { setIsAdmin(false); sessionStorage.clear() }} style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'none', border: '1px solid var(--d-border)', color: 'var(--green)', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer' }}>Admin ✓</button>
+              <button onClick={() => { setIsAdmin(false); sessionStorage.clear() }} style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'none', border: '1px solid var(--d-border)', color: 'var(--green)', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer' }}>Admin ✓</button>
             ) : (
-              <button onClick={() => setShowLogin(true)} style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-faint)', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer' }}>Login</button>
+              <button onClick={() => setShowLogin(true)} style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer' }}>Login</button>
             )}
           </div>
 
@@ -706,7 +681,7 @@ export default function App() {
             ].map((s, i) => (
               <div key={s.label} style={{ flex: 1, textAlign: 'center', paddingTop: '10px', borderLeft: i > 0 ? '1px solid var(--d-border)' : 'none' }}>
                 <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', color: s.color, lineHeight: 1 }}>{s.value}</div>
-                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginTop: '3px' }}>{s.label}</div>
+                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginTop: '3px' }}>{s.label}</div>
               </div>
             ))}
           </div>
@@ -739,7 +714,7 @@ export default function App() {
                       <div key={v.id} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
                         <div style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '14px', color: 'var(--d-text)' }}>{v.name}</div>
                         {(v.make || v.model || v.trim_level) && (
-                          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '9px', color: 'var(--d-sub)', marginTop: '2px', letterSpacing: '0.06em' }}>
+                          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', marginTop: '2px', letterSpacing: '0.06em' }}>
                             {[v.make, v.model, v.trim_level].filter(Boolean).join(' · ')}
                           </div>
                         )}
@@ -759,7 +734,7 @@ export default function App() {
                         {lastFillup && (
                           <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '7px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>Last Fill-Up</span>
-                            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '9px', color: 'var(--d-sub)' }}>{fmtDate(lastFillup)}</span>
+                            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>{fmtDate(lastFillup)}</span>
                           </div>
                         )}
                       </div>
@@ -775,13 +750,13 @@ export default function App() {
             <>
               {/* Filter row */}
               <div className="chip-scroll" style={{ display: 'flex', gap: '7px', overflowX: 'auto', padding: '0 20px 10px', WebkitOverflowScrolling: 'touch', alignItems: 'center' }}>
-                <select value={historyVehicleFilter} onChange={e => setHistoryVehicleFilter(e.target.value)} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '6px 10px', borderRadius: '8px', fontFamily: "'DM Mono', monospace", fontSize: '9px', cursor: 'pointer', flexShrink: 0 }}>
+                <select value={historyVehicleFilter} onChange={e => setHistoryVehicleFilter(e.target.value)} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '6px 10px', borderRadius: '8px', fontFamily: "'DM Mono', monospace", fontSize: '10px', cursor: 'pointer', flexShrink: 0 }}>
                   {vehicleOptions.map(v => <option key={v}>{v}</option>)}
                 </select>
-                <select value={dateFilter} onChange={e => setDateFilter(e.target.value)} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '6px 10px', borderRadius: '8px', fontFamily: "'DM Mono', monospace", fontSize: '9px', cursor: 'pointer', flexShrink: 0 }}>
+                <select value={dateFilter} onChange={e => setDateFilter(e.target.value)} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '6px 10px', borderRadius: '8px', fontFamily: "'DM Mono', monospace", fontSize: '10px', cursor: 'pointer', flexShrink: 0 }}>
                   {DATE_FILTERS.map(f => <option key={f}>{f}</option>)}
                 </select>
-                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '9px', color: 'var(--d-faint)', whiteSpace: 'nowrap' }}>{historyLogs.length} {historyLogs.length === 1 ? 'entry' : 'entries'}</span>
+                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', whiteSpace: 'nowrap' }}>{historyLogs.length} {historyLogs.length === 1 ? 'entry' : 'entries'}</span>
               </div>
 
               {/* Fill-up card list */}
@@ -797,29 +772,29 @@ export default function App() {
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '7px' }}>
                       <div style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '14px', color: 'var(--d-text)' }}>{log.vehicle || '—'}</div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '9px', color: 'var(--d-faint)' }}>{fmtDate(log.date)}</span>
+                        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{fmtDate(log.date)}</span>
                         {isAdmin && (
                           confirmDelete === log.id ? (
                             <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                              <button onClick={() => handleDelete(log.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '5px', padding: '3px 8px', fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', cursor: 'pointer' }}>Yes</button>
-                              <button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '5px', padding: '3px 8px', fontFamily: "'DM Mono', monospace", fontSize: '8px', cursor: 'pointer' }}>No</button>
+                              <button onClick={() => handleDelete(log.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '5px', padding: '3px 8px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Yes</button>
+                              <button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '5px', padding: '3px 8px', fontFamily: "'DM Mono', monospace", fontSize: '10px', cursor: 'pointer' }}>No</button>
                             </span>
                           ) : (
                             <span style={{ display: 'flex', gap: '4px' }}>
-                              <button onClick={() => setEditEntry(log)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '5px', padding: '3px 8px', fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', cursor: 'pointer' }}>Edit</button>
-                              <button onClick={() => setConfirmDelete(log.id)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '5px', padding: '3px 8px', fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', cursor: 'pointer' }}>Del</button>
+                              <button onClick={() => setEditEntry(log)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '5px', padding: '3px 8px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Edit</button>
+                              <button onClick={() => setConfirmDelete(log.id)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '5px', padding: '3px 8px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Del</button>
                             </span>
                           )
                         )}
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '4px' }}>
-                      <div><span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '16px', color: log.mpg ? 'var(--amber)' : 'var(--d-faint)' }}>{log.mpg ? fmt(log.mpg) : '—'}</span><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', color: 'var(--d-faint)', marginLeft: '3px' }}>mpg</span></div>
-                      <div><span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '16px', color: 'var(--d-muted)' }}>{fmt(log.fuel_amount, 3)}</span><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', color: 'var(--d-faint)', marginLeft: '3px' }}>gal</span></div>
+                      <div><span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '16px', color: log.mpg ? 'var(--amber)' : 'var(--d-faint)' }}>{log.mpg ? fmt(log.mpg) : '—'}</span><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', marginLeft: '3px' }}>mpg</span></div>
+                      <div><span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '16px', color: 'var(--d-muted)' }}>{fmt(log.fuel_amount, 3)}</span><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', marginLeft: '3px' }}>gal</span></div>
                       {log.fuel_cost != null && <div><span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '16px', color: 'var(--purple)' }}>${log.fuel_cost.toFixed(2)}</span></div>}
                       {log.price_per_gal != null && <div><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>${fmt(log.price_per_gal, 3)}/gal</span></div>}
                       <div><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>{log.odometer?.toLocaleString()} mi</span></div>
-                      {log.fuel_grade && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '9px', color: gradeColor(log.fuel_grade) }}>{log.fuel_grade}</span>}
+                      {log.fuel_grade && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: gradeColor(log.fuel_grade) }}>{log.fuel_grade}</span>}
                     </div>
                     {log.location && <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--d-faint)' }}>{log.location}</div>}
                     {log.notes && <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--d-faint)', marginTop: '2px' }}>{log.notes}</div>}
@@ -832,7 +807,7 @@ export default function App() {
               <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', padding: '4px 20px 12px' }}>My Garage</div>
               <VehiclesPanel vehicles={vehicles} logs={logs} isAdmin={isAdmin} onEdit={handleEditVehicle} onDelete={handleDeleteVehicle} />
               {!isAdmin && vehicles.length > 0 && (
-                <div style={{ margin: '0 20px', fontFamily: "'DM Mono', monospace", fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>
+                <div style={{ margin: '0 20px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>
                   Login as admin to add or manage vehicles
                 </div>
               )}
@@ -848,13 +823,13 @@ export default function App() {
               <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginBottom: '14px' }}>Stats</div>
 
               {logs.length < 2 ? (
-                <div style={{ textAlign: 'center', padding: '40px', fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--d-faint)' }}>Record at least 2 fill-ups to see charts</div>
+                <div style={{ textAlign: 'center', padding: '40px', fontFamily: "'DM Mono', monospace", fontSize: '12px', color: 'var(--d-faint)' }}>Record at least 2 fill-ups to see charts</div>
               ) : (
                 <>
                   {/* MPG trend line */}
                   {chartData.length >= 2 && (
                     <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px 8px', marginBottom: '10px' }}>
-                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>MPG Trend</div>
+                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>MPG Trend</div>
                       <ResponsiveContainer width="100%" height={130}>
                         <LineChart data={chartData} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
                           <XAxis dataKey="date" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} tickFormatter={fmtDate} axisLine={false} tickLine={false} />
@@ -869,7 +844,7 @@ export default function App() {
                   {/* Avg MPG by vehicle */}
                   {mpgByVehicle.length > 0 && (
                     <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px', marginBottom: '10px' }}>
-                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Average MPG by Vehicle</div>
+                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Average MPG by Vehicle</div>
                       <ResponsiveContainer width="100%" height={mpgByVehicle.length * 36 + 10}>
                         <BarChart data={mpgByVehicle} layout="vertical" margin={{ top: 0, right: 30, bottom: 0, left: 80 }}>
                           <XAxis type="number" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} domain={[0, 'auto']} />
@@ -884,7 +859,7 @@ export default function App() {
                   {/* Monthly spend */}
                   {monthlySpendData.length > 1 && (
                     <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
-                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Monthly Fuel Spend</div>
+                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Monthly Fuel Spend</div>
                       <ResponsiveContainer width="100%" height={120}>
                         <BarChart data={monthlySpendData} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
                           <XAxis dataKey="month" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} />
@@ -916,7 +891,7 @@ export default function App() {
           {NAV_TABS.map(tab => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', opacity: activeTab === tab.id ? 1 : 0.35 }}>
               <span style={{ fontSize: '17px' }}>{tab.icon}</span>
-              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.1em', color: activeTab === tab.id ? 'var(--rust)' : 'var(--d-sub)' }}>{tab.label}</span>
+              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: activeTab === tab.id ? 'var(--rust)' : 'var(--d-sub)' }}>{tab.label}</span>
             </button>
           ))}
         </div>

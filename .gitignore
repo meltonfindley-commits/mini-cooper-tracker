@@ -5,4 +5,3 @@ dist/
 *.env.example
 package-lock.json
 supabase/.temp/
-packages/shared/
