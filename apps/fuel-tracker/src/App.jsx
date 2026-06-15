@@ -849,7 +849,7 @@ export default function App() {
                         <BarChart data={mpgByVehicle} layout="vertical" margin={{ top: 0, right: 30, bottom: 0, left: 80 }}>
                           <XAxis type="number" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} domain={[0, 'auto']} />
                           <YAxis type="category" dataKey="name" tick={{ fill: '#9E9894', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} width={80} />
-                          <Tooltip formatter={v => [`${v} mpg`, 'Avg MPG']} contentStyle={{ background: '#2C2926', border: '1px solid #3D3530', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: '#D9D0C1' }} />
+                          <Tooltip formatter={v => [`${v} mpg`, 'Avg MPG']} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
                           <Bar dataKey="mpg" fill="#E8943A" radius={[0, 4, 4, 0]} />
                         </BarChart>
                       </ResponsiveContainer>
@@ -864,7 +864,7 @@ export default function App() {
                         <BarChart data={monthlySpendData} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
                           <XAxis dataKey="month" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} />
                           <YAxis tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} width={36} tickFormatter={v => `$${v}`} />
-                          <Tooltip formatter={v => [`$${v.toFixed(2)}`, 'Spent']} contentStyle={{ background: '#2C2926', border: '1px solid #3D3530', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: '#D9D0C1' }} />
+                          <Tooltip formatter={v => [`$${v.toFixed(2)}`, 'Spent']} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
                           <Bar dataKey="cost" fill="#818CF8" radius={[4, 4, 0, 0]} />
                         </BarChart>
                       </ResponsiveContainer>
