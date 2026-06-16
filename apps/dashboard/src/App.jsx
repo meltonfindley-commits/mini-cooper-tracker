@@ -611,6 +611,12 @@ export default function App() {
   const [vehicleFilter, setVehicleFilter] = useState('All')
   const [expandedTask, setExpandedTask] = useState(null)
   const [activeTab, setActiveTab] = useState('service')
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 640)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 640)
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
   const [isAdmin, setIsAdmin] = useState(() => sessionStorage.getItem('adminSession') === 'true')
   const [adminPassword, setAdminPassword] = useState(() => sessionStorage.getItem('adminPass') || '')
   const [showLogin, setShowLogin] = useState(false)
@@ -768,7 +774,7 @@ export default function App() {
 
   return (
     <div style={{ fontFamily: "'Barlow', sans-serif", background: 'var(--d-bg)', minHeight: '100vh', color: 'var(--d-text)', paddingTop: 'env(safe-area-inset-top)' }}>
-      <div style={{ maxWidth: '430px', margin: '0 auto' }}>
+      <div style={{ maxWidth: isMobile ? '430px' : '1400px', margin: '0 auto', padding: isMobile ? '0' : '0 24px' }}>
         <Nav activeApp="dashboard" dashboardUrl="/" fuelUrl={FUEL_URL} />
 
         {/* Progress Hero Card */}
@@ -776,7 +782,7 @@ export default function App() {
           {/* Vehicle filter */}
           {vehicles.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Vehicle</span>
+              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Filter</span>
               <select value={vehicleFilter} onChange={e => setVehicleFilter(e.target.value)} style={{ background: 'var(--d-surf)', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '3px 8px', borderRadius: '6px', fontFamily: "'DM Mono', monospace", fontSize: '10px', cursor: 'pointer' }}>
                 {vehicleOptions.map(v => <option key={v}>{v}</option>)}
               </select>
@@ -825,338 +831,348 @@ export default function App() {
           </div>
         </div>
 
-        {/* Tab content */}
-        <div style={{ paddingBottom: '96px' }}>
-          {loading ? (
-            <div style={{ textAlign: 'center', padding: '48px', fontFamily: "'DM Mono', monospace", fontSize: '12px', color: 'var(--d-sub)' }}>Loading services...</div>
-          ) : activeTab === 'service' ? (
-            <>
+        {/* Desktop sidebar + content, mobile single column */}
+        <div style={{ display: isMobile ? 'block' : 'flex', paddingBottom: isMobile ? '96px' : '32px' }}>
 
-              {/* Filter chips */}
-              <div className="chip-scroll" style={{ display: 'flex', gap: '7px', overflowX: 'auto', padding: '0 20px 2px', marginBottom: '14px', WebkitOverflowScrolling: 'touch' }}>
-                {CHIPS.map((chip, i) => {
-                  const isActive = i === activeChipIndex || (activeChipIndex === -1 && i === 0)
-                  return (
-                    <button key={chip.label} onClick={() => setFilter(chip.filter)} style={{
-                      flexShrink: 0, whiteSpace: 'nowrap', borderRadius: '20px', padding: '6px 12px',
-                      border: 'none', cursor: 'pointer', fontFamily: "'DM Mono', monospace",
-                      fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em',
-                      background: isActive ? 'rgba(204,74,15,0.15)' : 'var(--d-card)',
-                      color: isActive ? 'var(--rust)' : 'var(--d-sub)',
-                      outline: isActive ? '1px solid var(--rust)' : '1px solid var(--d-border)',
-                    }}>{chip.label}</button>
-                  )
-                })}
-                {isAdmin && (
-                  <button onClick={() => setShowBulkUpload(true)} style={{
-                    flexShrink: 0, whiteSpace: 'nowrap', borderRadius: '20px', padding: '6px 12px',
-                    border: 'none', cursor: 'pointer', fontFamily: "'DM Mono', monospace",
-                    fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em',
-                    background: 'var(--d-card)', color: 'var(--d-sub)', outline: '1px solid var(--d-border)',
-                  }}>↑ Bulk Upload</button>
-                )}
-              </div>
-
-              {tasks.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '60px 24px' }}>
-                  <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔧</div>
-                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--d-sub)', letterSpacing: '0.06em' }}>No Services Yet</div>
-                </div>
+          {/* ── Desktop sidebar ── */}
+          {!isMobile && (
+            <aside style={{ width: '200px', flexShrink: 0, borderRight: '1px solid var(--d-border)', marginRight: '24px', paddingTop: '4px', position: 'sticky', top: 0, alignSelf: 'flex-start', maxHeight: 'calc(100vh - 80px)', overflowY: 'auto' }}>
+              {NAV_TABS.map(tab => (
+                <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{
+                  display: 'flex', alignItems: 'center', gap: '10px', width: '100%', padding: '10px 16px',
+                  background: activeTab === tab.id ? 'rgba(204,74,15,0.1)' : 'transparent',
+                  border: 'none', borderLeft: `2px solid ${activeTab === tab.id ? 'var(--rust)' : 'transparent'}`,
+                  cursor: 'pointer', color: activeTab === tab.id ? 'var(--rust)' : 'var(--d-sub)',
+                  fontFamily: "'DM Mono', monospace", fontSize: '11px', textTransform: 'uppercase',
+                  letterSpacing: '0.08em', textAlign: 'left',
+                }}>
+                  <span style={{ fontSize: '15px' }}>{tab.icon}</span>
+                  {tab.label}
+                </button>
+              ))}
+              {isAdmin && (activeTab === 'service' || activeTab === 'garage') && (
+                <button onClick={() => activeTab === 'service' ? setShowAddTask(true) : setShowAddVehicle(true)} style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                  width: 'calc(100% - 24px)', margin: '14px 12px 6px', padding: '9px 14px',
+                  background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '8px',
+                  cursor: 'pointer', fontFamily: "'DM Mono', monospace", fontSize: '11px',
+                  textTransform: 'uppercase', letterSpacing: '0.08em',
+                }}>+ {activeTab === 'service' ? 'Add Service' : 'Add Vehicle'}</button>
               )}
-
-              {filtered.length === 0 && tasks.length > 0 && (
-                <div style={{ textAlign: 'center', padding: '32px', fontFamily: "'Barlow', sans-serif", fontSize: '14px', color: 'var(--d-faint)' }}>No services match the current filters</div>
+              {isAdmin && activeTab === 'service' && (
+                <button onClick={() => setShowBulkUpload(true)} style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                  width: 'calc(100% - 24px)', margin: '0 12px', padding: '7px 14px',
+                  background: 'none', color: 'var(--d-sub)', border: '1px solid var(--d-border)', borderRadius: '8px',
+                  cursor: 'pointer', fontFamily: "'DM Mono', monospace", fontSize: '11px',
+                  textTransform: 'uppercase', letterSpacing: '0.08em',
+                }}>↑ Bulk Upload</button>
               )}
+            </aside>
+          )}
 
-              {/* Task list */}
-              {CATEGORIES.map(cat => {
-                const catTasks = grouped[cat]
-                if (!catTasks || catTasks.length === 0) return null
-                const catDone = catTasks.filter(t => t.status === 'Done').length
-                return (
-                  <div key={cat} style={{ marginBottom: '16px' }}>
-                    {/* Category header */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '6px 20px', marginBottom: '4px' }}>
-                      <span style={{ fontSize: '12px' }}>{CAT_ICONS[cat]}</span>
-                      <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-sub)' }}>{cat}</span>
-                      <div style={{ flex: 1, height: '1px', background: 'var(--d-border)' }} />
-                      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{catDone}/{catTasks.length}</span>
+          {/* ── Main content ── */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '48px', fontFamily: "'DM Mono', monospace", fontSize: '12px', color: 'var(--d-sub)' }}>Loading services...</div>
+            ) : activeTab === 'service' ? (
+              <>
+                {isMobile ? (
+                  /* Mobile: chip scroll + grouped cards */
+                  <>
+                    <div className="chip-scroll" style={{ display: 'flex', gap: '7px', overflowX: 'auto', padding: '0 20px 2px', marginBottom: '14px', WebkitOverflowScrolling: 'touch' }}>
+                      {CHIPS.map((chip, i) => {
+                        const isActive = i === activeChipIndex || (activeChipIndex === -1 && i === 0)
+                        return (
+                          <button key={chip.label} onClick={() => setFilter(chip.filter)} style={{
+                            flexShrink: 0, whiteSpace: 'nowrap', borderRadius: '20px', padding: '6px 12px',
+                            border: 'none', cursor: 'pointer', fontFamily: "'DM Mono', monospace",
+                            fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em',
+                            background: isActive ? 'rgba(204,74,15,0.15)' : 'var(--d-card)',
+                            color: isActive ? 'var(--rust)' : 'var(--d-sub)',
+                            outline: isActive ? '1px solid var(--rust)' : '1px solid var(--d-border)',
+                          }}>{chip.label}</button>
+                        )
+                      })}
+                      {isAdmin && (
+                        <button onClick={() => setShowBulkUpload(true)} style={{
+                          flexShrink: 0, whiteSpace: 'nowrap', borderRadius: '20px', padding: '6px 12px',
+                          border: 'none', cursor: 'pointer', fontFamily: "'DM Mono', monospace",
+                          fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em',
+                          background: 'var(--d-card)', color: 'var(--d-sub)', outline: '1px solid var(--d-border)',
+                        }}>↑ Bulk Upload</button>
+                      )}
                     </div>
-
-                    {catTasks.map(task => {
-                      const isExpanded = expandedTask === task.id
-                      const accentColor = STATUS_COLOR[task.status]
+                    {tasks.length === 0 && <div style={{ textAlign: 'center', padding: '60px 24px' }}><div style={{ fontSize: '48px', marginBottom: '16px' }}>🔧</div><div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--d-sub)', letterSpacing: '0.06em' }}>No Services Yet</div></div>}
+                    {filtered.length === 0 && tasks.length > 0 && <div style={{ textAlign: 'center', padding: '32px', fontFamily: "'Barlow', sans-serif", fontSize: '14px', color: 'var(--d-faint)' }}>No services match the current filters</div>}
+                    {CATEGORIES.map(cat => {
+                      const catTasks = grouped[cat]
+                      if (!catTasks || catTasks.length === 0) return null
+                      const catDone = catTasks.filter(t => t.status === 'Done').length
                       return (
-                        <div key={task.id} style={{ margin: '0 20px 7px' }}>
-                          {/* Task row */}
-                          <div onClick={() => setExpandedTask(isExpanded ? null : task.id)} style={{
-                            display: 'flex', alignItems: 'center', gap: '10px',
-                            background: 'var(--d-card)', border: '1px solid var(--d-border)',
-                            borderRadius: isExpanded ? '10px 10px 0 0' : '10px',
-                            borderBottom: isExpanded ? 'none' : '1px solid var(--d-border)',
-                            cursor: 'pointer', minHeight: '48px', padding: '12px 14px', overflow: 'hidden',
-                          }}>
-                            <div style={{ width: '3px', alignSelf: 'stretch', borderRadius: '2px', background: accentColor, flexShrink: 0, margin: '-12px 0' }} />
-                            <span style={{ flex: 1, fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '14px', color: task.status === 'Done' ? 'var(--d-faint)' : 'var(--d-text)', textDecoration: task.status === 'Done' ? 'line-through' : 'none', minWidth: 0 }}>
-                              {task.service}
-                            </span>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-                              <span style={{
-                                fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '2px 7px', borderRadius: '4px',
-                                background: task.status === 'Not Started' ? 'rgba(157,152,148,0.12)' : task.status === 'In Progress' ? 'rgba(232,148,58,0.15)' : 'rgba(52,211,153,0.12)',
-                                color: task.status === 'Not Started' ? 'var(--d-sub)' : task.status === 'In Progress' ? 'var(--amber)' : 'var(--green)',
-                              }}>
-                                {task.status === 'Not Started' ? 'Pending' : task.status === 'In Progress' ? 'Active' : 'Done'}
-                              </span>
-                              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', color: PRIORITY_COLOR[task.priority] }}>{task.priority}</span>
-                              {task.cost && parseFloat(task.cost) > 0 && <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '12px', color: 'var(--purple)' }}>${parseFloat(task.cost).toLocaleString()}</span>}
-                              {task.vehicle && vehicleFilter === 'All' && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', background: 'var(--d-surf)', border: '1px solid var(--d-border)', borderRadius: '3px', padding: '1px 5px', whiteSpace: 'nowrap' }}>{task.vehicle}</span>}
-                              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{isExpanded ? '▲' : '▼'}</span>
-                            </div>
+                        <div key={cat} style={{ marginBottom: '16px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '6px 20px', marginBottom: '4px' }}>
+                            <span style={{ fontSize: '12px' }}>{CAT_ICONS[cat]}</span>
+                            <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-sub)' }}>{cat}</span>
+                            <div style={{ flex: 1, height: '1px', background: 'var(--d-border)' }} />
+                            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{catDone}/{catTasks.length}</span>
                           </div>
-
-                          {/* Expanded panel */}
-                          {isExpanded && (
-                            <div className="expand-row" style={{ background: 'var(--d-surf)', borderRadius: '0 0 10px 10px', border: '1px solid var(--d-border)', borderTop: 'none', padding: '12px 14px 14px' }}>
-                              {/* Status chips */}
-                              <div style={{ marginBottom: '12px' }}>
-                                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '6px' }}>Change Status</div>
-                                <div style={{ display: 'flex', gap: '6px' }}>
-                                  {STATUSES.map(s => {
-                                    const isActive = task.status === s
-                                    const col = s === 'Not Started' ? 'var(--d-sub)' : s === 'In Progress' ? 'var(--amber)' : 'var(--green)'
-                                    const bg = isActive ? (s === 'Not Started' ? 'rgba(157,152,148,0.2)' : s === 'In Progress' ? 'rgba(232,148,58,0.2)' : 'rgba(52,211,153,0.2)') : 'transparent'
-                                    return (
-                                      <button key={s} onClick={e => { e.stopPropagation(); if (isAdmin) handleStatusChange(task.id, s) }} style={{
-                                        flex: 1, minHeight: '36px', borderRadius: '6px',
-                                        border: isActive ? `1px solid ${col}` : '1px solid var(--d-border)',
-                                        background: bg, color: isActive ? col : 'var(--d-sub)',
-                                        fontFamily: "'DM Mono', monospace", fontSize: '10px',
-                                        textTransform: 'uppercase', letterSpacing: '0.08em',
-                                        cursor: isAdmin ? 'pointer' : 'default',
-                                      }}>{isActive ? '● ' : ''}{s}</button>
-                                    )
-                                  })}
+                          {catTasks.map(task => {
+                            const isExpanded = expandedTask === task.id
+                            const accentColor = STATUS_COLOR[task.status]
+                            return (
+                              <div key={task.id} style={{ margin: '0 20px 7px' }}>
+                                <div onClick={() => setExpandedTask(isExpanded ? null : task.id)} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: isExpanded ? '10px 10px 0 0' : '10px', borderBottom: isExpanded ? 'none' : '1px solid var(--d-border)', cursor: 'pointer', minHeight: '48px', padding: '12px 14px', overflow: 'hidden' }}>
+                                  <div style={{ width: '3px', alignSelf: 'stretch', borderRadius: '2px', background: accentColor, flexShrink: 0, margin: '-12px 0' }} />
+                                  <span style={{ flex: 1, fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '14px', color: task.status === 'Done' ? 'var(--d-faint)' : 'var(--d-text)', textDecoration: task.status === 'Done' ? 'line-through' : 'none', minWidth: 0 }}>{task.service}</span>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+                                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '2px 7px', borderRadius: '4px', background: task.status === 'Not Started' ? 'rgba(157,152,148,0.12)' : task.status === 'In Progress' ? 'rgba(232,148,58,0.15)' : 'rgba(52,211,153,0.12)', color: task.status === 'Not Started' ? 'var(--d-sub)' : task.status === 'In Progress' ? 'var(--amber)' : 'var(--green)' }}>{task.status === 'Not Started' ? 'Pending' : task.status === 'In Progress' ? 'Active' : 'Done'}</span>
+                                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', color: PRIORITY_COLOR[task.priority] }}>{task.priority}</span>
+                                    {task.cost && parseFloat(task.cost) > 0 && <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '12px', color: 'var(--purple)' }}>${parseFloat(task.cost).toLocaleString()}</span>}
+                                    {task.vehicle && vehicleFilter === 'All' && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', background: 'var(--d-surf)', border: '1px solid var(--d-border)', borderRadius: '3px', padding: '1px 5px', whiteSpace: 'nowrap' }}>{task.vehicle}</span>}
+                                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{isExpanded ? '▲' : '▼'}</span>
+                                  </div>
                                 </div>
+                                {isExpanded && (
+                                  <div className="expand-row" style={{ background: 'var(--d-surf)', borderRadius: '0 0 10px 10px', border: '1px solid var(--d-border)', borderTop: 'none', padding: '12px 14px 14px' }}>
+                                    <div style={{ marginBottom: '12px' }}>
+                                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '6px' }}>Change Status</div>
+                                      <div style={{ display: 'flex', gap: '6px' }}>
+                                        {STATUSES.map(s => { const isActive = task.status === s; const col = s === 'Not Started' ? 'var(--d-sub)' : s === 'In Progress' ? 'var(--amber)' : 'var(--green)'; const bg = isActive ? (s === 'Not Started' ? 'rgba(157,152,148,0.2)' : s === 'In Progress' ? 'rgba(232,148,58,0.2)' : 'rgba(52,211,153,0.2)') : 'transparent'; return <button key={s} onClick={e => { e.stopPropagation(); if (isAdmin) handleStatusChange(task.id, s) }} style={{ flex: 1, minHeight: '36px', borderRadius: '6px', border: isActive ? `1px solid ${col}` : '1px solid var(--d-border)', background: bg, color: isActive ? col : 'var(--d-sub)', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: isAdmin ? 'pointer' : 'default' }}>{isActive ? '● ' : ''}{s}</button> })}
+                                      </div>
+                                    </div>
+                                    <div style={{ marginBottom: '10px' }}><div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Estimated Cost</div><input type="number" placeholder="0" value={task.cost ?? ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'cost', e.target.value)} style={{ width: '100%', padding: '9px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--purple)', fontSize: '14px', minHeight: '44px', fontFamily: "'DM Mono', monospace" }} /></div>
+                                    <div style={{ marginBottom: '12px' }}><div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Notes</div><textarea placeholder={isAdmin ? 'Add notes, shop quotes, part numbers...' : ''} value={task.notes || ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'notes', e.target.value)} style={{ width: '100%', padding: '9px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-text)', fontSize: '14px', minHeight: '72px', resize: 'none', fontFamily: "'Barlow', sans-serif" }} /></div>
+                                    {isAdmin && <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px' }}><button onClick={e => { e.stopPropagation(); setEditingTask(task) }} style={{ background: 'rgba(129,140,248,0.1)', color: 'var(--purple)', border: '1px solid rgba(129,140,248,0.2)', borderRadius: '7px', padding: '9px 14px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Edit</button>{confirmDelete === task.id ? <span style={{ display: 'flex', gap: '6px', alignItems: 'center' }}><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>Delete?</span><button onClick={() => handleDelete(task.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px', padding: '7px 12px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Yes</button><button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '7px 12px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>No</button></span> : <button onClick={e => { e.stopPropagation(); setConfirmDelete(task.id) }} style={{ background: 'rgba(204,74,15,0.1)', color: 'var(--rust)', border: '1px solid rgba(204,74,15,0.2)', borderRadius: '7px', padding: '9px 14px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Delete</button>}</div>}
+                                  </div>
+                                )}
                               </div>
-                              {/* Cost */}
-                              <div style={{ marginBottom: '10px' }}>
-                                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Estimated Cost</div>
-                                <input type="number" placeholder="0" value={task.cost ?? ''}
-                                  readOnly={!isAdmin}
-                                  onClick={e => e.stopPropagation()}
-                                  onChange={e => isAdmin && handleFieldChange(task.id, 'cost', e.target.value)}
-                                  style={{ width: '100%', padding: '9px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--purple)', fontSize: '14px', minHeight: '44px', fontFamily: "'DM Mono', monospace" }} />
+                            )
+                          })}
+                        </div>
+                      )
+                    })}
+                  </>
+                ) : (
+                  /* Desktop: filter toolbar + data table */
+                  <>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '7px', marginBottom: '14px' }}>
+                      {CHIPS.map((chip, i) => {
+                        const isActive = i === activeChipIndex || (activeChipIndex === -1 && i === 0)
+                        return (
+                          <button key={chip.label} onClick={() => setFilter(chip.filter)} style={{
+                            whiteSpace: 'nowrap', borderRadius: '20px', padding: '6px 12px',
+                            border: 'none', cursor: 'pointer', fontFamily: "'DM Mono', monospace",
+                            fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em',
+                            background: isActive ? 'rgba(204,74,15,0.15)' : 'var(--d-card)',
+                            color: isActive ? 'var(--rust)' : 'var(--d-sub)',
+                            outline: isActive ? '1px solid var(--rust)' : '1px solid var(--d-border)',
+                          }}>{chip.label}</button>
+                        )
+                      })}
+                    </div>
+                    {tasks.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '60px 24px' }}><div style={{ fontSize: '48px', marginBottom: '16px' }}>🔧</div><div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--d-sub)', letterSpacing: '0.06em' }}>No Services Yet</div></div>
+                    ) : filtered.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '32px', fontFamily: "'Barlow', sans-serif", fontSize: '14px', color: 'var(--d-faint)' }}>No services match the current filters</div>
+                    ) : (
+                      <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', overflow: 'hidden' }}>
+                        {/* Table header */}
+                        <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr 110px 80px 90px 160px', padding: '8px 14px 8px 22px', background: 'var(--d-surf)', borderBottom: '1px solid var(--d-border)' }}>
+                          {['Service', 'Category', 'Status', 'Priority', 'Cost', vehicleFilter === 'All' ? 'Vehicle' : ''].map((h, i) => (
+                            <span key={i} style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>{h}</span>
+                          ))}
+                        </div>
+                        {/* Table rows */}
+                        {filtered.map(task => {
+                          const isExpanded = expandedTask === task.id
+                          const accentColor = STATUS_COLOR[task.status]
+                          return (
+                            <div key={task.id}>
+                              <div onClick={() => setExpandedTask(isExpanded ? null : task.id)} style={{ display: 'grid', gridTemplateColumns: '3fr 2fr 110px 80px 90px 160px', alignItems: 'center', paddingRight: '14px', borderBottom: '1px solid var(--d-border)', background: isExpanded ? 'rgba(61,53,48,0.6)' : 'transparent', cursor: 'pointer', minHeight: '44px', transition: 'background 0.1s' }}>
+                                <div style={{ display: 'flex', alignItems: 'stretch', overflow: 'hidden', paddingRight: '12px' }}>
+                                  <div style={{ width: '4px', background: accentColor, flexShrink: 0, marginRight: '10px', alignSelf: 'stretch' }} />
+                                  <span style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', padding: '12px 0', color: task.status === 'Done' ? 'var(--d-faint)' : 'var(--d-text)', textDecoration: task.status === 'Done' ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.service}</span>
+                                </div>
+                                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: '8px' }}>{task.category}</span>
+                                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '2px 7px', borderRadius: '4px', width: 'fit-content', background: task.status === 'Not Started' ? 'rgba(157,152,148,0.12)' : task.status === 'In Progress' ? 'rgba(232,148,58,0.15)' : 'rgba(52,211,153,0.12)', color: task.status === 'Not Started' ? 'var(--d-sub)' : task.status === 'In Progress' ? 'var(--amber)' : 'var(--green)' }}>{task.status === 'Not Started' ? 'Pending' : task.status === 'In Progress' ? 'Active' : 'Done'}</span>
+                                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', color: PRIORITY_COLOR[task.priority] }}>{task.priority}</span>
+                                <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '12px', color: task.cost && parseFloat(task.cost) > 0 ? 'var(--purple)' : 'var(--d-faint)' }}>{task.cost && parseFloat(task.cost) > 0 ? `$${parseFloat(task.cost).toLocaleString()}` : '—'}</span>
+                                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{vehicleFilter === 'All' ? (task.vehicle || '—') : ''}</span>
                               </div>
-                              {/* Notes */}
-                              <div style={{ marginBottom: '12px' }}>
-                                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Notes</div>
-                                <textarea placeholder={isAdmin ? 'Add notes, shop quotes, part numbers...' : ''} value={task.notes || ''}
-                                  readOnly={!isAdmin}
-                                  onClick={e => e.stopPropagation()}
-                                  onChange={e => isAdmin && handleFieldChange(task.id, 'notes', e.target.value)}
-                                  style={{ width: '100%', padding: '9px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-text)', fontSize: '14px', minHeight: '72px', resize: 'none', fontFamily: "'Barlow', sans-serif" }} />
-                              </div>
-                              {/* Admin actions */}
-                              {isAdmin && (
-                                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px' }}>
-                                  <button onClick={e => { e.stopPropagation(); setEditingTask(task) }} style={{ background: 'rgba(129,140,248,0.1)', color: 'var(--purple)', border: '1px solid rgba(129,140,248,0.2)', borderRadius: '7px', padding: '9px 14px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Edit</button>
-                                  {confirmDelete === task.id ? (
-                                    <span style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                                      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>Delete?</span>
-                                      <button onClick={() => handleDelete(task.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px', padding: '7px 12px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Yes</button>
-                                      <button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '7px 12px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>No</button>
-                                    </span>
-                                  ) : (
-                                    <button onClick={e => { e.stopPropagation(); setConfirmDelete(task.id) }} style={{ background: 'rgba(204,74,15,0.1)', color: 'var(--rust)', border: '1px solid rgba(204,74,15,0.2)', borderRadius: '7px', padding: '9px 14px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Delete</button>
-                                  )}
+                              {isExpanded && (
+                                <div className="expand-row" style={{ background: 'var(--d-surf)', borderBottom: '1px solid var(--d-border)', padding: '14px 18px 16px 18px' }}>
+                                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '12px' }}>
+                                    <div>
+                                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '6px' }}>Change Status</div>
+                                      <div style={{ display: 'flex', gap: '5px' }}>
+                                        {STATUSES.map(s => { const isActive = task.status === s; const col = s === 'Not Started' ? 'var(--d-sub)' : s === 'In Progress' ? 'var(--amber)' : 'var(--green)'; const bg = isActive ? (s === 'Not Started' ? 'rgba(157,152,148,0.2)' : s === 'In Progress' ? 'rgba(232,148,58,0.2)' : 'rgba(52,211,153,0.2)') : 'transparent'; return <button key={s} onClick={e => { e.stopPropagation(); if (isAdmin) handleStatusChange(task.id, s) }} style={{ flex: 1, minHeight: '30px', borderRadius: '6px', border: isActive ? `1px solid ${col}` : '1px solid var(--d-border)', background: bg, color: isActive ? col : 'var(--d-sub)', fontFamily: "'DM Mono', monospace", fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.06em', cursor: isAdmin ? 'pointer' : 'default' }}>{isActive ? '● ' : ''}{s === 'Not Started' ? 'Pending' : s === 'In Progress' ? 'Active' : 'Done'}</button> })}
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Estimated Cost</div>
+                                      <input type="number" placeholder="0" value={task.cost ?? ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'cost', e.target.value)} style={{ width: '100%', padding: '7px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--purple)', fontSize: '13px', fontFamily: "'DM Mono', monospace" }} />
+                                    </div>
+                                    <div>
+                                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Notes</div>
+                                      <textarea placeholder={isAdmin ? 'Add notes, shop quotes, part numbers...' : ''} value={task.notes || ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'notes', e.target.value)} style={{ width: '100%', padding: '7px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-text)', fontSize: '13px', minHeight: '60px', resize: 'none', fontFamily: "'Barlow', sans-serif" }} />
+                                    </div>
+                                  </div>
+                                  {isAdmin && <div style={{ display: 'flex', gap: '8px' }}><button onClick={e => { e.stopPropagation(); setEditingTask(task) }} style={{ background: 'rgba(129,140,248,0.1)', color: 'var(--purple)', border: '1px solid rgba(129,140,248,0.2)', borderRadius: '7px', padding: '7px 14px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Edit</button>{confirmDelete === task.id ? <span style={{ display: 'flex', gap: '6px', alignItems: 'center' }}><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>Delete?</span><button onClick={() => handleDelete(task.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px', padding: '5px 12px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Yes</button><button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '5px 12px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>No</button></span> : <button onClick={e => { e.stopPropagation(); setConfirmDelete(task.id) }} style={{ background: 'rgba(204,74,15,0.1)', color: 'var(--rust)', border: '1px solid rgba(204,74,15,0.2)', borderRadius: '7px', padding: '7px 14px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Delete</button>}</div>}
                                 </div>
                               )}
                             </div>
-                          )}
+                          )
+                        })}
+                      </div>
+                    )}
+                  </>
+                )}
+              </>
+            ) : activeTab === 'summary' ? (
+              <div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', padding: '0 20px', marginBottom: '14px' }}>
+                  Category Breakdown{vehicleFilter !== 'All' ? ` — ${vehicleFilter}` : ''}
+                </div>
+                {CATEGORIES.map(cat => {
+                  const catTasks = filteredByVehicle.filter(t => t.category === cat)
+                  if (!catTasks.length) return null
+                  const done = catTasks.filter(t => t.status === 'Done').length
+                  const inProg = catTasks.filter(t => t.status === 'In Progress').length
+                  const pct = Math.round((done / catTasks.length) * 100)
+                  const catCost = catTasks.reduce((s, t) => s + (parseFloat(t.cost) || 0), 0)
+                  return (
+                    <div key={cat} style={{ margin: '0 20px 8px', background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                        <span>{CAT_ICONS[cat]}</span>
+                        <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '14px', textTransform: 'uppercase', color: 'var(--d-text)' }}>{cat}</span>
+                        <span style={{ marginLeft: 'auto', fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{done}/{catTasks.length}</span>
+                        {catCost > 0 && <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '12px', color: 'var(--purple)' }}>${catCost.toLocaleString()}</span>}
+                      </div>
+                      <div style={{ background: 'var(--d-border)', borderRadius: '2px', height: '3px', overflow: 'hidden', marginBottom: '6px' }}>
+                        <div style={{ width: `${pct}%`, height: '100%', background: pct === 100 ? 'var(--green)' : 'var(--amber)', borderRadius: '2px', transition: 'width 0.4s' }} />
+                      </div>
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--green)' }}>✓ {done} done</span>
+                        {inProg > 0 && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--amber)' }}>◐ {inProg} in progress</span>}
+                        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>{catTasks.length - done - inProg} remaining</span>
+                      </div>
+                    </div>
+                  )
+                })}
+                {vehicleFilter === 'All' && vehicles.length > 0 && (
+                  <div style={{ margin: '20px 20px 8px' }}>
+                    <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginBottom: '10px' }}>By Vehicle</div>
+                    {[...vehicles, { id: 0, name: null }].map(v => {
+                      const vTasks = v.name ? tasks.filter(t => t.vehicle === v.name) : tasks.filter(t => !t.vehicle)
+                      if (!vTasks.length) return null
+                      const vDone = vTasks.filter(t => t.status === 'Done').length
+                      const vPct = Math.round((vDone / vTasks.length) * 100)
+                      const vCost = vTasks.reduce((s, t) => s + (parseFloat(t.cost) || 0), 0)
+                      return (
+                        <div key={v.id} style={{ marginBottom: '8px', background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '10px 14px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                            <span style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', color: v.name ? 'var(--d-text)' : 'var(--d-faint)' }}>{v.name || '(no vehicle)'}</span>
+                            <span style={{ marginLeft: 'auto', fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{vDone}/{vTasks.length}</span>
+                            {vCost > 0 && <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '12px', color: 'var(--purple)' }}>${vCost.toLocaleString()}</span>}
+                          </div>
+                          <div style={{ background: 'var(--d-border)', borderRadius: '2px', height: '3px', overflow: 'hidden' }}>
+                            <div style={{ width: `${vPct}%`, height: '100%', background: vPct === 100 ? 'var(--green)' : 'var(--amber)', borderRadius: '2px', transition: 'width 0.4s' }} />
+                          </div>
                         </div>
                       )
                     })}
                   </div>
-                )
-              })}
-            </>
-          ) : activeTab === 'summary' ? (
-            <div>
-              <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', padding: '0 20px', marginBottom: '14px' }}>
-                Category Breakdown{vehicleFilter !== 'All' ? ` — ${vehicleFilter}` : ''}
-              </div>
-              {CATEGORIES.map(cat => {
-                const catTasks = filteredByVehicle.filter(t => t.category === cat)
-                if (!catTasks.length) return null
-                const done = catTasks.filter(t => t.status === 'Done').length
-                const inProg = catTasks.filter(t => t.status === 'In Progress').length
-                const pct = Math.round((done / catTasks.length) * 100)
-                const catCost = catTasks.reduce((s, t) => s + (parseFloat(t.cost) || 0), 0)
-                return (
-                  <div key={cat} style={{ margin: '0 20px 8px', background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                      <span>{CAT_ICONS[cat]}</span>
-                      <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '14px', textTransform: 'uppercase', color: 'var(--d-text)' }}>{cat}</span>
-                      <span style={{ marginLeft: 'auto', fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{done}/{catTasks.length}</span>
-                      {catCost > 0 && <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '12px', color: 'var(--purple)' }}>${catCost.toLocaleString()}</span>}
-                    </div>
-                    <div style={{ background: 'var(--d-border)', borderRadius: '2px', height: '3px', overflow: 'hidden', marginBottom: '6px' }}>
-                      <div style={{ width: `${pct}%`, height: '100%', background: pct === 100 ? 'var(--green)' : 'var(--amber)', borderRadius: '2px', transition: 'width 0.4s' }} />
-                    </div>
-                    <div style={{ display: 'flex', gap: '12px' }}>
-                      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--green)' }}>✓ {done} done</span>
-                      {inProg > 0 && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--amber)' }}>◐ {inProg} in progress</span>}
-                      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>{catTasks.length - done - inProg} remaining</span>
-                    </div>
+                )}
+                <div style={{ margin: '16px 20px 8px', background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
+                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginBottom: '10px' }}>Cost Summary{vehicleFilter !== 'All' ? ` — ${vehicleFilter}` : ''}</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {[
+                      { label: 'Total estimated', value: `$${totalCost.toLocaleString()}`, color: 'var(--purple)' },
+                      { label: 'Spent (completed)', value: `$${doneCost.toLocaleString()}`, color: 'var(--green)' },
+                      { label: 'Remaining budget', value: `$${(totalCost - doneCost).toLocaleString()}`, color: 'var(--amber)', border: true },
+                    ].map(r => (
+                      <div key={r.label} style={{ display: 'flex', justifyContent: 'space-between', paddingTop: r.border ? '8px' : 0, borderTop: r.border ? '1px solid var(--d-border)' : 'none' }}>
+                        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)' }}>{r.label}</span>
+                        <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '12px', color: r.color }}>{r.value}</span>
+                      </div>
+                    ))}
                   </div>
-                )
-              })}
-
-              {/* By vehicle */}
-              {vehicleFilter === 'All' && vehicles.length > 0 && (
-                <div style={{ margin: '20px 20px 8px' }}>
-                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginBottom: '10px' }}>By Vehicle</div>
-                  {[...vehicles, { id: 0, name: null }].map(v => {
-                    const vTasks = v.name ? tasks.filter(t => t.vehicle === v.name) : tasks.filter(t => !t.vehicle)
-                    if (!vTasks.length) return null
-                    const vDone = vTasks.filter(t => t.status === 'Done').length
-                    const vPct = Math.round((vDone / vTasks.length) * 100)
-                    const vCost = vTasks.reduce((s, t) => s + (parseFloat(t.cost) || 0), 0)
-                    return (
-                      <div key={v.id} style={{ marginBottom: '8px', background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '10px 14px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                          <span style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', color: v.name ? 'var(--d-text)' : 'var(--d-faint)' }}>{v.name || '(no vehicle)'}</span>
-                          <span style={{ marginLeft: 'auto', fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{vDone}/{vTasks.length}</span>
-                          {vCost > 0 && <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '12px', color: 'var(--purple)' }}>${vCost.toLocaleString()}</span>}
-                        </div>
-                        <div style={{ background: 'var(--d-border)', borderRadius: '2px', height: '3px', overflow: 'hidden' }}>
-                          <div style={{ width: `${vPct}%`, height: '100%', background: vPct === 100 ? 'var(--green)' : 'var(--amber)', borderRadius: '2px', transition: 'width 0.4s' }} />
+                </div>
+              </div>
+            ) : activeTab === 'garage' ? (
+              <div style={{ padding: '0 0 8px' }}>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', padding: '4px 20px 12px' }}>My Garage</div>
+                <VehiclesPanel vehicles={vehicles} tasks={tasks} isAdmin={isAdmin} onEdit={handleEditVehicle} onDelete={handleDeleteVehicle} />
+                {!isAdmin && vehicles.length > 0 && <div style={{ margin: '0 20px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>Login as admin to add or manage vehicles</div>}
+                {vehicles.length === 0 && !isAdmin && <div style={{ textAlign: 'center', padding: '48px 24px' }}><div style={{ fontSize: '40px', marginBottom: '12px' }}>🏎</div><div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--d-sub)' }}>No Vehicles Yet</div></div>}
+              </div>
+            ) : (
+              /* Stats tab */
+              <div style={{ padding: '0 20px 8px' }}>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginBottom: '14px' }}>Stats{vehicleFilter !== 'All' ? ` — ${vehicleFilter}` : ''}</div>
+                {filteredByVehicle.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '40px', fontFamily: "'DM Mono', monospace", fontSize: '12px', color: 'var(--d-faint)' }}>No task data to visualize yet</div>
+                ) : (
+                  <>
+                    <div style={{ display: isMobile ? 'block' : 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+                      <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px', marginBottom: isMobile ? '10px' : 0 }}>
+                        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Task Status</div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <PieChart width={120} height={120}><Pie data={statusPieData} cx={55} cy={55} innerRadius={36} outerRadius={52} dataKey="value" stroke="none">{statusPieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}</Pie></PieChart>
+                          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>{statusPieData.map(d => (<div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><div style={{ width: '8px', height: '8px', borderRadius: '2px', background: d.color, flexShrink: 0 }} /><div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', textTransform: 'uppercase', letterSpacing: '0.08em', flex: 1 }}>{d.name}</div><div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', color: d.color }}>{d.value}</div></div>))}</div>
                         </div>
                       </div>
-                    )
-                  })}
-                </div>
-              )}
-
-              {/* Cost summary */}
-              <div style={{ margin: '16px 20px 8px', background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginBottom: '10px' }}>Cost Summary{vehicleFilter !== 'All' ? ` — ${vehicleFilter}` : ''}</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {[
-                    { label: 'Total estimated', value: `$${totalCost.toLocaleString()}`, color: 'var(--purple)' },
-                    { label: 'Spent (completed)', value: `$${doneCost.toLocaleString()}`, color: 'var(--green)' },
-                    { label: 'Remaining budget', value: `$${(totalCost - doneCost).toLocaleString()}`, color: 'var(--amber)', border: true },
-                  ].map(r => (
-                    <div key={r.label} style={{ display: 'flex', justifyContent: 'space-between', paddingTop: r.border ? '8px' : 0, borderTop: r.border ? '1px solid var(--d-border)' : 'none' }}>
-                      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)' }}>{r.label}</span>
-                      <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '12px', color: r.color }}>{r.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ) : activeTab === 'garage' ? (
-            <div style={{ padding: '0 0 8px' }}>
-              <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', padding: '4px 20px 12px' }}>My Garage</div>
-              <VehiclesPanel vehicles={vehicles} tasks={tasks} isAdmin={isAdmin} onEdit={handleEditVehicle} onDelete={handleDeleteVehicle} />
-              {!isAdmin && vehicles.length > 0 && (
-                <div style={{ margin: '0 20px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>
-                  Login as admin to add or manage vehicles
-                </div>
-              )}
-              {vehicles.length === 0 && !isAdmin && (
-                <div style={{ textAlign: 'center', padding: '48px 24px' }}>
-                  <div style={{ fontSize: '40px', marginBottom: '12px' }}>🏎</div>
-                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--d-sub)' }}>No Vehicles Yet</div>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div style={{ padding: '0 20px 8px' }}>
-              <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginBottom: '14px' }}>
-                Stats{vehicleFilter !== 'All' ? ` — ${vehicleFilter}` : ''}
-              </div>
-
-              {filteredByVehicle.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '40px', fontFamily: "'DM Mono', monospace", fontSize: '12px', color: 'var(--d-faint)' }}>No task data to visualize yet</div>
-              ) : (
-                <>
-                  {/* Status donut */}
-                  <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px', marginBottom: '10px' }}>
-                    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Task Status</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <PieChart width={120} height={120}>
-                        <Pie data={statusPieData} cx={55} cy={55} innerRadius={36} outerRadius={52} dataKey="value" stroke="none">
-                          {statusPieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
-                        </Pie>
-                      </PieChart>
-                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {statusPieData.map(d => (
-                          <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div style={{ width: '8px', height: '8px', borderRadius: '2px', background: d.color, flexShrink: 0 }} />
-                            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', textTransform: 'uppercase', letterSpacing: '0.08em', flex: 1 }}>{d.name}</div>
-                            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', color: d.color }}>{d.value}</div>
-                          </div>
-                        ))}
+                      <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
+                        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Completion by Category</div>
+                        <ResponsiveContainer width="100%" height={catBarData.length * 28 + 10}>
+                          <BarChart data={catBarData} layout="vertical" margin={{ top: 0, right: 30, bottom: 0, left: 56 }}>
+                            <XAxis type="number" domain={[0, 100]} tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} tickFormatter={v => `${v}%`} axisLine={false} tickLine={false} />
+                            <YAxis type="category" dataKey="name" tick={{ fill: '#9E9894', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} width={56} />
+                            <Tooltip formatter={(v, _, p) => [`${v}%`, p.payload.full]} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
+                            <Bar dataKey="pct" radius={[0, 4, 4, 0]}>{catBarData.map((d, i) => <Cell key={i} fill={d.pct === 100 ? '#34D399' : '#E8943A'} />)}</Bar>
+                          </BarChart>
+                        </ResponsiveContainer>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Completion by category */}
-                  <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px', marginBottom: '10px' }}>
-                    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Completion by Category</div>
-                    <ResponsiveContainer width="100%" height={catBarData.length * 28 + 10}>
-                      <BarChart data={catBarData} layout="vertical" margin={{ top: 0, right: 30, bottom: 0, left: 56 }}>
-                        <XAxis type="number" domain={[0, 100]} tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} tickFormatter={v => `${v}%`} axisLine={false} tickLine={false} />
-                        <YAxis type="category" dataKey="name" tick={{ fill: '#9E9894', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} width={56} />
-                        <Tooltip formatter={(v, _, p) => [`${v}%`, p.payload.full]} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
-                        <Bar dataKey="pct" radius={[0, 4, 4, 0]}>
-                          {catBarData.map((d, i) => <Cell key={i} fill={d.pct === 100 ? '#34D399' : '#E8943A'} />)}
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
-
-                  {/* Cost by category */}
-                  {costBarData.length > 0 && (
-                    <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
-                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Estimated Cost by Category</div>
-                      <ResponsiveContainer width="100%" height={costBarData.length * 28 + 10}>
-                        <BarChart data={costBarData} layout="vertical" margin={{ top: 0, right: 30, bottom: 0, left: 56 }}>
-                          <XAxis type="number" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} tickFormatter={v => `$${v}`} axisLine={false} tickLine={false} />
-                          <YAxis type="category" dataKey="name" tick={{ fill: '#9E9894', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} width={56} />
-                          <Tooltip formatter={v => [`$${v.toLocaleString()}`, 'Estimated']} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
-                          <Bar dataKey="cost" fill="#818CF8" radius={[0, 4, 4, 0]} />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          )}
+                    {costBarData.length > 0 && (
+                      <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
+                        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Estimated Cost by Category</div>
+                        <ResponsiveContainer width="100%" height={costBarData.length * 28 + 10}>
+                          <BarChart data={costBarData} layout="vertical" margin={{ top: 0, right: 30, bottom: 0, left: 56 }}>
+                            <XAxis type="number" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} tickFormatter={v => `$${v}`} axisLine={false} tickLine={false} />
+                            <YAxis type="category" dataKey="name" tick={{ fill: '#9E9894', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} width={56} />
+                            <Tooltip formatter={v => [`$${v.toLocaleString()}`, 'Estimated']} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
+                            <Bar dataKey="cost" fill="#818CF8" radius={[0, 4, 4, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* FAB — service tab and garage tab, admin only */}
-        {isAdmin && (activeTab === 'service' || activeTab === 'garage') && (
+        {/* FAB — mobile only */}
+        {isMobile && isAdmin && (activeTab === 'service' || activeTab === 'garage') && (
           <div style={{ position: 'fixed', bottom: '88px', left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', pointerEvents: 'none', zIndex: 90 }}>
-            <button
-              onClick={() => activeTab === 'service' ? setShowAddTask(true) : setShowAddVehicle(true)}
-              style={{ position: 'absolute', right: '16px', bottom: '0', width: '56px', height: '56px', borderRadius: '16px', background: 'var(--rust)', color: '#fff', border: 'none', fontSize: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 20px rgba(204,74,15,0.5)', cursor: 'pointer', pointerEvents: 'all' }}
-            >+</button>
+            <button onClick={() => activeTab === 'service' ? setShowAddTask(true) : setShowAddVehicle(true)} style={{ position: 'absolute', right: '16px', bottom: '0', width: '56px', height: '56px', borderRadius: '16px', background: 'var(--rust)', color: '#fff', border: 'none', fontSize: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 20px rgba(204,74,15,0.5)', cursor: 'pointer', pointerEvents: 'all' }}>+</button>
           </div>
         )}
 
-        {/* Bottom navigation */}
-        <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', height: '76px', background: 'var(--d-surf)', borderTop: '1px solid var(--d-border)', display: 'flex', alignItems: 'stretch', paddingBottom: 'env(safe-area-inset-bottom)', zIndex: 100 }}>
-          {NAV_TABS.map(tab => (
-            <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', opacity: activeTab === tab.id ? 1 : 0.35 }}>
-              <span style={{ fontSize: '17px' }}>{tab.icon}</span>
-              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: activeTab === tab.id ? 'var(--rust)' : 'var(--d-sub)' }}>{tab.label}</span>
-            </button>
-          ))}
-        </div>
+        {/* Bottom navigation — mobile only */}
+        {isMobile && (
+          <div style={{ position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', height: '76px', background: 'var(--d-surf)', borderTop: '1px solid var(--d-border)', display: 'flex', alignItems: 'stretch', paddingBottom: 'env(safe-area-inset-bottom)', zIndex: 100 }}>
+            {NAV_TABS.map(tab => (
+              <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', opacity: activeTab === tab.id ? 1 : 0.35 }}>
+                <span style={{ fontSize: '17px' }}>{tab.icon}</span>
+                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: activeTab === tab.id ? 'var(--rust)' : 'var(--d-sub)' }}>{tab.label}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {showLogin && <AdminLoginModal onClose={() => setShowLogin(false)} onSuccess={handleAdminSuccess} />}
