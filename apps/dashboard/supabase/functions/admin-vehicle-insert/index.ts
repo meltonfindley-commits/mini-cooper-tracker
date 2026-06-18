@@ -12,14 +12,22 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders })
   }
 
-  const { password, name, year, make, model, trim_level, color, original_mileage, current_mileage } = await req.json()
-
-  if (password !== Deno.env.get("ADMIN_PASSWORD")) {
-    return new Response(JSON.stringify({ ok: false, error: "Unauthorized" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 401,
+  const authHeader = req.headers.get("Authorization")
+  if (!authHeader?.startsWith("Bearer ")) {
+    return new Response(JSON.stringify({ ok: false, error: { message: "Unauthorized" } }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 401,
     })
   }
+  const token = authHeader.replace("Bearer ", "")
+  const authClient = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!)
+  const { data: { user }, error: authError } = await authClient.auth.getUser(token)
+  if (authError || !user) {
+    return new Response(JSON.stringify({ ok: false, error: { message: "Unauthorized" } }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 401,
+    })
+  }
+
+  const { name, year, make, model, trim_level, color, original_mileage, current_mileage } = await req.json()
 
   if (!name?.trim()) {
     return new Response(JSON.stringify({ ok: false, error: "Vehicle name is required" }), {
@@ -37,6 +45,7 @@ serve(async (req) => {
     .from("vehicles")
     .insert({
       name: name.trim(),
+      user_id: user.id,
       year: year ? parseInt(year) : null,
       make: make?.trim() || null,
       model: model?.trim() || null,

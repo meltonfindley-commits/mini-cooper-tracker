@@ -12,14 +12,22 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders })
   }
 
-  const { password, id, oldName, newName, year, make, model, trim_level, color, original_mileage, current_mileage } = await req.json()
-
-  if (password !== Deno.env.get("ADMIN_PASSWORD")) {
-    return new Response(JSON.stringify({ ok: false, error: "Unauthorized" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 401,
+  const authHeader = req.headers.get("Authorization")
+  if (!authHeader?.startsWith("Bearer ")) {
+    return new Response(JSON.stringify({ ok: false, error: { message: "Unauthorized" } }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 401,
     })
   }
+  const token = authHeader.replace("Bearer ", "")
+  const authClient = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!)
+  const { data: { user }, error: authError } = await authClient.auth.getUser(token)
+  if (authError || !user) {
+    return new Response(JSON.stringify({ ok: false, error: { message: "Unauthorized" } }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 401,
+    })
+  }
+
+  const { id, oldName, newName, year, make, model, trim_level, color, original_mileage, current_mileage } = await req.json()
 
   if (!newName?.trim()) {
     return new Response(JSON.stringify({ ok: false, error: "Vehicle name is required" }), {
@@ -33,7 +41,6 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
   )
 
-  // Update vehicle row with all fields
   const { error: vehicleError } = await supabase
     .from("vehicles")
     .update({
@@ -47,6 +54,7 @@ serve(async (req) => {
       current_mileage: current_mileage ? parseFloat(current_mileage) : null,
     })
     .eq("id", id)
+    .eq("user_id", user.id)
 
   if (vehicleError) {
     return new Response(JSON.stringify({ ok: false, error: vehicleError }), {
@@ -55,13 +63,13 @@ serve(async (req) => {
     })
   }
 
-  // Propagate name change to fuel_logs only if name actually changed
   let updatedLogs = 0
   if (oldName && newName.trim() !== oldName) {
     const { count } = await supabase
       .from("fuel_logs")
       .update({ vehicle: newName.trim() })
       .eq("vehicle", oldName)
+      .eq("user_id", user.id)
     updatedLogs = count ?? 0
   }
 

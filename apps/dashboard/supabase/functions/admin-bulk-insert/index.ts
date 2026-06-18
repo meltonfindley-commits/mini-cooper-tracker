@@ -12,14 +12,22 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders })
   }
 
-  const { password, rows } = await req.json()
-
-  if (password !== Deno.env.get("ADMIN_PASSWORD")) {
-    return new Response(JSON.stringify({ ok: false, error: "Unauthorized" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 401,
+  const authHeader = req.headers.get("Authorization")
+  if (!authHeader?.startsWith("Bearer ")) {
+    return new Response(JSON.stringify({ ok: false, error: { message: "Unauthorized" } }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 401,
     })
   }
+  const token = authHeader.replace("Bearer ", "")
+  const authClient = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!)
+  const { data: { user }, error: authError } = await authClient.auth.getUser(token)
+  if (authError || !user) {
+    return new Response(JSON.stringify({ ok: false, error: { message: "Unauthorized" } }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 401,
+    })
+  }
+
+  const { rows } = await req.json()
 
   if (!Array.isArray(rows) || rows.length === 0) {
     return new Response(JSON.stringify({ ok: false, error: "No rows provided" }), {
@@ -33,7 +41,8 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
   )
 
-  const { data, error } = await supabase.from("services").insert(rows).select()
+  const rowsWithUser = rows.map((r: Record<string, unknown>) => ({ ...r, user_id: user.id }))
+  const { data, error } = await supabase.from("services").insert(rowsWithUser).select()
 
   return new Response(JSON.stringify({ ok: !error, count: data?.length ?? 0, error }), {
     headers: { ...corsHeaders, "Content-Type": "application/json" },

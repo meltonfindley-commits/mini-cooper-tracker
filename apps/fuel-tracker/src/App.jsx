@@ -99,40 +99,34 @@ function Toast({ message, onDone }) {
 }
 
 // ─── Admin Login Modal ────────────────────────────────────────────────────────
-function AdminLoginModal({ onClose, onSuccess }) {
+function LoginPage() {
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   const handleLogin = async () => {
     setLoading(true); setError('')
-    try {
-      const res = await fetch(`${SUPABASE_URL}/functions/v1/fuel-verify`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
-      })
-      const data = await res.json()
-      if (data.ok) {
-        sessionStorage.setItem('adminSession', 'true')
-        sessionStorage.setItem('adminPass', password)
-        onSuccess(password)
-      } else setError('Invalid password')
-    } catch { setError('Connection error') }
+    const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
+    if (authError) setError(authError.message)
     setLoading(false)
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div onClick={e => e.stopPropagation()} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '24px 28px', width: '320px' }}>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--rust)', marginBottom: '18px' }}>Admin Login</div>
-        <label style={labelStyle}>Password</label>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--d-bg)' }}>
+      <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '28px 32px', width: '320px' }}>
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '26px', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--rust)', marginBottom: '4px' }}>Mini Tracker</div>
+        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', marginBottom: '24px' }}>Sign in to continue</div>
+        <label style={labelStyle}>Email</label>
+        <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle()} autoFocus />
+        <label style={{ ...labelStyle, marginTop: '12px' }}>Password</label>
         <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleLogin()} style={inputStyle()} autoFocus />
-        {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '12px', marginTop: '6px' }}>{error}</div>}
-        <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-          <button onClick={handleLogin} disabled={loading} style={{ flex: 1, background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: 'pointer', opacity: loading ? 0.6 : 1 }}>{loading ? 'Checking...' : 'Login'}</button>
-          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
-        </div>
+          onKeyDown={e => e.key === 'Enter' && handleLogin()} style={inputStyle()} />
+        {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '11px', marginTop: '8px' }}>{error}</div>}
+        <button onClick={handleLogin} disabled={loading} style={{
+          width: '100%', marginTop: '20px', background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px',
+          padding: '10px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
+        }}>{loading ? 'Signing in...' : 'Sign In'}</button>
       </div>
     </div>
   )
@@ -502,9 +496,15 @@ export default function App() {
     window.addEventListener('resize', check)
     return () => window.removeEventListener('resize', check)
   }, [])
-  const [isAdmin, setIsAdmin] = useState(() => sessionStorage.getItem('adminSession') === 'true')
-  const [adminPassword, setAdminPassword] = useState(() => sessionStorage.getItem('adminPass') || '')
-  const [showLogin, setShowLogin] = useState(false)
+  const [session, setSession] = useState(null)
+  const [authLoading, setAuthLoading] = useState(true)
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => { setSession(session); setAuthLoading(false) })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session); setAuthLoading(false)
+    })
+    return () => subscription.unsubscribe()
+  }, [])
   const [showAddVehicle, setShowAddVehicle] = useState(false)
   const [showAdd, setShowAdd] = useState(false)
   const [editEntry, setEditEntry] = useState(null)
@@ -534,8 +534,9 @@ export default function App() {
   const callFn = async (fnName, payload) => {
     try {
       const res = await fetch(`${SUPABASE_URL}/functions/v1/${fnName}`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: adminPassword, ...payload }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.access_token}` },
+        body: JSON.stringify(payload),
       })
       const text = await res.text()
       try { return JSON.parse(text) } catch {
@@ -595,9 +596,8 @@ export default function App() {
     showToast('Entry deleted'); fetchLogs(); setConfirmDelete(null)
   }
 
-  const handleAdminSuccess = (pass) => {
-    setIsAdmin(true); setAdminPassword(pass); setShowLogin(false); showToast('Admin access granted')
-  }
+  const user = session?.user ?? null
+  const isAdmin = !!user
 
   const handleRefresh = () => { fetchLogs(); fetchVehicles() }
 
@@ -656,6 +656,13 @@ export default function App() {
     { id: 'stats', icon: '📈', label: 'Stats' },
   ]
 
+  if (authLoading) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--d-bg)' }}>
+      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Loading...</div>
+    </div>
+  )
+  if (!user) return <LoginPage />
+
   return (
     <div style={{ fontFamily: "'Barlow', sans-serif", background: 'var(--d-bg)', minHeight: '100vh', color: 'var(--d-text)', paddingTop: 'env(safe-area-inset-top)' }}>
       <div style={{ maxWidth: isMobile ? '430px' : '1400px', margin: '0 auto', padding: isMobile ? '0' : '0 24px' }}>
@@ -670,11 +677,7 @@ export default function App() {
               {vehicleOptions.map(v => <option key={v}>{v}</option>)}
             </select>
             <button onClick={handleRefresh} style={{ marginLeft: 'auto', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-faint)', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer' }}>↻</button>
-            {isAdmin ? (
-              <button onClick={() => { setIsAdmin(false); sessionStorage.clear() }} style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'none', border: '1px solid var(--d-border)', color: 'var(--green)', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer' }}>Admin ✓</button>
-            ) : (
-              <button onClick={() => setShowLogin(true)} style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer' }}>Login</button>
-            )}
+            <button onClick={() => supabase.auth.signOut()} style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'none', border: '1px solid var(--d-border)', color: 'var(--green)', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer' }}>{user?.email?.split('@')[0]} · Sign out</button>
           </div>
 
           {/* Stat row */}
@@ -925,7 +928,6 @@ export default function App() {
         )}
       </div>
 
-      {showLogin && <AdminLoginModal onClose={() => setShowLogin(false)} onSuccess={handleAdminSuccess} />}
       {showAddVehicle && <VehicleFormModal vehicles={vehicles} onClose={() => setShowAddVehicle(false)} onSave={async fields => { await handleAddVehicle(fields); setShowAddVehicle(false) }} />}
       {showAdd && <FillUpModal vehicles={vehicles} onClose={() => setShowAdd(false)} onSave={handleSave} />}
       {editEntry && <FillUpModal entry={editEntry} vehicles={vehicles} onClose={() => setEditEntry(null)} onSave={handleSave} />}
