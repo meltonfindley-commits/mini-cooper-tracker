@@ -167,6 +167,7 @@ function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
 
   const handleLogin = async () => {
     setLoading(true); setError('')
@@ -175,21 +176,90 @@ function LoginPage() {
     setLoading(false)
   }
 
+  const handleForgot = async () => {
+    if (!email) { setError('Enter your email above first'); return }
+    setLoading(true); setError('')
+    const { error: authError } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin })
+    if (authError) setError(authError.message)
+    else setResetSent(true)
+    setLoading(false)
+  }
+
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--d-bg)' }}>
       <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '28px 32px', width: '320px' }}>
         <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '26px', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--rust)', marginBottom: '4px' }}>Mini Tracker</div>
         <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', marginBottom: '24px' }}>Sign in to continue</div>
-        <label style={labelStyle}>Email</label>
-        <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle()} autoFocus />
-        <label style={{ ...labelStyle, marginTop: '12px' }}>Password</label>
-        <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && handleLogin()} style={inputStyle()} />
-        {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '11px', marginTop: '8px' }}>{error}</div>}
-        <button onClick={handleLogin} disabled={loading} style={{
-          width: '100%', marginTop: '20px', background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px',
-          padding: '10px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
-        }}>{loading ? 'Signing in...' : 'Sign In'}</button>
+        {resetSent ? (
+          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--green)', lineHeight: 1.6 }}>
+            Reset link sent to <strong>{email}</strong>. Check your email and click the link to set a new password.
+          </div>
+        ) : (
+          <>
+            <label style={labelStyle}>Email</label>
+            <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle()} autoFocus />
+            <label style={{ ...labelStyle, marginTop: '12px' }}>Password</label>
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleLogin()} style={inputStyle()} />
+            {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '11px', marginTop: '8px' }}>{error}</div>}
+            <button onClick={handleLogin} disabled={loading} style={{
+              width: '100%', marginTop: '20px', background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px',
+              padding: '10px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
+            }}>{loading ? 'Signing in...' : 'Sign In'}</button>
+            <button onClick={handleForgot} disabled={loading} style={{
+              width: '100%', marginTop: '10px', background: 'none', border: 'none',
+              fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em',
+              color: 'var(--d-faint)', cursor: 'pointer', opacity: loading ? 0.4 : 1,
+            }}>Forgot password?</button>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function ResetPasswordPage({ onDone }) {
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [done, setDone] = useState(false)
+
+  const handleReset = async () => {
+    if (password !== confirm) { setError('Passwords do not match'); return }
+    if (password.length < 6) { setError('Password must be at least 6 characters'); return }
+    setLoading(true); setError('')
+    const { error: authError } = await supabase.auth.updateUser({ password })
+    if (authError) { setError(authError.message); setLoading(false); return }
+    setDone(true)
+    setTimeout(onDone, 2000)
+    setLoading(false)
+  }
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--d-bg)' }}>
+      <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '28px 32px', width: '320px' }}>
+        {done ? (
+          <>
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--green)', marginBottom: '8px' }}>Password Updated</div>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--d-sub)' }}>Taking you to the app...</div>
+          </>
+        ) : (
+          <>
+            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--rust)', marginBottom: '4px' }}>Set New Password</div>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', marginBottom: '24px' }}>Choose a new password</div>
+            <label style={labelStyle}>New Password</label>
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle()} autoFocus />
+            <label style={{ ...labelStyle, marginTop: '12px' }}>Confirm Password</label>
+            <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleReset()} style={inputStyle()} />
+            {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '11px', marginTop: '8px' }}>{error}</div>}
+            <button onClick={handleReset} disabled={loading} style={{
+              width: '100%', marginTop: '20px', background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px',
+              padding: '10px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
+            }}>{loading ? 'Updating...' : 'Update Password'}</button>
+          </>
+        )}
       </div>
     </div>
   )
@@ -610,10 +680,12 @@ export default function App() {
   }, [])
   const [session, setSession] = useState(null)
   const [authLoading, setAuthLoading] = useState(true)
+  const [isRecovery, setIsRecovery] = useState(false)
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => { setSession(session); setAuthLoading(false) })
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session); setAuthLoading(false)
+      if (event === 'PASSWORD_RECOVERY') setIsRecovery(true)
     })
     return () => subscription.unsubscribe()
   }, [])
@@ -779,6 +851,7 @@ export default function App() {
       <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Loading...</div>
     </div>
   )
+  if (isRecovery) return <ResetPasswordPage onDone={() => setIsRecovery(false)} />
   if (!user) return <LoginPage />
 
   return (
