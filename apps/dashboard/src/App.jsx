@@ -523,7 +523,32 @@ function VehiclesPanel({ vehicles, tasks, isAdmin, onEdit, onDelete }) {
 // ─── Task Modal ───────────────────────────────────────────────────────────────
 function TaskModal({ task, vehicles, onClose, onSave }) {
   const [form, setForm] = useState(task || { category: task?.category ?? '', service: '', priority: 'Medium', status: 'Not Started', cost: '', notes: '', vehicle: '', service_date: '', shop: '' })
+  const [categorizing, setCategorizing] = useState(false)
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+
+  const autoCategory = async () => {
+    if (!form.service.trim() || form.category) return
+    setCategorizing(true)
+    try {
+      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${import.meta.env.VITE_OPENROUTER_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'meta-llama/llama-3.1-8b-instruct:free',
+          messages: [{ role: 'user', content: `You are a vehicle service categorization assistant. Given a vehicle service description, respond with ONLY the single most appropriate category name from this exact list, nothing else:\n\n${CATEGORIES.join('\n')}\n\nService description: "${form.service.trim()}"` }],
+          max_tokens: 20,
+        })
+      })
+      const data = await res.json()
+      const suggested = data.choices?.[0]?.message?.content?.trim()
+      if (suggested && CATEGORIES.includes(suggested)) set('category', suggested)
+    } catch (_) { /* silently fail — user can pick manually */ }
+    setCategorizing(false)
+  }
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '24px 28px', width: '480px', maxWidth: '95vw', maxHeight: '90vh', overflowY: 'auto' }}>
@@ -535,14 +560,17 @@ function TaskModal({ task, vehicles, onClose, onSave }) {
               {vehicles.map(v => <option key={v.id} value={v.name}>{v.name}</option>)}
             </select>
           </div>
-          <div><label style={labelStyle}>Category *</label>
-            <select value={form.category} onChange={e => set('category', e.target.value)} style={selectStyle({ color: form.category ? 'var(--d-muted)' : 'var(--d-faint)' })}>
+          <div><label style={labelStyle}>Description *</label>
+            <input value={form.service} onChange={e => set('service', e.target.value)} onBlur={autoCategory} style={inputStyle()} placeholder="Describe the service..." />
+          </div>
+          <div>
+            <label style={labelStyle}>
+              Category *{categorizing && <span style={{ marginLeft: '8px', color: 'var(--amber)', fontStyle: 'normal' }}>auto-detecting…</span>}
+            </label>
+            <select value={form.category} onChange={e => set('category', e.target.value)} disabled={categorizing} style={selectStyle({ color: form.category ? 'var(--d-muted)' : 'var(--d-faint)', opacity: categorizing ? 0.5 : 1 })}>
               <option value="" disabled>Select Category</option>
               {CATEGORIES.map(c => <option key={c}>{c}</option>)}
             </select>
-          </div>
-          <div><label style={labelStyle}>Description *</label>
-            <input value={form.service} onChange={e => set('service', e.target.value)} style={inputStyle()} placeholder="Describe the service..." />
           </div>
           <div style={{ display: 'flex', gap: '12px' }}>
             <div style={{ flex: 1 }}><label style={labelStyle}>Priority</label>
