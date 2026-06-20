@@ -33,6 +33,7 @@ const CATEGORIES = [
   'Body, Exterior & Trim',
   'Interior & Safety Restraints',
   'Routine Maintenance / Fluids',
+  'Other',
 ]
 const PRIORITIES = ['High', 'Medium', 'Low']
 const STATUSES = ['Not Started', 'In Progress', 'Done']
@@ -52,6 +53,7 @@ const CAT_ICONS = {
   'Body, Exterior & Trim': '🚗',
   'Interior & Safety Restraints': '🪑',
   'Routine Maintenance / Fluids': '🛢️',
+  'Other': '📋',
 }
 
 const CSV_TEMPLATE = 'service,category,priority,status,cost,notes,vehicle,shop\nReplace coolant expansion tank,Engine & Performance,High,Not Started,45,Plastic tanks crack with age,2009 Mini Cooper S,Firestone\nInspect brake booster vacuum hose,Brakes & Traction Control,Medium,Not Started,15,Common source of hard brake pedal,2009 Mini Cooper S,'
@@ -520,7 +522,7 @@ function VehiclesPanel({ vehicles, tasks, isAdmin, onEdit, onDelete }) {
 
 // ─── Task Modal ───────────────────────────────────────────────────────────────
 function TaskModal({ task, vehicles, onClose, onSave }) {
-  const [form, setForm] = useState(task || { category: CATEGORIES[0], service: '', priority: 'Medium', status: 'Not Started', cost: '', notes: '', vehicle: '', service_date: '', shop: '' })
+  const [form, setForm] = useState(task || { category: task?.category ?? '', service: '', priority: 'Medium', status: 'Not Started', cost: '', notes: '', vehicle: '', service_date: '', shop: '' })
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -534,7 +536,8 @@ function TaskModal({ task, vehicles, onClose, onSave }) {
             </select>
           </div>
           <div><label style={labelStyle}>Category *</label>
-            <select value={form.category} onChange={e => set('category', e.target.value)} style={selectStyle()}>
+            <select value={form.category} onChange={e => set('category', e.target.value)} style={selectStyle({ color: form.category ? 'var(--d-muted)' : 'var(--d-faint)' })}>
+              <option value="" disabled>Select Category</option>
               {CATEGORIES.map(c => <option key={c}>{c}</option>)}
             </select>
           </div>
@@ -567,7 +570,7 @@ function TaskModal({ task, vehicles, onClose, onSave }) {
           </div>
         </div>
         <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
-          <button onClick={() => onSave(form)} style={{ flex: 1, background: 'var(--amber)', color: '#1A1714', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>{task ? 'Save Changes' : 'Add Service'}</button>
+          <button onClick={() => onSave(form)} disabled={!form.category || !form.service.trim()} style={{ flex: 1, background: 'var(--amber)', color: '#1A1714', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: (!form.category || !form.service.trim()) ? 'default' : 'pointer', opacity: (!form.category || !form.service.trim()) ? 0.4 : 1 }}>{task ? 'Save Changes' : 'Add Service'}</button>
           <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
         </div>
       </div>
