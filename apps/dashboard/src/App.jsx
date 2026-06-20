@@ -163,16 +163,31 @@ function Toast({ message, onDone }) {
 
 // ─── Admin Login Modal ────────────────────────────────────────────────────────
 function LoginPage() {
+  const [mode, setMode] = useState('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [resetSent, setResetSent] = useState(false)
+  const [signupSent, setSignupSent] = useState(false)
 
-  const handleLogin = async () => {
+  const switchMode = (m) => { setMode(m); setError(''); setPassword(''); setConfirm('') }
+
+  const handleSignIn = async () => {
     setLoading(true); setError('')
     const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
     if (authError) setError(authError.message)
+    setLoading(false)
+  }
+
+  const handleSignUp = async () => {
+    if (password !== confirm) { setError('Passwords do not match'); return }
+    if (password.length < 6) { setError('Password must be at least 6 characters'); return }
+    setLoading(true); setError('')
+    const { error: authError } = await supabase.auth.signUp({ email, password })
+    if (authError) setError(authError.message)
+    else setSignupSent(true)
     setLoading(false)
   }
 
@@ -185,12 +200,30 @@ function LoginPage() {
     setLoading(false)
   }
 
+  const monoBtn = (active) => ({
+    flex: 1, padding: '6px', background: active ? 'var(--rust)' : 'none',
+    border: `1px solid ${active ? 'var(--rust)' : 'var(--d-border)'}`,
+    color: active ? '#fff' : 'var(--d-faint)', borderRadius: '6px',
+    fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase',
+    letterSpacing: '0.08em', cursor: 'pointer',
+  })
+
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--d-bg)' }}>
       <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '28px 32px', width: '320px' }}>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '26px', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--rust)', marginBottom: '4px' }}>Mini Tracker</div>
-        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', marginBottom: '24px' }}>Sign in to continue</div>
-        {resetSent ? (
+        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '26px', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--rust)', marginBottom: '20px' }}>Mini Tracker</div>
+
+        {/* Mode toggle */}
+        <div style={{ display: 'flex', gap: '6px', marginBottom: '20px' }}>
+          <button style={monoBtn(mode === 'signin')} onClick={() => switchMode('signin')}>Sign In</button>
+          <button style={monoBtn(mode === 'signup')} onClick={() => switchMode('signup')}>Sign Up</button>
+        </div>
+
+        {signupSent ? (
+          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--green)', lineHeight: 1.6 }}>
+            Check your email at <strong>{email}</strong> and click the confirmation link to activate your account.
+          </div>
+        ) : resetSent ? (
           <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--green)', lineHeight: 1.6 }}>
             Reset link sent to <strong>{email}</strong>. Check your email and click the link to set a new password.
           </div>
@@ -200,17 +233,26 @@ function LoginPage() {
             <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle()} autoFocus />
             <label style={{ ...labelStyle, marginTop: '12px' }}>Password</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleLogin()} style={inputStyle()} />
+              onKeyDown={e => mode === 'signin' && e.key === 'Enter' && handleSignIn()} style={inputStyle()} />
+            {mode === 'signup' && (
+              <>
+                <label style={{ ...labelStyle, marginTop: '12px' }}>Confirm Password</label>
+                <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && handleSignUp()} style={inputStyle()} />
+              </>
+            )}
             {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '11px', marginTop: '8px' }}>{error}</div>}
-            <button onClick={handleLogin} disabled={loading} style={{
+            <button onClick={mode === 'signin' ? handleSignIn : handleSignUp} disabled={loading} style={{
               width: '100%', marginTop: '20px', background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px',
               padding: '10px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
-            }}>{loading ? 'Signing in...' : 'Sign In'}</button>
-            <button onClick={handleForgot} disabled={loading} style={{
-              width: '100%', marginTop: '10px', background: 'none', border: 'none',
-              fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em',
-              color: 'var(--d-faint)', cursor: 'pointer', opacity: loading ? 0.4 : 1,
-            }}>Forgot password?</button>
+            }}>{loading ? (mode === 'signin' ? 'Signing in...' : 'Creating account...') : (mode === 'signin' ? 'Sign In' : 'Create Account')}</button>
+            {mode === 'signin' && (
+              <button onClick={handleForgot} disabled={loading} style={{
+                width: '100%', marginTop: '10px', background: 'none', border: 'none',
+                fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em',
+                color: 'var(--d-faint)', cursor: 'pointer', opacity: loading ? 0.4 : 1,
+              }}>Forgot password?</button>
+            )}
           </>
         )}
       </div>
