@@ -537,14 +537,16 @@ function TaskModal({ task, vehicles, onClose, onSave }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'meta-llama/llama-3.1-8b-instruct:free',
+          model: 'openrouter/free',
           messages: [{ role: 'user', content: `You are a vehicle service categorization assistant. Given a vehicle service description, respond with ONLY the single most appropriate category name from this exact list, nothing else:\n\n${CATEGORIES.join('\n')}\n\nService description: "${form.service.trim()}"` }],
           max_tokens: 20,
         })
       })
       const data = await res.json()
-      const suggested = data.choices?.[0]?.message?.content?.trim()
-      if (suggested && CATEGORIES.includes(suggested)) set('category', suggested)
+      const raw = data.choices?.[0]?.message?.content?.trim()
+      // exact match first, then search within response in case model adds extra text
+      const suggested = CATEGORIES.find(c => c === raw) ?? CATEGORIES.find(c => raw?.toLowerCase().includes(c.toLowerCase()))
+      if (suggested) set('category', suggested)
     } catch (_) { /* silently fail — user can pick manually */ }
     setCategorizing(false)
   }
