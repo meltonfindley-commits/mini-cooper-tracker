@@ -568,7 +568,7 @@ export default function App() {
   }, [])
   const [session, setSession] = useState(null)
   const [authLoading, setAuthLoading] = useState(true)
-  const [isRecovery, setIsRecovery] = useState(false)
+  const [isRecovery, setIsRecovery] = useState(() => window.location.hash.includes('type=recovery'))
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => { setSession(session); setAuthLoading(false) })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
