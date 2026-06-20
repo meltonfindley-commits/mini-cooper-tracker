@@ -526,8 +526,8 @@ function TaskModal({ task, vehicles, onClose, onSave }) {
   const [categorizing, setCategorizing] = useState(false)
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
-  const autoCategory = async () => {
-    if (!form.service.trim() || form.category) return
+  const autoCategory = async (description) => {
+    if (!description?.trim() || form.category) return
     setCategorizing(true)
     try {
       const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -538,7 +538,7 @@ function TaskModal({ task, vehicles, onClose, onSave }) {
         },
         body: JSON.stringify({
           model: 'openrouter/free',
-          messages: [{ role: 'user', content: `You are a vehicle service categorization assistant. Given a vehicle service description, respond with ONLY the single most appropriate category name from this exact list, nothing else:\n\n${CATEGORIES.join('\n')}\n\nService description: "${form.service.trim()}"` }],
+          messages: [{ role: 'user', content: `You are a vehicle service categorization assistant. Given a vehicle service description, respond with ONLY the single most appropriate category name from this exact list, nothing else:\n\n${CATEGORIES.join('\n')}\n\nService description: "${description.trim()}"` }],
           max_tokens: 20,
         })
       })
@@ -566,7 +566,7 @@ function TaskModal({ task, vehicles, onClose, onSave }) {
             </select>
           </div>
           <div><label style={labelStyle}>Description *</label>
-            <input value={form.service} onChange={e => set('service', e.target.value)} onBlur={autoCategory} style={inputStyle()} placeholder="Describe the service..." />
+            <input value={form.service} onChange={e => set('service', e.target.value)} onBlur={e => autoCategory(e.target.value)} style={inputStyle()} placeholder="Describe the service..." />
           </div>
           <div>
             <label style={labelStyle}>
