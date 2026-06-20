@@ -212,7 +212,7 @@ function LoginPage() {
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--d-bg)' }}>
       <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '28px 32px', width: '320px' }}>
         <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '26px', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '20px' }}>
-          <span style={{ color: '#fff' }}>LOG</span><span style={{ color: 'var(--rust)' }}>YARD</span>
+          <span style={{ color: 'var(--d-text)' }}>LOG</span><span style={{ color: 'var(--rust)' }}>YARD</span>
         </div>
 
         {/* Mode toggle */}
