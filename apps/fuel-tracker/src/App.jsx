@@ -645,7 +645,7 @@ export default function App() {
     setLoading(false)
   }, [])
 
-  useEffect(() => { Promise.all([fetchLogs(), fetchVehicles()]) }, [fetchLogs, fetchVehicles])
+  useEffect(() => { if (session) Promise.all([fetchLogs(), fetchVehicles()]) }, [session, fetchLogs, fetchVehicles])
 
   const callFn = async (fnName, payload) => {
     try {

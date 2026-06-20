@@ -753,7 +753,7 @@ export default function App() {
     setVehicles(data || [])
   }, [])
 
-  useEffect(() => { Promise.all([fetchTasks(), fetchVehicles()]) }, [fetchTasks, fetchVehicles])
+  useEffect(() => { if (session) Promise.all([fetchTasks(), fetchVehicles()]) }, [session, fetchTasks, fetchVehicles])
 
   useEffect(() => {
     const channel = supabase.channel('services-changes')
