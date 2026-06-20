@@ -8,54 +8,32 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
 const FUEL_URL = import.meta.env.VITE_FUEL_URL || '#'
 
 const DEFAULT_TASKS = [
-  { category: 'Engine & Drivetrain', service: '📋 Engine History / Mileage Note', priority: 'High', status: 'In Progress', cost: '', notes: 'Odometer reads 73k miles. Engine was replaced with a unit that has 67k miles on it.' },
-  { category: 'Engine & Drivetrain', service: 'Replace spark plugs & ignition coils', priority: 'High', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Engine & Drivetrain', service: 'Inspect/replace timing chain & tensioner', priority: 'High', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Engine & Drivetrain', service: 'Check engine mounts for wear/cracking', priority: 'Medium', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Engine & Drivetrain', service: 'Inspect drive belts (serpentine/aux)', priority: 'High', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Engine & Drivetrain', service: 'Check for oil leaks (valve cover, rear main seal)', priority: 'High', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Engine & Drivetrain', service: 'Replace air filter & clean intake', priority: 'Low', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Engine & Drivetrain', service: 'Install fuel injector kit', priority: 'High', status: 'In Progress', cost: '', notes: 'Parts purchased. Ready to install.' },
-  { category: 'Engine & Drivetrain', service: 'Replace high pressure fuel pump (HPFP)', priority: 'High', status: 'In Progress', cost: '', notes: 'Parts purchased. Ready to install.' },
-  { category: 'Engine & Drivetrain', service: 'Replace fuel rail pressure sensor', priority: 'High', status: 'In Progress', cost: '', notes: 'Parts purchased. Ready to install.' },
-  { category: 'Engine & Drivetrain', service: 'Install oil catch can(s)', priority: 'Medium', status: 'In Progress', cost: '', notes: 'Parts purchased. Ready to install.' },
-  { category: 'Fluids & Filters', service: 'Full synthetic oil change', priority: 'High', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Fluids & Filters', service: 'Flush & replace coolant', priority: 'High', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Fluids & Filters', service: 'Brake fluid flush', priority: 'High', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Fluids & Filters', service: 'Power steering fluid check/top-off', priority: 'Medium', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Fluids & Filters', service: 'Replace fuel filter', priority: 'Medium', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Fluids & Filters', service: 'Transmission fluid check/change', priority: 'Medium', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Brakes & Suspension', service: 'Inspect brake pads & rotors (all 4 corners)', priority: 'High', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Brakes & Suspension', service: 'Check calipers for sticking/leaking', priority: 'High', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Brakes & Suspension', service: 'Inspect control arms & bushings', priority: 'Medium', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Brakes & Suspension', service: 'Check shocks/struts for leaking', priority: 'Medium', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Brakes & Suspension', service: 'Inspect wheel bearings', priority: 'Medium', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Brakes & Suspension', service: '4-wheel alignment', priority: 'Low', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Tires & Wheels', service: 'Inspect tires for wear/cracking', priority: 'High', status: 'Done', cost: '', notes: 'Tires replaced ~2 years ago.' },
-  { category: 'Tires & Wheels', service: 'Check & set tire pressure', priority: 'Low', status: 'Done', cost: '', notes: 'Tires replaced ~2 years ago.' },
-  { category: 'Tires & Wheels', service: 'Rotate tires', priority: 'Low', status: 'Done', cost: '', notes: 'Tires replaced ~2 years ago.' },
-  { category: 'Electrical & Battery', service: 'Test/replace battery (likely due at 15yr)', priority: 'High', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Electrical & Battery', service: 'Inspect alternator output', priority: 'High', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Electrical & Battery', service: 'Check all exterior lights (bulbs, lenses)', priority: 'Low', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Electrical & Battery', service: 'Test power windows, locks & mirrors', priority: 'Low', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Electrical & Battery', service: 'Scan for stored OBD-II fault codes', priority: 'High', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Convertible Top', service: 'Inspect convertible top fabric for tears/seams', priority: 'High', status: 'Done', cost: '', notes: 'Convertible top replaced ~2 years ago.' },
-  { category: 'Convertible Top', service: 'Test hydraulic top mechanism (full open/close cycle)', priority: 'High', status: 'Done', cost: '', notes: 'Convertible top replaced ~2 years ago.' },
-  { category: 'Convertible Top', service: 'Check hydraulic fluid level for top pump', priority: 'Medium', status: 'Done', cost: '', notes: 'Convertible top replaced ~2 years ago.' },
-  { category: 'Convertible Top', service: 'Inspect & lubricate latches and weatherstripping', priority: 'Medium', status: 'Done', cost: '', notes: 'Convertible top replaced ~2 years ago.' },
-  { category: 'Convertible Top', service: 'Clean & condition top fabric', priority: 'Low', status: 'Done', cost: '', notes: 'Convertible top replaced ~2 years ago.' },
-  { category: 'Interior', service: 'Deep clean & condition leather/seats', priority: 'Low', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Interior', service: 'Inspect carpets & floor mats for moisture/mold', priority: 'Medium', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Interior', service: 'Check HVAC (A/C, heat, blower motor)', priority: 'Medium', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Interior', service: 'Test infotainment/radio & speakers', priority: 'Low', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Interior', service: 'Install new infotainment head unit', priority: 'Medium', status: 'In Progress', cost: '', notes: 'Parts purchased. Ready to install.' },
-  { category: 'Exterior & Body', service: 'Full paint inspection — chips, rust spots', priority: 'Medium', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Exterior & Body', service: 'Inspect undercarriage for rust/corrosion', priority: 'High', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Exterior & Body', service: 'Clean & treat door jambs and hinges', priority: 'Low', status: 'Not Started', cost: '', notes: '' },
-  { category: 'Exterior & Body', service: 'Machine polish & ceramic coat or wax', priority: 'Low', status: 'Not Started', cost: '', notes: '' },
+  { category: 'Engine & Performance', service: 'Replace spark plugs & ignition coils', priority: 'High', status: 'Not Started', cost: '', notes: '' },
+  { category: 'Drivetrain & Transmission', service: 'Transmission fluid check/change', priority: 'Medium', status: 'Not Started', cost: '', notes: '' },
+  { category: 'Electrical & Electronics', service: 'Test battery & inspect alternator output', priority: 'High', status: 'Not Started', cost: '', notes: '' },
+  { category: 'Brakes & Traction Control', service: 'Inspect brake pads & rotors (all 4 corners)', priority: 'High', status: 'Not Started', cost: '', notes: '' },
+  { category: 'Steering & Suspension', service: 'Inspect shocks/struts & control arms', priority: 'Medium', status: 'Not Started', cost: '', notes: '' },
+  { category: 'Wheels & Tires', service: 'Inspect tires for wear & check pressure', priority: 'Medium', status: 'Not Started', cost: '', notes: '' },
+  { category: 'HVAC (Climate Control)', service: 'Test A/C & heat — inspect blower motor', priority: 'Medium', status: 'Not Started', cost: '', notes: '' },
+  { category: 'Exhaust & Emissions', service: 'Inspect exhaust for leaks & check O2 sensors', priority: 'Medium', status: 'Not Started', cost: '', notes: '' },
+  { category: 'Body, Exterior & Trim', service: 'Full paint inspection — chips, rust spots', priority: 'Low', status: 'Not Started', cost: '', notes: '' },
+  { category: 'Interior & Safety Restraints', service: 'Inspect seatbelts & airbag warning lights', priority: 'High', status: 'Not Started', cost: '', notes: '' },
+  { category: 'Routine Maintenance / Fluids', service: 'Full synthetic oil & filter change', priority: 'High', status: 'Not Started', cost: '', notes: '' },
 ]
 
-const CATEGORIES = ['Engine & Drivetrain', 'Fluids & Filters', 'Brakes & Suspension', 'Tires & Wheels', 'Electrical & Battery', 'Convertible Top', 'Interior', 'Exterior & Body']
+const CATEGORIES = [
+  'Engine & Performance',
+  'Drivetrain & Transmission',
+  'Electrical & Electronics',
+  'Brakes & Traction Control',
+  'Steering & Suspension',
+  'Wheels & Tires',
+  'HVAC (Climate Control)',
+  'Exhaust & Emissions',
+  'Body, Exterior & Trim',
+  'Interior & Safety Restraints',
+  'Routine Maintenance / Fluids',
+]
 const PRIORITIES = ['High', 'Medium', 'Low']
 const STATUSES = ['Not Started', 'In Progress', 'Done']
 
@@ -63,12 +41,20 @@ const STATUSES = ['Not Started', 'In Progress', 'Done']
 const STATUS_COLOR = { 'Not Started': '#3D3530', 'In Progress': '#E8943A', 'Done': '#34D399' }
 const PRIORITY_COLOR = { 'High': '#CC4A0F', 'Medium': '#E8943A', 'Low': '#9E9894' }
 const CAT_ICONS = {
-  'Engine & Drivetrain': '⚙️', 'Fluids & Filters': '🛢️', 'Brakes & Suspension': '🔧',
-  'Tires & Wheels': '🛞', 'Electrical & Battery': '⚡', 'Convertible Top': '🔄',
-  'Interior': '🪑', 'Exterior & Body': '🚗',
+  'Engine & Performance': '⚙️',
+  'Drivetrain & Transmission': '🔩',
+  'Electrical & Electronics': '⚡',
+  'Brakes & Traction Control': '🛑',
+  'Steering & Suspension': '🔧',
+  'Wheels & Tires': '🛞',
+  'HVAC (Climate Control)': '❄️',
+  'Exhaust & Emissions': '💨',
+  'Body, Exterior & Trim': '🚗',
+  'Interior & Safety Restraints': '🪑',
+  'Routine Maintenance / Fluids': '🛢️',
 }
 
-const CSV_TEMPLATE = 'service,category,priority,status,cost,notes,vehicle\nReplace coolant expansion tank,Engine & Drivetrain,High,Not Started,45,Plastic tanks crack with age,2009 Mini Cooper S\nInspect brake booster vacuum hose,Brakes & Suspension,Medium,Not Started,15,Common source of hard brake pedal,2009 Mini Cooper S'
+const CSV_TEMPLATE = 'service,category,priority,status,cost,notes,vehicle\nReplace coolant expansion tank,Engine & Performance,High,Not Started,45,Plastic tanks crack with age,2009 Mini Cooper S\nInspect brake booster vacuum hose,Brakes & Traction Control,Medium,Not Started,15,Common source of hard brake pedal,2009 Mini Cooper S'
 
 function fmtDate(dateStr) {
   if (!dateStr) return '—'
