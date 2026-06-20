@@ -543,11 +543,14 @@ function TaskModal({ task, vehicles, onClose, onSave }) {
         })
       })
       const data = await res.json()
+      console.log('[autoCategory] full response:', JSON.stringify(data))
       const raw = data.choices?.[0]?.message?.content?.trim()
+      console.log('[autoCategory] raw content:', raw)
       // exact match first, then search within response in case model adds extra text
       const suggested = CATEGORIES.find(c => c === raw) ?? CATEGORIES.find(c => raw?.toLowerCase().includes(c.toLowerCase()))
+      console.log('[autoCategory] suggested:', suggested)
       if (suggested) set('category', suggested)
-    } catch (_) { /* silently fail — user can pick manually */ }
+    } catch (err) { console.error('[autoCategory] error:', err) }
     setCategorizing(false)
   }
 
