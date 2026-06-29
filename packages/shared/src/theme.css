@@ -48,7 +48,7 @@
      WCAG 2.1 AA does not mandate a pixel minimum but 10px for compact
      metadata labels and 12px for body content are our chosen floors.   */
   --fs-label:  10px;   /* IBM Plex Mono uppercase tracking labels             */
-  --fs-body:   12px;   /* Barlow body / readable prose                  */
+  --fs-body:   12px;   /* Space Grotesk body / readable prose            */
   --fs-chip:   10px;   /* Filter chips, badge text                      */
   --fs-btn:    11px;   /* Button / action text                          */
   --fs-mono:   11px;   /* Inline mono values (cost, odometer)           */
