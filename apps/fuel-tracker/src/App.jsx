@@ -968,10 +968,7 @@ export default function App() {
               </>
             ) : activeTab === 'garage' ? (
               <div style={{ padding: '0 0 8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 20px 12px' }}>
-                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)' }}>My Garage</div>
-                  {isAdmin && <button onClick={() => setShowAddVehicle(true)} style={{ background: 'none', border: 'none', fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--rust)', cursor: 'pointer', letterSpacing: '0.06em' }}>+ ADD</button>}
-                </div>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', padding: '4px 20px 12px' }}>My Garage</div>
                 <VehiclesPanel vehicles={vehicles} logs={logs} isAdmin={isAdmin} onEdit={handleEditVehicle} onDelete={handleDeleteVehicle} />
                 {!isAdmin && vehicles.length > 0 && <div style={{ margin: '0 20px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>Login as admin to add or manage vehicles</div>}
                 {vehicles.length === 0 && !isAdmin && <div style={{ textAlign: 'center', padding: '48px 24px' }}><div style={{ fontSize: '40px', marginBottom: '12px' }}>🚗</div><div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--d-sub)' }}>No Vehicles Yet</div></div>}
