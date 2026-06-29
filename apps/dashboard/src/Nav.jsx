@@ -9,12 +9,15 @@ function applyTheme(theme) {
   localStorage.setItem('ly-theme', theme)
 }
 
-export default function Nav({ activeApp, dashboardUrl, fuelUrl }) {
+export default function Nav({ activeApp, dashboardUrl, fuelUrl, user, onSignOut }) {
   const [theme, setTheme] = useState(getTheme)
+  const [showMenu, setShowMenu] = useState(false)
 
   useEffect(() => { applyTheme(theme) }, [theme])
 
   const toggle = () => setTheme(t => t === 'dark' ? 'light' : 'dark')
+
+  const initials = user?.email ? user.email.split('@')[0].slice(0, 2).toUpperCase() : '?'
 
   return (
     <div style={{
@@ -57,6 +60,35 @@ export default function Nav({ activeApp, dashboardUrl, fuelUrl }) {
           background: activeApp === 'fuel' ? 'rgba(204,74,15,0.12)' : 'transparent',
           border: activeApp === 'fuel' ? '1px solid var(--rust)' : '1px solid var(--d-border)',
         }}>Fuel</a>
+
+        {/* Avatar */}
+        {user && (
+          <div style={{ position: 'relative', marginLeft: '4px' }}>
+            <button onClick={() => setShowMenu(m => !m)} style={{
+              width: '32px', height: '32px', borderRadius: '50%', border: '1px solid var(--d-border)',
+              background: 'var(--rust)', color: '#fff', fontFamily: "'Barlow Condensed', sans-serif",
+              fontWeight: 700, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>{initials}</button>
+            {showMenu && (
+              <>
+                <div onClick={() => setShowMenu(false)} style={{ position: 'fixed', inset: 0, zIndex: 99 }} />
+                <div style={{
+                  position: 'absolute', right: 0, top: '38px', zIndex: 100,
+                  background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '8px',
+                  padding: '8px 0', minWidth: '160px', boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+                }}>
+                  <div style={{ padding: '6px 14px', fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', borderBottom: '1px solid var(--d-border)', marginBottom: '4px' }}>
+                    {user.email}
+                  </div>
+                  <button onClick={onSignOut} style={{
+                    width: '100%', textAlign: 'left', padding: '8px 14px', background: 'none', border: 'none',
+                    fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--rust)', cursor: 'pointer',
+                  }}>Sign out</button>
+                </div>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

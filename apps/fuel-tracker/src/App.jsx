@@ -783,7 +783,7 @@ export default function App() {
   return (
     <div style={{ fontFamily: "'Barlow', sans-serif", background: 'var(--d-bg)', minHeight: '100vh', color: 'var(--d-text)', paddingTop: 'env(safe-area-inset-top)' }}>
       <div style={{ maxWidth: isMobile ? '430px' : '1400px', margin: '0 auto', padding: isMobile ? '0' : '0 24px' }}>
-        <Nav activeApp="fuel" dashboardUrl={DASHBOARD_URL} fuelUrl={FUEL_URL} />
+        <Nav activeApp="fuel" dashboardUrl={DASHBOARD_URL} fuelUrl={FUEL_URL} user={user} onSignOut={() => supabase.auth.signOut()} />
 
         {/* Stats hero card */}
         <div style={{ margin: '16px 20px', background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '16px' }}>
@@ -794,7 +794,6 @@ export default function App() {
               {vehicleOptions.map(v => <option key={v}>{v}</option>)}
             </select>
             <button onClick={handleRefresh} style={{ marginLeft: 'auto', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-faint)', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer' }}>↻</button>
-            <button onClick={() => supabase.auth.signOut()} style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'none', border: '1px solid var(--d-border)', color: 'var(--green)', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer' }}>{user?.email?.split('@')[0]} · Sign out</button>
           </div>
 
           {/* Stat row */}
