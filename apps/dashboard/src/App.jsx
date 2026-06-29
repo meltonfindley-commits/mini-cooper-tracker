@@ -511,7 +511,10 @@ function VehiclesPanel({ vehicles, tasks, isAdmin, onEdit, onDelete }) {
                 <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--d-border)' }}>
                   <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Last Service</div>
                   <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--d-muted)', marginTop: '3px' }}>{svc.service}</div>
-                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px', color: 'var(--d-text)', marginTop: '2px' }}>{new Date(svc.service_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '2px' }}>
+                    <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px', color: 'var(--d-text)' }}>{new Date(svc.service_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    {svc.mileage && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--amber)' }}>{Number(svc.mileage).toLocaleString()} mi</span>}
+                  </div>
                 </div>
               ) : (
                 <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--d-border)' }}>
@@ -530,7 +533,7 @@ function VehiclesPanel({ vehicles, tasks, isAdmin, onEdit, onDelete }) {
 
 // ─── Task Modal ───────────────────────────────────────────────────────────────
 function TaskModal({ task, vehicles, onClose, onSave }) {
-  const [form, setForm] = useState(task || { category: task?.category ?? '', service: '', priority: 'Medium', status: 'Not Started', cost: '', notes: '', vehicle: '', service_date: '', shop: '' })
+  const [form, setForm] = useState(task || { category: task?.category ?? '', service: '', priority: 'Medium', status: 'Not Started', cost: '', notes: '', vehicle: '', service_date: '', shop: '', mileage: '' })
   const [categorizing, setCategorizing] = useState(false)
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
@@ -598,6 +601,9 @@ function TaskModal({ task, vehicles, onClose, onSave }) {
           </div>
           <div><label style={labelStyle}>Shop / Dealership</label>
             <input value={form.shop || ''} onChange={e => set('shop', e.target.value)} style={inputStyle()} placeholder="e.g. Firestone, BMW of Dallas..." />
+          </div>
+          <div><label style={labelStyle}>Mileage</label>
+            <input type="number" value={form.mileage || ''} onChange={e => set('mileage', e.target.value)} style={inputStyle()} placeholder="e.g. 73000" />
           </div>
           <div><label style={labelStyle}>Estimated Cost ($)</label>
             <input type="number" value={form.cost} onChange={e => set('cost', e.target.value)} style={inputStyle()} placeholder="0" />
@@ -841,14 +847,14 @@ export default function App() {
   }
   const handleAddTask = async (form) => {
     if (!form.service.trim()) return
-    const data = await callFn('admin-insert', { row: { ...form, vehicle: form.vehicle || null } })
+    const data = await callFn('admin-insert', { row: { ...form, vehicle: form.vehicle || null, mileage: form.mileage ? parseInt(form.mileage) : null } })
     if (data.ok) { showToast('Service added'); fetchTasks() }
     else showToast('Error: ' + (data.error?.message || data.error || 'could not add service'))
     setShowAddTask(false)
   }
   const handleEditTask = async (form) => {
     const { id, ...fields } = form
-    await callFn('admin-update', { id: editingTask.id, fields: { ...fields, vehicle: fields.vehicle || null } })
+    await callFn('admin-update', { id: editingTask.id, fields: { ...fields, vehicle: fields.vehicle || null, mileage: fields.mileage ? parseInt(fields.mileage) : null } })
     showToast('Service updated'); fetchTasks(); setEditingTask(null)
   }
   const handleDelete = async (id) => {
