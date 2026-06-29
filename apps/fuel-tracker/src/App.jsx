@@ -927,13 +927,26 @@ export default function App() {
                             {isAdmin && (confirmDelete === log.id ? <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}><button onClick={() => handleDelete(log.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '5px', padding: '3px 8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Yes</button><button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '5px', padding: '3px 8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', cursor: 'pointer' }}>No</button></span> : <span style={{ display: 'flex', gap: '4px' }}><button onClick={() => setEditEntry(log)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '5px', padding: '3px 8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Edit</button><button onClick={() => setConfirmDelete(log.id)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '5px', padding: '3px 8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Del</button></span>)}
                           </div>
                         </div>
-                        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '4px' }}>
-                          <div><span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '16px', color: log.mpg ? 'var(--amber)' : 'var(--d-faint)' }}>{log.mpg ? fmt(log.mpg) : '—'}</span><span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', marginLeft: '3px' }}>mpg</span></div>
-                          <div><span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '16px', color: 'var(--d-muted)' }}>{fmt(log.fuel_amount, 3)}</span><span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', marginLeft: '3px' }}>gal</span></div>
-                          {log.fuel_cost != null && <div><span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '16px', color: 'var(--purple)' }}>${log.fuel_cost.toFixed(2)}</span></div>}
-                          {log.price_per_gal != null && <div><span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>${fmt(log.price_per_gal, 3)}/gal</span></div>}
-                          <div><span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>{log.odometer?.toLocaleString()} mi</span></div>
-                          {log.fuel_grade && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: gradeColor(log.fuel_grade) }}>{log.fuel_grade}</span>}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '4px' }}>
+                          <div style={{ display: 'flex', gap: '16px' }}>
+                            <div>
+                              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '22px', color: log.mpg ? 'var(--amber)' : 'var(--d-faint)', lineHeight: 1 }}>{log.mpg ? fmt(log.mpg) : '—'}</div>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', marginTop: '2px' }}>MPG</div>
+                            </div>
+                            <div>
+                              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '22px', color: 'var(--d-muted)', lineHeight: 1 }}>{fmt(log.fuel_amount, 3)}</div>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', marginTop: '2px' }}>Gallons</div>
+                            </div>
+                            {log.fuel_cost != null && <div>
+                              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '22px', color: 'var(--purple)', lineHeight: 1 }}>${log.fuel_cost.toFixed(2)}</div>
+                              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', marginTop: '2px' }}>Total</div>
+                            </div>}
+                          </div>
+                          <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                            {log.price_per_gal != null && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>${fmt(log.price_per_gal, 3)}/gal</span>}
+                            {log.odometer && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>{log.odometer.toLocaleString()} mi</span>}
+                            {log.fuel_grade && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: gradeColor(log.fuel_grade) }}>{log.fuel_grade}</span>}
+                          </div>
                         </div>
                         {log.location && <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '12px', color: 'var(--d-faint)' }}>{log.location}</div>}
                         {log.notes && <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '12px', color: 'var(--d-faint)', marginTop: '2px' }}>{log.notes}</div>}
