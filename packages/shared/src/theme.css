@@ -102,8 +102,36 @@ input, textarea, select {
 .expand-row { animation: slideDown 0.15s ease; }
 
 /* ── Interactive hovers ─────────────────────────────────────────────── */
-.vehicle-icon-btn:hover  { color: var(--d-muted) !important; }
 .add-vehicle-btn:hover   { border-color: var(--rust) !important; color: var(--rust) !important; }
+
+/* ── Action buttons (Edit / Delete) ────────────────────────────────── */
+.btn-edit {
+  background: rgba(129, 140, 248, 0.1);
+  color: var(--purple);
+  border: 1px solid rgba(129, 140, 248, 0.2);
+  border-radius: 7px;
+  padding: 4px 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.btn-edit:hover { background: rgba(129, 140, 248, 0.2); }
+
+.btn-delete {
+  background: rgba(204, 74, 15, 0.1);
+  color: var(--rust);
+  border: 1px solid rgba(204, 74, 15, 0.2);
+  border-radius: 7px;
+  padding: 4px 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.btn-delete:hover { background: rgba(204, 74, 15, 0.2); }
 
 /* ── Animations ─────────────────────────────────────────────────────── */
 @keyframes slideDown {
