@@ -481,33 +481,41 @@ function VehiclesPanel({ vehicles, tasks, isAdmin, onEdit, onDelete }) {
         )}
         {vehicles.map(v => {
           const svc = lastService(v.name)
+          const colorMap = { black: '#333', white: '#fff', silver: '#c0c0c0', gray: '#808080', grey: '#808080', red: '#e53e3e', blue: '#3b82f6', green: '#38a169', yellow: '#ecc94b', orange: '#dd6b20', brown: '#8b4513', gold: '#d4a017', beige: '#f5f5dc', midnight: '#1a1a2e' }
+          const colorDot = v.color ? (colorMap[v.color.split(' ')[0].toLowerCase()] || 'var(--d-sub)') : null
           return (
-            <div key={v.id} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
+            <div key={v.id} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '14px 16px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
                 <div>
-                  <div style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '14px', color: 'var(--d-text)' }}>{v.name}</div>
+                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', color: 'var(--d-text)' }}>{v.name}</div>
                   {(v.make || v.model || v.trim_level) && (
-                    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', marginTop: '2px', letterSpacing: '0.06em' }}>
+                    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', marginTop: '2px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                       {[v.make, v.model, v.trim_level].filter(Boolean).join(' · ')}
+                    </div>
+                  )}
+                  {v.color && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
+                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: colorDot, border: colorDot === '#fff' || colorDot === '#f5f5dc' ? '1px solid var(--d-border)' : 'none', display: 'inline-block' }} />
+                      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{v.color}</span>
                     </div>
                   )}
                 </div>
                 {isAdmin && (
-                  <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
-                    <button onClick={() => setEditingVehicle(v)} title="Edit" className="vehicle-icon-btn" style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-faint)', cursor: 'pointer', padding: '3px 8px', borderRadius: '5px', fontSize: '12px', fontFamily: "'DM Mono', monospace" }}>✏ Edit</button>
-                    <button onClick={() => setDeletingVehicle(v)} title="Remove" className="vehicle-icon-btn" style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-faint)', cursor: 'pointer', padding: '3px 8px', borderRadius: '5px', fontSize: '12px', fontFamily: "'DM Mono', monospace" }}>× Del</button>
+                  <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
+                    <button onClick={() => setEditingVehicle(v)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', cursor: 'pointer', padding: '4px 10px', borderRadius: '6px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Edit</button>
+                    <button onClick={() => setDeletingVehicle(v)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--rust)', cursor: 'pointer', padding: '4px 10px', borderRadius: '6px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Del</button>
                   </div>
                 )}
               </div>
-              <div style={{ display: 'flex', gap: '10px', marginTop: '8px', flexWrap: 'wrap' }}>
-                {v.color && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>🎨 {v.color}</span>}
-                {v.current_mileage && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--amber)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>ODO {Number(v.current_mileage).toLocaleString()} mi</span>}
-              </div>
-              {svc && (
-                <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px solid var(--d-border)' }}>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '7px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', marginBottom: '3px' }}>Last Service</div>
-                  <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--d-muted)' }}>{svc.service}</div>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--green)', marginTop: '2px' }}>{fmtDate(svc.service_date)}</div>
+              {svc ? (
+                <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--d-border)' }}>
+                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Last Service</div>
+                  <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--d-muted)', marginTop: '3px' }}>{svc.service}</div>
+                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px', color: 'var(--d-text)', marginTop: '2px' }}>{new Date(svc.service_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                </div>
+              ) : (
+                <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--d-border)' }}>
+                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', padding: '4px 0' }}>No services yet</div>
                 </div>
               )}
             </div>
@@ -957,17 +965,17 @@ export default function App() {
             <div className="progress-bar-inner" style={{ width: `${progressPct}%`, height: '100%', background: 'linear-gradient(90deg, var(--rust), var(--amber))', borderRadius: '3px' }} />
           </div>
 
-          {/* Stat row */}
-          <div style={{ display: 'flex', borderTop: '1px solid var(--d-border)' }}>
+          {/* Stat grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
             {[
               { value: doneCount, label: 'Done', color: 'var(--green)' },
               { value: inProgressCount, label: 'In Prog', color: 'var(--amber)' },
               { value: remainCount, label: 'Remain', color: 'var(--d-sub)' },
               { value: filteredByVehicle.length, label: 'Total', color: 'var(--d-muted)' },
-            ].map((s, i) => (
-              <div key={s.label} style={{ flex: 1, textAlign: 'center', paddingTop: '10px', borderLeft: i > 0 ? '1px solid var(--d-border)' : 'none' }}>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', color: s.color, lineHeight: 1 }}>{s.value}</div>
-                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginTop: '3px' }}>{s.label}</div>
+            ].map(s => (
+              <div key={s.label} style={{ border: '1px solid var(--d-border)', borderRadius: '8px', padding: '12px 14px' }}>
+                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '28px', color: s.color, lineHeight: 1 }}>{s.value}</div>
+                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginTop: '4px' }}>{s.label}</div>
               </div>
             ))}
           </div>
