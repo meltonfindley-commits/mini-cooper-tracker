@@ -67,15 +67,15 @@ function fmtDate(dateStr) {
 const inputStyle = (extra = {}) => ({
   background: 'var(--d-bg)', border: '1px solid var(--d-border)', color: 'var(--d-text)',
   padding: '7px 10px', borderRadius: '4px', fontSize: '13px',
-  fontFamily: "'Barlow', sans-serif", width: '100%', outline: 'none', ...extra,
+  fontFamily: "'Space Grotesk', sans-serif", width: '100%', outline: 'none', ...extra,
 })
 const selectStyle = (extra = {}) => ({
   background: 'var(--d-bg)', border: '1px solid var(--d-border)', color: 'var(--d-muted)',
   padding: '7px 10px', borderRadius: '4px', fontSize: '13px',
-  fontFamily: "'Barlow', sans-serif", width: '100%', cursor: 'pointer', outline: 'none', ...extra,
+  fontFamily: "'Space Grotesk', sans-serif", width: '100%', cursor: 'pointer', outline: 'none', ...extra,
 })
 const labelStyle = {
-  display: 'block', fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)',
+  display: 'block', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-faint)',
   letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '5px',
 }
 
@@ -141,7 +141,7 @@ function Toast({ message, onDone }) {
     <div style={{
       position: 'fixed', bottom: '96px', right: '20px', zIndex: 200,
       background: 'var(--green)', color: '#1A1714', padding: '10px 18px',
-      borderRadius: '8px', fontFamily: "'DM Mono', monospace", fontSize: '12px',
+      borderRadius: '8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px',
       fontWeight: 500, animation: 'toastIn 0.2s ease', letterSpacing: '0.04em',
     }}>
       ✓ {message}
@@ -192,14 +192,14 @@ function LoginPage() {
     flex: 1, padding: '6px', background: active ? 'var(--rust)' : 'none',
     border: `1px solid ${active ? 'var(--rust)' : 'var(--d-border)'}`,
     color: active ? '#fff' : 'var(--d-faint)', borderRadius: '6px',
-    fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase',
+    fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase',
     letterSpacing: '0.08em', cursor: 'pointer',
   })
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--d-bg)' }}>
       <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '28px 32px', width: '320px' }}>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '26px', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '20px' }}>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '26px', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '20px' }}>
           <span style={{ color: 'var(--d-text)' }}>LOG</span><span style={{ color: 'var(--rust)' }}>YARD</span>
         </div>
 
@@ -210,11 +210,11 @@ function LoginPage() {
         </div>
 
         {signupSent ? (
-          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--green)', lineHeight: 1.6 }}>
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: 'var(--green)', lineHeight: 1.6 }}>
             Check your email at <strong>{email}</strong> and click the confirmation link to activate your account.
           </div>
         ) : resetSent ? (
-          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--green)', lineHeight: 1.6 }}>
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: 'var(--green)', lineHeight: 1.6 }}>
             Reset link sent to <strong>{email}</strong>. Check your email and click the link to set a new password.
           </div>
         ) : (
@@ -231,15 +231,15 @@ function LoginPage() {
                   onKeyDown={e => e.key === 'Enter' && handleSignUp()} style={inputStyle()} />
               </>
             )}
-            {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '11px', marginTop: '8px' }}>{error}</div>}
+            {error && <div style={{ color: 'var(--rust)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', marginTop: '8px' }}>{error}</div>}
             <button onClick={mode === 'signin' ? handleSignIn : handleSignUp} disabled={loading} style={{
               width: '100%', marginTop: '20px', background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px',
-              padding: '10px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
+              padding: '10px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
             }}>{loading ? (mode === 'signin' ? 'Signing in...' : 'Creating account...') : (mode === 'signin' ? 'Sign In' : 'Create Account')}</button>
             {mode === 'signin' && (
               <button onClick={handleForgot} disabled={loading} style={{
                 width: '100%', marginTop: '10px', background: 'none', border: 'none',
-                fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em',
+                fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em',
                 color: 'var(--d-faint)', cursor: 'pointer', opacity: loading ? 0.4 : 1,
               }}>Forgot password?</button>
             )}
@@ -273,22 +273,22 @@ function ResetPasswordPage({ onDone }) {
       <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '28px 32px', width: '320px' }}>
         {done ? (
           <>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--green)', marginBottom: '8px' }}>Password Updated</div>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--d-sub)' }}>Taking you to the app...</div>
+            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--green)', marginBottom: '8px' }}>Password Updated</div>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: 'var(--d-sub)' }}>Taking you to the app...</div>
           </>
         ) : (
           <>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--rust)', marginBottom: '4px' }}>Set New Password</div>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', marginBottom: '24px' }}>Choose a new password</div>
+            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--rust)', marginBottom: '4px' }}>Set New Password</div>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', marginBottom: '24px' }}>Choose a new password</div>
             <label style={labelStyle}>New Password</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle()} autoFocus />
             <label style={{ ...labelStyle, marginTop: '12px' }}>Confirm Password</label>
             <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleReset()} style={inputStyle()} />
-            {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '11px', marginTop: '8px' }}>{error}</div>}
+            {error && <div style={{ color: 'var(--rust)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', marginTop: '8px' }}>{error}</div>}
             <button onClick={handleReset} disabled={loading} style={{
               width: '100%', marginTop: '20px', background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px',
-              padding: '10px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
+              padding: '10px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
             }}>{loading ? 'Updating...' : 'Update Password'}</button>
           </>
         )}
@@ -311,14 +311,14 @@ function RenameVehicleModal({ vehicle, vehicles, onClose, onSave }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '24px 28px', width: '360px' }}>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--amber)', marginBottom: '18px' }}>Rename Vehicle</div>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--amber)', marginBottom: '18px' }}>Rename Vehicle</div>
         <label style={labelStyle}>Vehicle Name</label>
         <input value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handle()} style={inputStyle()} autoFocus />
-        {error && <div style={{ color: 'var(--rust)', fontSize: '12px', marginTop: '6px', fontFamily: "'DM Mono', monospace" }}>{error}</div>}
-        <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--d-sub)', marginTop: '10px', lineHeight: 1.5 }}>All existing services assigned to this vehicle will be updated to the new name.</div>
+        {error && <div style={{ color: 'var(--rust)', fontSize: '12px', marginTop: '6px', fontFamily: "'IBM Plex Mono', monospace" }}>{error}</div>}
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '12px', color: 'var(--d-sub)', marginTop: '10px', lineHeight: 1.5 }}>All existing services assigned to this vehicle will be updated to the new name.</div>
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-          <button onClick={handle} style={{ flex: 1, background: 'var(--amber)', color: '#1A1714', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Save &amp; Update</button>
-          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
+          <button onClick={handle} style={{ flex: 1, background: 'var(--amber)', color: '#1A1714', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Save &amp; Update</button>
+          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
         </div>
       </div>
     </div>
@@ -330,20 +330,20 @@ function DeleteVehicleModal({ vehicle, taskCount, onClose, onConfirm }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '24px 28px', width: '360px' }}>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: '16px' }}>Delete Vehicle</div>
-        <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '14px', color: 'var(--d-text)', marginBottom: '10px' }}>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: '16px' }}>Delete Vehicle</div>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '14px', color: 'var(--d-text)', marginBottom: '10px' }}>
           Remove <strong style={{ color: 'var(--amber)' }}>{vehicle.name}</strong> from your vehicle list?
         </div>
         {taskCount > 0 ? (
-          <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: 'var(--d-sub)', background: 'var(--d-surf)', border: '1px solid var(--d-border)', borderRadius: '7px', padding: '10px 12px', lineHeight: 1.6 }}>
+          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: 'var(--d-sub)', background: 'var(--d-surf)', border: '1px solid var(--d-border)', borderRadius: '7px', padding: '10px 12px', lineHeight: 1.6 }}>
             This vehicle has <strong style={{ color: 'var(--amber)' }}>{taskCount} {taskCount === 1 ? 'service' : 'services'}</strong> assigned. Those services will be kept — only the vehicle name is removed from the list.
           </div>
         ) : (
-          <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: 'var(--d-sub)' }}>This vehicle has no services assigned.</div>
+          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: 'var(--d-sub)' }}>This vehicle has no services assigned.</div>
         )}
         <div style={{ display: 'flex', gap: '8px', marginTop: '18px' }}>
-          <button onClick={onConfirm} style={{ flex: 1, background: 'rgba(204,74,15,0.1)', border: '1px solid var(--rust)', color: 'var(--rust)', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Confirm Delete</button>
-          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
+          <button onClick={onConfirm} style={{ flex: 1, background: 'rgba(204,74,15,0.1)', border: '1px solid var(--rust)', color: 'var(--rust)', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Confirm Delete</button>
+          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
         </div>
       </div>
     </div>
@@ -402,7 +402,7 @@ function VehicleFormModal({ vehicle, vehicles, onClose, onSave }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '24px 28px', width: '480px', maxWidth: '95vw', maxHeight: '90vh', overflowY: 'auto' }}>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--amber)', marginBottom: '20px' }}>{isEdit ? 'Edit Vehicle' : 'Add Vehicle'}</div>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--amber)', marginBottom: '20px' }}>{isEdit ? 'Edit Vehicle' : 'Add Vehicle'}</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div style={{ display: 'flex', gap: '12px' }}>
             <div style={{ flex: '0 0 90px' }}>
@@ -440,8 +440,8 @@ function VehicleFormModal({ vehicle, vehicles, onClose, onSave }) {
           </div>
           {composedName && (
             <div style={{ background: 'var(--d-surf)', border: '1px solid var(--d-border)', borderRadius: '7px', padding: '10px 14px' }}>
-              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '4px' }}>Name Preview</div>
-              <div style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '15px', color: 'var(--d-text)' }}>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '4px' }}>Name Preview</div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '15px', color: 'var(--d-text)' }}>
                 {composedName}
                 {form.color && <span style={{ color: 'var(--d-sub)', fontWeight: 400, fontSize: '13px' }}> · {form.color}</span>}
                 {form.originalMileage && <span style={{ color: 'var(--d-sub)', fontWeight: 400, fontSize: '13px' }}> · orig {parseInt(form.originalMileage).toLocaleString()} mi</span>}
@@ -449,11 +449,11 @@ function VehicleFormModal({ vehicle, vehicles, onClose, onSave }) {
               </div>
             </div>
           )}
-          {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '12px' }}>{error}</div>}
+          {error && <div style={{ color: 'var(--rust)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px' }}>{error}</div>}
         </div>
         <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
-          <button onClick={handle} disabled={saving} style={{ flex: 1, background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.6 : 1 }}>{saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Vehicle'}</button>
-          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
+          <button onClick={handle} disabled={saving} style={{ flex: 1, background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.6 : 1 }}>{saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Vehicle'}</button>
+          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
         </div>
       </div>
     </div>
@@ -475,7 +475,7 @@ function VehiclesPanel({ vehicles, tasks, isAdmin, onEdit, onDelete }) {
     <>
       <div style={{ margin: '0 20px 14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {vehicles.length === 0 && (
-          <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '14px', fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: 'var(--d-faint)' }}>
+          <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '14px', fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: 'var(--d-faint)' }}>
             {isAdmin ? 'No vehicles yet — tap + to add one.' : 'No vehicles configured.'}
           </div>
         )}
@@ -487,38 +487,38 @@ function VehiclesPanel({ vehicles, tasks, isAdmin, onEdit, onDelete }) {
             <div key={v.id} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '14px 16px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
                 <div>
-                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', color: 'var(--d-text)' }}>{v.name}</div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '20px', color: 'var(--d-text)' }}>{v.name}</div>
                   {(v.make || v.model || v.trim_level) && (
-                    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', marginTop: '2px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', marginTop: '2px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                       {[v.make, v.model, v.trim_level].filter(Boolean).join(' · ')}
                     </div>
                   )}
                   {v.color && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
                       <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: colorDot, border: colorDot === '#fff' || colorDot === '#f5f5dc' ? '1px solid var(--d-border)' : 'none', display: 'inline-block' }} />
-                      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{v.color}</span>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{v.color}</span>
                     </div>
                   )}
                 </div>
                 {isAdmin && (
                   <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
-                    <button onClick={() => setEditingVehicle(v)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', cursor: 'pointer', padding: '4px 10px', borderRadius: '6px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Edit</button>
-                    <button onClick={() => setDeletingVehicle(v)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--rust)', cursor: 'pointer', padding: '4px 10px', borderRadius: '6px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Del</button>
+                    <button onClick={() => setEditingVehicle(v)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', cursor: 'pointer', padding: '4px 10px', borderRadius: '6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Edit</button>
+                    <button onClick={() => setDeletingVehicle(v)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--rust)', cursor: 'pointer', padding: '4px 10px', borderRadius: '6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Del</button>
                   </div>
                 )}
               </div>
               {svc ? (
                 <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--d-border)' }}>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Last Service</div>
-                  <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--d-muted)', marginTop: '3px' }}>{svc.service}</div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Last Service</div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '12px', color: 'var(--d-muted)', marginTop: '3px' }}>{svc.service}</div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '2px' }}>
-                    <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px', color: 'var(--d-text)' }}>{new Date(svc.service_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                    {svc.mileage && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--amber)' }}>{Number(svc.mileage).toLocaleString()} mi</span>}
+                    <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '14px', color: 'var(--d-text)' }}>{new Date(svc.service_date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    {svc.mileage && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--amber)' }}>{Number(svc.mileage).toLocaleString()} mi</span>}
                   </div>
                 </div>
               ) : (
                 <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--d-border)' }}>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', padding: '4px 0' }}>No services yet</div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', padding: '4px 0' }}>No services yet</div>
                 </div>
               )}
             </div>
@@ -564,7 +564,7 @@ function TaskModal({ task, vehicles, onClose, onSave }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '24px 28px', width: '480px', maxWidth: '95vw', maxHeight: '90vh', overflowY: 'auto' }}>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--amber)', marginBottom: '20px' }}>{task ? 'Edit Service' : 'Add Service'}</div>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--amber)', marginBottom: '20px' }}>{task ? 'Edit Service' : 'Add Service'}</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div><label style={labelStyle}>Vehicle</label>
             <select value={form.vehicle || ''} onChange={e => set('vehicle', e.target.value || null)} style={selectStyle()}>
@@ -613,8 +613,8 @@ function TaskModal({ task, vehicles, onClose, onSave }) {
           </div>
         </div>
         <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
-          <button onClick={() => onSave(form)} disabled={!form.category || !form.service.trim()} style={{ flex: 1, background: 'var(--amber)', color: '#1A1714', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: (!form.category || !form.service.trim()) ? 'default' : 'pointer', opacity: (!form.category || !form.service.trim()) ? 0.4 : 1 }}>{task ? 'Save Changes' : 'Add Service'}</button>
-          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
+          <button onClick={() => onSave(form)} disabled={!form.category || !form.service.trim()} style={{ flex: 1, background: 'var(--amber)', color: '#1A1714', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: (!form.category || !form.service.trim()) ? 'default' : 'pointer', opacity: (!form.category || !form.service.trim()) ? 0.4 : 1 }}>{task ? 'Save Changes' : 'Add Service'}</button>
+          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
         </div>
       </div>
     </div>
@@ -669,8 +669,8 @@ function BulkUploadModal({ onClose, onUpload }) {
     <div className="modal-overlay" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '24px 28px', width: '680px', maxWidth: '95vw', maxHeight: '90vh', display: 'flex', flexDirection: 'column', gap: '14px' }}>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
-          <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--amber)' }}>Bulk Upload Services</div>
-          <button onClick={downloadTemplate} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', padding: '4px 10px', borderRadius: '6px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>↓ Template</button>
+          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--amber)' }}>Bulk Upload Services</div>
+          <button onClick={downloadTemplate} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', padding: '4px 10px', borderRadius: '6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>↓ Template</button>
         </div>
 
         {stage === 'drop' && (
@@ -679,63 +679,63 @@ function BulkUploadModal({ onClose, onUpload }) {
             onClick={() => fileRef.current?.click()}
             style={{ border: `2px dashed ${dragging ? 'var(--rust)' : 'var(--d-border)'}`, borderRadius: '10px', padding: '40px 24px', textAlign: 'center', cursor: 'pointer', background: dragging ? 'rgba(204,74,15,0.04)' : 'var(--d-surf)', transition: 'all 0.15s' }}>
             <div style={{ fontSize: '32px', marginBottom: '10px' }}>📂</div>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '16px', color: 'var(--d-muted)', letterSpacing: '0.06em' }}>Drop CSV file here</div>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', marginTop: '6px' }}>or click to browse</div>
+            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '16px', color: 'var(--d-muted)', letterSpacing: '0.06em' }}>Drop CSV file here</div>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', marginTop: '6px' }}>or click to browse</div>
             <input ref={fileRef} type="file" accept=".csv,text/csv" onChange={e => { processFile(e.target.files[0]); e.target.value = '' }} style={{ display: 'none' }} />
           </div>
         )}
 
         {parseErrors.length > 0 && stage !== 'done' && (
           <div style={{ background: 'rgba(204,74,15,0.08)', border: '1px solid rgba(204,74,15,0.3)', borderRadius: '7px', padding: '10px 14px' }}>
-            {parseErrors.map((e, i) => <div key={i} style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--rust)', marginBottom: '2px' }}>• {e}</div>)}
+            {parseErrors.map((e, i) => <div key={i} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--rust)', marginBottom: '2px' }}>• {e}</div>)}
           </div>
         )}
 
         {allWarnings.length > 0 && stage === 'preview' && (
           <div style={{ background: 'rgba(232,148,58,0.08)', border: '1px solid rgba(232,148,58,0.3)', borderRadius: '7px', padding: '10px 14px' }}>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--amber)', marginBottom: '5px' }}>Warnings — values defaulted</div>
-            {allWarnings.map((w, i) => <div key={i} style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--amber)', marginBottom: '2px' }}>• {w}</div>)}
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--amber)', marginBottom: '5px' }}>Warnings — values defaulted</div>
+            {allWarnings.map((w, i) => <div key={i} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--amber)', marginBottom: '2px' }}>• {w}</div>)}
           </div>
         )}
 
-        {uploadError && <div style={{ background: 'rgba(204,74,15,0.08)', border: '1px solid rgba(204,74,15,0.3)', borderRadius: '7px', padding: '10px 14px' }}><div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--rust)' }}>⚠ {uploadError}</div></div>}
+        {uploadError && <div style={{ background: 'rgba(204,74,15,0.08)', border: '1px solid rgba(204,74,15,0.3)', borderRadius: '7px', padding: '10px 14px' }}><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--rust)' }}>⚠ {uploadError}</div></div>}
 
         {stage === 'preview' && previewRows.length > 0 && (
           <div style={{ flex: 1, overflowY: 'auto' }}>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', marginBottom: '8px' }}>Preview — {previewRows.length} {previewRows.length === 1 ? 'service' : 'services'} ready</div>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', marginBottom: '8px' }}>Preview — {previewRows.length} {previewRows.length === 1 ? 'service' : 'services'} ready</div>
             <div style={{ background: 'var(--d-surf)', border: '1px solid var(--d-border)', borderRadius: '7px', overflow: 'hidden' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '2fr 1.2fr 1fr 70px 90px 60px', padding: '7px 12px', borderBottom: '1px solid var(--d-border)' }}>
-                {['Service', 'Category', 'Vehicle', 'Priority', 'Status', 'Cost'].map(h => <div key={h} style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>{h}</div>)}
+                {['Service', 'Category', 'Vehicle', 'Priority', 'Status', 'Cost'].map(h => <div key={h} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>{h}</div>)}
               </div>
               {previewRows.map((row, i) => (
                 <div key={i} style={{ display: 'grid', gridTemplateColumns: '2fr 1.2fr 1fr 70px 90px 60px', padding: '7px 12px', borderBottom: i < previewRows.length - 1 ? '1px solid var(--d-border)' : 'none', background: row._warnings?.length ? 'rgba(232,148,58,0.04)' : 'transparent' }}>
-                  <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--d-text)', paddingRight: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.service}</div>
-                  <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--d-muted)', paddingRight: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.category}</div>
-                  <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: row.vehicle ? 'var(--d-text)' : 'var(--d-faint)', paddingRight: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.vehicle || '—'}</div>
-                  <div><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', padding: '2px 6px', borderRadius: '4px', background: PRIORITY_COLOR[row.priority] + '22', color: PRIORITY_COLOR[row.priority] }}>{row.priority}</span></div>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: STATUS_COLOR[row.status] }}>{row.status}</div>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: row.cost ? 'var(--purple)' : 'var(--d-faint)' }}>{row.cost ? `$${row.cost}` : '—'}</div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '12px', color: 'var(--d-text)', paddingRight: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.service}</div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '12px', color: 'var(--d-muted)', paddingRight: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.category}</div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '12px', color: row.vehicle ? 'var(--d-text)' : 'var(--d-faint)', paddingRight: '8px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.vehicle || '—'}</div>
+                  <div><span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', padding: '2px 6px', borderRadius: '4px', background: PRIORITY_COLOR[row.priority] + '22', color: PRIORITY_COLOR[row.priority] }}>{row.priority}</span></div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: STATUS_COLOR[row.status] }}>{row.status}</div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: row.cost ? 'var(--purple)' : 'var(--d-faint)' }}>{row.cost ? `$${row.cost}` : '—'}</div>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {stage === 'uploading' && <div style={{ textAlign: 'center', padding: '32px', fontFamily: "'Barlow', sans-serif", color: 'var(--d-sub)', fontSize: '14px' }}>Uploading {previewRows.length} services...</div>}
+        {stage === 'uploading' && <div style={{ textAlign: 'center', padding: '32px', fontFamily: "'Space Grotesk', sans-serif", color: 'var(--d-sub)', fontSize: '14px' }}>Uploading {previewRows.length} services...</div>}
         {stage === 'done' && (
           <div style={{ textAlign: 'center', padding: '32px' }}>
             <div style={{ fontSize: '36px', marginBottom: '12px' }}>✅</div>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--green)' }}>{uploadCount} {uploadCount === 1 ? 'Service' : 'Services'} Added</div>
+            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--green)' }}>{uploadCount} {uploadCount === 1 ? 'Service' : 'Services'} Added</div>
           </div>
         )}
 
         <div style={{ display: 'flex', gap: '8px' }}>
           {stage === 'preview' && <>
-            <button onClick={handleConfirm} style={{ flex: 1, background: 'var(--amber)', color: '#1A1714', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Import {previewRows.length} {previewRows.length === 1 ? 'Service' : 'Services'}</button>
-            <button onClick={reset} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px 16px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Back</button>
+            <button onClick={handleConfirm} style={{ flex: 1, background: 'var(--amber)', color: '#1A1714', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Import {previewRows.length} {previewRows.length === 1 ? 'Service' : 'Services'}</button>
+            <button onClick={reset} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px 16px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Back</button>
           </>}
-          {stage === 'done' && <button onClick={onClose} style={{ flex: 1, background: 'var(--green)', color: '#1A1714', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Done</button>}
-          {(stage === 'drop' || stage === 'uploading') && <button onClick={onClose} disabled={stage === 'uploading'} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: stage === 'uploading' ? 'default' : 'pointer' }}>Cancel</button>}
+          {stage === 'done' && <button onClick={onClose} style={{ flex: 1, background: 'var(--green)', color: '#1A1714', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Done</button>}
+          {(stage === 'drop' || stage === 'uploading') && <button onClick={onClose} disabled={stage === 'uploading'} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: stage === 'uploading' ? 'default' : 'pointer' }}>Cancel</button>}
         </div>
       </div>
     </div>
@@ -927,14 +927,14 @@ export default function App() {
 
   if (authLoading) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--d-bg)' }}>
-      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Loading...</div>
+      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Loading...</div>
     </div>
   )
   if (isRecovery) return <ResetPasswordPage onDone={() => setIsRecovery(false)} />
   if (!user) return <LoginPage />
 
   return (
-    <div style={{ fontFamily: "'Barlow', sans-serif", background: 'var(--d-bg)', minHeight: '100vh', color: 'var(--d-text)', paddingTop: 'env(safe-area-inset-top)' }}>
+    <div style={{ fontFamily: "'Space Grotesk', sans-serif", background: 'var(--d-bg)', minHeight: '100vh', color: 'var(--d-text)', paddingTop: 'env(safe-area-inset-top)' }}>
       <div style={{ maxWidth: isMobile ? '430px' : '1400px', margin: '0 auto', padding: isMobile ? '0' : '0 24px' }}>
         <Nav activeApp="dashboard" dashboardUrl="/" fuelUrl={FUEL_URL} user={user} onSignOut={() => supabase.auth.signOut()} />
 
@@ -943,8 +943,8 @@ export default function App() {
           {/* Vehicle filter */}
           {vehicles.length > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Filter</span>
-              <select value={vehicleFilter} onChange={e => setVehicleFilter(e.target.value)} style={{ background: 'var(--d-surf)', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '3px 8px', borderRadius: '6px', fontFamily: "'DM Mono', monospace", fontSize: '10px', cursor: 'pointer' }}>
+              <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Filter</span>
+              <select value={vehicleFilter} onChange={e => setVehicleFilter(e.target.value)} style={{ background: 'var(--d-surf)', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '3px 8px', borderRadius: '6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', cursor: 'pointer' }}>
                 {vehicleOptions.map(v => <option key={v}>{v}</option>)}
               </select>
             </div>
@@ -953,16 +953,16 @@ export default function App() {
           {/* Top row */}
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '10px' }}>
             <div>
-              <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '42px', color: 'var(--amber)', lineHeight: 1 }}>{progressPct}%</div>
-              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-sub)', marginTop: '2px' }}>Overall Progress</div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 900, fontSize: '42px', color: 'var(--amber)', lineHeight: 1 }}>{progressPct}%</div>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-sub)', marginTop: '2px' }}>Overall Progress</div>
             </div>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '28px', color: 'var(--rust)', lineHeight: 1 }}>{highPendingCount}</div>
-              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginTop: '2px' }}>High</div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 900, fontSize: '28px', color: 'var(--rust)', lineHeight: 1 }}>{highPendingCount}</div>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginTop: '2px' }}>High</div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '20px', color: 'var(--purple)', lineHeight: 1 }}>${totalCost > 0 ? (totalCost / 1000).toFixed(1) + 'k' : '0'}</div>
-              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginTop: '2px' }}>Est. Spend</div>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontWeight: 500, fontSize: '20px', color: 'var(--purple)', lineHeight: 1 }}>${totalCost > 0 ? (totalCost / 1000).toFixed(1) + 'k' : '0'}</div>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginTop: '2px' }}>Est. Spend</div>
             </div>
           </div>
 
@@ -980,8 +980,8 @@ export default function App() {
               { value: filteredByVehicle.length, label: 'Total', color: 'var(--d-muted)' },
             ].map(s => (
               <div key={s.label} style={{ border: '1px solid var(--d-border)', borderRadius: '8px', padding: '12px 14px' }}>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '28px', color: s.color, lineHeight: 1 }}>{s.value}</div>
-                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginTop: '4px' }}>{s.label}</div>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '28px', color: s.color, lineHeight: 1 }}>{s.value}</div>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginTop: '4px' }}>{s.label}</div>
               </div>
             ))}
           </div>
@@ -999,7 +999,7 @@ export default function App() {
                   background: activeTab === tab.id ? 'rgba(204,74,15,0.1)' : 'transparent',
                   border: 'none', borderLeft: `2px solid ${activeTab === tab.id ? 'var(--rust)' : 'transparent'}`,
                   cursor: 'pointer', color: activeTab === tab.id ? 'var(--rust)' : 'var(--d-sub)',
-                  fontFamily: "'DM Mono', monospace", fontSize: '11px', textTransform: 'uppercase',
+                  fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', textTransform: 'uppercase',
                   letterSpacing: '0.08em', textAlign: 'left',
                 }}>
                   <span style={{ fontSize: '15px' }}>{tab.icon}</span>
@@ -1011,7 +1011,7 @@ export default function App() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
                   width: 'calc(100% - 24px)', margin: '14px 12px 6px', padding: '9px 14px',
                   background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '8px',
-                  cursor: 'pointer', fontFamily: "'DM Mono', monospace", fontSize: '11px',
+                  cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px',
                   textTransform: 'uppercase', letterSpacing: '0.08em',
                 }}>+ {activeTab === 'service' ? 'Add Service' : 'Add Vehicle'}</button>
               )}
@@ -1020,7 +1020,7 @@ export default function App() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
                   width: 'calc(100% - 24px)', margin: '0 12px', padding: '7px 14px',
                   background: 'none', color: 'var(--d-sub)', border: '1px solid var(--d-border)', borderRadius: '8px',
-                  cursor: 'pointer', fontFamily: "'DM Mono', monospace", fontSize: '11px',
+                  cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px',
                   textTransform: 'uppercase', letterSpacing: '0.08em',
                 }}>↑ Bulk Upload</button>
               )}
@@ -1030,7 +1030,7 @@ export default function App() {
           {/* ── Main content ── */}
           <div style={{ flex: 1, minWidth: 0 }}>
             {loading ? (
-              <div style={{ textAlign: 'center', padding: '48px', fontFamily: "'DM Mono', monospace", fontSize: '12px', color: 'var(--d-sub)' }}>Loading services...</div>
+              <div style={{ textAlign: 'center', padding: '48px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px', color: 'var(--d-sub)' }}>Loading services...</div>
             ) : activeTab === 'service' ? (
               <>
                 {isMobile ? (
@@ -1042,7 +1042,7 @@ export default function App() {
                         return (
                           <button key={chip.label} onClick={() => setFilter(chip.filter)} style={{
                             flexShrink: 0, whiteSpace: 'nowrap', borderRadius: '20px', padding: '6px 12px',
-                            border: 'none', cursor: 'pointer', fontFamily: "'DM Mono', monospace",
+                            border: 'none', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace",
                             fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em',
                             background: isActive ? 'rgba(204,74,15,0.15)' : 'var(--d-card)',
                             color: isActive ? 'var(--rust)' : 'var(--d-sub)',
@@ -1053,14 +1053,14 @@ export default function App() {
                       {isAdmin && (
                         <button onClick={() => setShowBulkUpload(true)} style={{
                           flexShrink: 0, whiteSpace: 'nowrap', borderRadius: '20px', padding: '6px 12px',
-                          border: 'none', cursor: 'pointer', fontFamily: "'DM Mono', monospace",
+                          border: 'none', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace",
                           fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em',
                           background: 'var(--d-card)', color: 'var(--d-sub)', outline: '1px solid var(--d-border)',
                         }}>↑ Bulk Upload</button>
                       )}
                     </div>
-                    {tasks.length === 0 && <div style={{ textAlign: 'center', padding: '60px 24px' }}><div style={{ fontSize: '48px', marginBottom: '16px' }}>🔧</div><div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--d-sub)', letterSpacing: '0.06em' }}>No Services Yet</div></div>}
-                    {filtered.length === 0 && tasks.length > 0 && <div style={{ textAlign: 'center', padding: '32px', fontFamily: "'Barlow', sans-serif", fontSize: '14px', color: 'var(--d-faint)' }}>No services match the current filters</div>}
+                    {tasks.length === 0 && <div style={{ textAlign: 'center', padding: '60px 24px' }}><div style={{ fontSize: '48px', marginBottom: '16px' }}>🔧</div><div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--d-sub)', letterSpacing: '0.06em' }}>No Services Yet</div></div>}
+                    {filtered.length === 0 && tasks.length > 0 && <div style={{ textAlign: 'center', padding: '32px', fontFamily: "'Space Grotesk', sans-serif", fontSize: '14px', color: 'var(--d-faint)' }}>No services match the current filters</div>}
                     {CATEGORIES.map(cat => {
                       const catTasks = grouped[cat]
                       if (!catTasks || catTasks.length === 0) return null
@@ -1069,9 +1069,9 @@ export default function App() {
                         <div key={cat} style={{ marginBottom: '16px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '7px', padding: '6px 20px', marginBottom: '4px' }}>
                             <span style={{ fontSize: '12px' }}>{CAT_ICONS[cat]}</span>
-                            <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-sub)' }}>{cat}</span>
+                            <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-sub)' }}>{cat}</span>
                             <div style={{ flex: 1, height: '1px', background: 'var(--d-border)' }} />
-                            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{catDone}/{catTasks.length}</span>
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{catDone}/{catTasks.length}</span>
                           </div>
                           {catTasks.map(task => {
                             const isExpanded = expandedTask === task.id
@@ -1080,27 +1080,27 @@ export default function App() {
                               <div key={task.id} style={{ margin: '0 20px 7px' }}>
                                 <div onClick={() => setExpandedTask(isExpanded ? null : task.id)} style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: isExpanded ? '10px 10px 0 0' : '10px', borderBottom: isExpanded ? 'none' : '1px solid var(--d-border)', cursor: 'pointer', minHeight: '48px', padding: '12px 14px', overflow: 'hidden' }}>
                                   <div style={{ width: '3px', alignSelf: 'stretch', borderRadius: '2px', background: accentColor, flexShrink: 0, margin: '-12px 0' }} />
-                                  <span style={{ flex: 1, fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '14px', color: task.status === 'Done' ? 'var(--d-faint)' : 'var(--d-text)', textDecoration: task.status === 'Done' ? 'line-through' : 'none', minWidth: 0 }}>{task.service}</span>
+                                  <span style={{ flex: 1, fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '14px', color: task.status === 'Done' ? 'var(--d-faint)' : 'var(--d-text)', textDecoration: task.status === 'Done' ? 'line-through' : 'none', minWidth: 0 }}>{task.service}</span>
                                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-                                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '2px 7px', borderRadius: '4px', background: task.status === 'Not Started' ? 'rgba(157,152,148,0.12)' : task.status === 'In Progress' ? 'rgba(232,148,58,0.15)' : 'rgba(52,211,153,0.12)', color: task.status === 'Not Started' ? 'var(--d-sub)' : task.status === 'In Progress' ? 'var(--amber)' : 'var(--green)' }}>{task.status === 'Not Started' ? 'Pending' : task.status === 'In Progress' ? 'Active' : 'Done'}</span>
-                                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', color: PRIORITY_COLOR[task.priority] }}>{task.priority}</span>
-                                    {task.cost && parseFloat(task.cost) > 0 && <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '12px', color: 'var(--purple)' }}>${parseFloat(task.cost).toLocaleString()}</span>}
-                                    {task.vehicle && vehicleFilter === 'All' && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', background: 'var(--d-surf)', border: '1px solid var(--d-border)', borderRadius: '3px', padding: '1px 5px', whiteSpace: 'nowrap' }}>{task.vehicle}</span>}
-                                    <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{isExpanded ? '▲' : '▼'}</span>
+                                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '2px 7px', borderRadius: '4px', background: task.status === 'Not Started' ? 'rgba(157,152,148,0.12)' : task.status === 'In Progress' ? 'rgba(232,148,58,0.15)' : 'rgba(52,211,153,0.12)', color: task.status === 'Not Started' ? 'var(--d-sub)' : task.status === 'In Progress' ? 'var(--amber)' : 'var(--green)' }}>{task.status === 'Not Started' ? 'Pending' : task.status === 'In Progress' ? 'Active' : 'Done'}</span>
+                                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', color: PRIORITY_COLOR[task.priority] }}>{task.priority}</span>
+                                    {task.cost && parseFloat(task.cost) > 0 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontWeight: 500, fontSize: '12px', color: 'var(--purple)' }}>${parseFloat(task.cost).toLocaleString()}</span>}
+                                    {task.vehicle && vehicleFilter === 'All' && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', background: 'var(--d-surf)', border: '1px solid var(--d-border)', borderRadius: '3px', padding: '1px 5px', whiteSpace: 'nowrap' }}>{task.vehicle}</span>}
+                                    <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{isExpanded ? '▲' : '▼'}</span>
                                   </div>
                                 </div>
                                 {isExpanded && (
                                   <div className="expand-row" style={{ background: 'var(--d-surf)', borderRadius: '0 0 10px 10px', border: '1px solid var(--d-border)', borderTop: 'none', padding: '12px 14px 14px' }}>
                                     <div style={{ marginBottom: '12px' }}>
-                                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '6px' }}>Change Status</div>
+                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '6px' }}>Change Status</div>
                                       <div style={{ display: 'flex', gap: '6px' }}>
-                                        {STATUSES.map(s => { const isActive = task.status === s; const col = s === 'Not Started' ? 'var(--d-sub)' : s === 'In Progress' ? 'var(--amber)' : 'var(--green)'; const bg = isActive ? (s === 'Not Started' ? 'rgba(157,152,148,0.2)' : s === 'In Progress' ? 'rgba(232,148,58,0.2)' : 'rgba(52,211,153,0.2)') : 'transparent'; return <button key={s} onClick={e => { e.stopPropagation(); if (isAdmin) handleStatusChange(task.id, s) }} style={{ flex: 1, minHeight: '36px', borderRadius: '6px', border: isActive ? `1px solid ${col}` : '1px solid var(--d-border)', background: bg, color: isActive ? col : 'var(--d-sub)', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: isAdmin ? 'pointer' : 'default' }}>{isActive ? '● ' : ''}{s}</button> })}
+                                        {STATUSES.map(s => { const isActive = task.status === s; const col = s === 'Not Started' ? 'var(--d-sub)' : s === 'In Progress' ? 'var(--amber)' : 'var(--green)'; const bg = isActive ? (s === 'Not Started' ? 'rgba(157,152,148,0.2)' : s === 'In Progress' ? 'rgba(232,148,58,0.2)' : 'rgba(52,211,153,0.2)') : 'transparent'; return <button key={s} onClick={e => { e.stopPropagation(); if (isAdmin) handleStatusChange(task.id, s) }} style={{ flex: 1, minHeight: '36px', borderRadius: '6px', border: isActive ? `1px solid ${col}` : '1px solid var(--d-border)', background: bg, color: isActive ? col : 'var(--d-sub)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: isAdmin ? 'pointer' : 'default' }}>{isActive ? '● ' : ''}{s}</button> })}
                                       </div>
                                     </div>
-                                    <div style={{ marginBottom: '10px' }}><div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Estimated Cost</div><input type="number" placeholder="0" value={task.cost ?? ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'cost', e.target.value)} style={{ width: '100%', padding: '9px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--purple)', fontSize: '14px', minHeight: '44px', fontFamily: "'DM Mono', monospace" }} /></div>
-                                    <div style={{ marginBottom: '10px' }}><div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Shop / Dealership</div><input placeholder={isAdmin ? 'e.g. Firestone, BMW of Dallas...' : '—'} value={task.shop || ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'shop', e.target.value)} style={{ width: '100%', padding: '9px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-text)', fontSize: '14px', minHeight: '44px', fontFamily: "'Barlow', sans-serif" }} /></div>
-                                    <div style={{ marginBottom: '12px' }}><div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Notes</div><textarea placeholder={isAdmin ? 'Add notes, part numbers...' : ''} value={task.notes || ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'notes', e.target.value)} style={{ width: '100%', padding: '9px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-text)', fontSize: '14px', minHeight: '72px', resize: 'none', fontFamily: "'Barlow', sans-serif" }} /></div>
-                                    {isAdmin && <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px' }}><button onClick={e => { e.stopPropagation(); setEditingTask(task) }} style={{ background: 'rgba(129,140,248,0.1)', color: 'var(--purple)', border: '1px solid rgba(129,140,248,0.2)', borderRadius: '7px', padding: '9px 14px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Edit</button>{confirmDelete === task.id ? <span style={{ display: 'flex', gap: '6px', alignItems: 'center' }}><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>Delete?</span><button onClick={() => handleDelete(task.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px', padding: '7px 12px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Yes</button><button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '7px 12px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>No</button></span> : <button onClick={e => { e.stopPropagation(); setConfirmDelete(task.id) }} style={{ background: 'rgba(204,74,15,0.1)', color: 'var(--rust)', border: '1px solid rgba(204,74,15,0.2)', borderRadius: '7px', padding: '9px 14px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Delete</button>}</div>}
+                                    <div style={{ marginBottom: '10px' }}><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Estimated Cost</div><input type="number" placeholder="0" value={task.cost ?? ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'cost', e.target.value)} style={{ width: '100%', padding: '9px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--purple)', fontSize: '14px', minHeight: '44px', fontFamily: "'IBM Plex Mono', monospace" }} /></div>
+                                    <div style={{ marginBottom: '10px' }}><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Shop / Dealership</div><input placeholder={isAdmin ? 'e.g. Firestone, BMW of Dallas...' : '—'} value={task.shop || ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'shop', e.target.value)} style={{ width: '100%', padding: '9px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-text)', fontSize: '14px', minHeight: '44px', fontFamily: "'Space Grotesk', sans-serif" }} /></div>
+                                    <div style={{ marginBottom: '12px' }}><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Notes</div><textarea placeholder={isAdmin ? 'Add notes, part numbers...' : ''} value={task.notes || ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'notes', e.target.value)} style={{ width: '100%', padding: '9px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-text)', fontSize: '14px', minHeight: '72px', resize: 'none', fontFamily: "'Space Grotesk', sans-serif" }} /></div>
+                                    {isAdmin && <div style={{ display: 'flex', justifyContent: 'space-between', gap: '8px' }}><button onClick={e => { e.stopPropagation(); setEditingTask(task) }} style={{ background: 'rgba(129,140,248,0.1)', color: 'var(--purple)', border: '1px solid rgba(129,140,248,0.2)', borderRadius: '7px', padding: '9px 14px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Edit</button>{confirmDelete === task.id ? <span style={{ display: 'flex', gap: '6px', alignItems: 'center' }}><span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>Delete?</span><button onClick={() => handleDelete(task.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px', padding: '7px 12px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Yes</button><button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '7px 12px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>No</button></span> : <button onClick={e => { e.stopPropagation(); setConfirmDelete(task.id) }} style={{ background: 'rgba(204,74,15,0.1)', color: 'var(--rust)', border: '1px solid rgba(204,74,15,0.2)', borderRadius: '7px', padding: '9px 14px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Delete</button>}</div>}
                                   </div>
                                 )}
                               </div>
@@ -1119,7 +1119,7 @@ export default function App() {
                         return (
                           <button key={chip.label} onClick={() => setFilter(chip.filter)} style={{
                             whiteSpace: 'nowrap', borderRadius: '20px', padding: '6px 12px',
-                            border: 'none', cursor: 'pointer', fontFamily: "'DM Mono', monospace",
+                            border: 'none', cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace",
                             fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em',
                             background: isActive ? 'rgba(204,74,15,0.15)' : 'var(--d-card)',
                             color: isActive ? 'var(--rust)' : 'var(--d-sub)',
@@ -1129,15 +1129,15 @@ export default function App() {
                       })}
                     </div>
                     {tasks.length === 0 ? (
-                      <div style={{ textAlign: 'center', padding: '60px 24px' }}><div style={{ fontSize: '48px', marginBottom: '16px' }}>🔧</div><div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--d-sub)', letterSpacing: '0.06em' }}>No Services Yet</div></div>
+                      <div style={{ textAlign: 'center', padding: '60px 24px' }}><div style={{ fontSize: '48px', marginBottom: '16px' }}>🔧</div><div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--d-sub)', letterSpacing: '0.06em' }}>No Services Yet</div></div>
                     ) : filtered.length === 0 ? (
-                      <div style={{ textAlign: 'center', padding: '32px', fontFamily: "'Barlow', sans-serif", fontSize: '14px', color: 'var(--d-faint)' }}>No services match the current filters</div>
+                      <div style={{ textAlign: 'center', padding: '32px', fontFamily: "'Space Grotesk', sans-serif", fontSize: '14px', color: 'var(--d-faint)' }}>No services match the current filters</div>
                     ) : (
                       <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', overflow: 'hidden' }}>
                         {/* Table header */}
                         <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr 110px 80px 90px 160px', padding: '8px 14px 8px 22px', background: 'var(--d-surf)', borderBottom: '1px solid var(--d-border)' }}>
                           {['Service', 'Category', 'Status', 'Priority', 'Cost', vehicleFilter === 'All' ? 'Vehicle' : ''].map((h, i) => (
-                            <span key={i} style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>{h}</span>
+                            <span key={i} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>{h}</span>
                           ))}
                         </div>
                         {/* Table rows */}
@@ -1149,37 +1149,37 @@ export default function App() {
                               <div onClick={() => setExpandedTask(isExpanded ? null : task.id)} style={{ display: 'grid', gridTemplateColumns: '3fr 2fr 110px 80px 90px 160px', alignItems: 'center', paddingRight: '14px', borderBottom: '1px solid var(--d-border)', background: isExpanded ? 'rgba(61,53,48,0.6)' : 'transparent', cursor: 'pointer', minHeight: '44px', transition: 'background 0.1s' }}>
                                 <div style={{ display: 'flex', alignItems: 'stretch', overflow: 'hidden', paddingRight: '12px' }}>
                                   <div style={{ width: '4px', background: accentColor, flexShrink: 0, marginRight: '10px', alignSelf: 'stretch' }} />
-                                  <span style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', padding: '12px 0', color: task.status === 'Done' ? 'var(--d-faint)' : 'var(--d-text)', textDecoration: task.status === 'Done' ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.service}</span>
+                                  <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '13px', padding: '12px 0', color: task.status === 'Done' ? 'var(--d-faint)' : 'var(--d-text)', textDecoration: task.status === 'Done' ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{task.service}</span>
                                 </div>
-                                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: '8px' }}>{task.category}</span>
-                                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '2px 7px', borderRadius: '4px', width: 'fit-content', background: task.status === 'Not Started' ? 'rgba(157,152,148,0.12)' : task.status === 'In Progress' ? 'rgba(232,148,58,0.15)' : 'rgba(52,211,153,0.12)', color: task.status === 'Not Started' ? 'var(--d-sub)' : task.status === 'In Progress' ? 'var(--amber)' : 'var(--green)' }}>{task.status === 'Not Started' ? 'Pending' : task.status === 'In Progress' ? 'Active' : 'Done'}</span>
-                                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', color: PRIORITY_COLOR[task.priority] }}>{task.priority}</span>
-                                <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '12px', color: task.cost && parseFloat(task.cost) > 0 ? 'var(--purple)' : 'var(--d-faint)' }}>{task.cost && parseFloat(task.cost) > 0 ? `$${parseFloat(task.cost).toLocaleString()}` : '—'}</span>
-                                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{vehicleFilter === 'All' ? (task.vehicle || '—') : ''}</span>
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: '8px' }}>{task.category}</span>
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '2px 7px', borderRadius: '4px', width: 'fit-content', background: task.status === 'Not Started' ? 'rgba(157,152,148,0.12)' : task.status === 'In Progress' ? 'rgba(232,148,58,0.15)' : 'rgba(52,211,153,0.12)', color: task.status === 'Not Started' ? 'var(--d-sub)' : task.status === 'In Progress' ? 'var(--amber)' : 'var(--green)' }}>{task.status === 'Not Started' ? 'Pending' : task.status === 'In Progress' ? 'Active' : 'Done'}</span>
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', color: PRIORITY_COLOR[task.priority] }}>{task.priority}</span>
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontWeight: 500, fontSize: '12px', color: task.cost && parseFloat(task.cost) > 0 ? 'var(--purple)' : 'var(--d-faint)' }}>{task.cost && parseFloat(task.cost) > 0 ? `$${parseFloat(task.cost).toLocaleString()}` : '—'}</span>
+                                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{vehicleFilter === 'All' ? (task.vehicle || '—') : ''}</span>
                               </div>
                               {isExpanded && (
                                 <div className="expand-row" style={{ background: 'var(--d-surf)', borderBottom: '1px solid var(--d-border)', padding: '14px 18px 16px 18px' }}>
                                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '16px', marginBottom: '12px' }}>
                                     <div>
-                                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '6px' }}>Change Status</div>
+                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '6px' }}>Change Status</div>
                                       <div style={{ display: 'flex', gap: '5px' }}>
-                                        {STATUSES.map(s => { const isActive = task.status === s; const col = s === 'Not Started' ? 'var(--d-sub)' : s === 'In Progress' ? 'var(--amber)' : 'var(--green)'; const bg = isActive ? (s === 'Not Started' ? 'rgba(157,152,148,0.2)' : s === 'In Progress' ? 'rgba(232,148,58,0.2)' : 'rgba(52,211,153,0.2)') : 'transparent'; return <button key={s} onClick={e => { e.stopPropagation(); if (isAdmin) handleStatusChange(task.id, s) }} style={{ flex: 1, minHeight: '30px', borderRadius: '6px', border: isActive ? `1px solid ${col}` : '1px solid var(--d-border)', background: bg, color: isActive ? col : 'var(--d-sub)', fontFamily: "'DM Mono', monospace", fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.06em', cursor: isAdmin ? 'pointer' : 'default' }}>{isActive ? '● ' : ''}{s === 'Not Started' ? 'Pending' : s === 'In Progress' ? 'Active' : 'Done'}</button> })}
+                                        {STATUSES.map(s => { const isActive = task.status === s; const col = s === 'Not Started' ? 'var(--d-sub)' : s === 'In Progress' ? 'var(--amber)' : 'var(--green)'; const bg = isActive ? (s === 'Not Started' ? 'rgba(157,152,148,0.2)' : s === 'In Progress' ? 'rgba(232,148,58,0.2)' : 'rgba(52,211,153,0.2)') : 'transparent'; return <button key={s} onClick={e => { e.stopPropagation(); if (isAdmin) handleStatusChange(task.id, s) }} style={{ flex: 1, minHeight: '30px', borderRadius: '6px', border: isActive ? `1px solid ${col}` : '1px solid var(--d-border)', background: bg, color: isActive ? col : 'var(--d-sub)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.06em', cursor: isAdmin ? 'pointer' : 'default' }}>{isActive ? '● ' : ''}{s === 'Not Started' ? 'Pending' : s === 'In Progress' ? 'Active' : 'Done'}</button> })}
                                       </div>
                                     </div>
                                     <div>
-                                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Estimated Cost</div>
-                                      <input type="number" placeholder="0" value={task.cost ?? ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'cost', e.target.value)} style={{ width: '100%', padding: '7px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--purple)', fontSize: '13px', fontFamily: "'DM Mono', monospace" }} />
+                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Estimated Cost</div>
+                                      <input type="number" placeholder="0" value={task.cost ?? ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'cost', e.target.value)} style={{ width: '100%', padding: '7px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--purple)', fontSize: '13px', fontFamily: "'IBM Plex Mono', monospace" }} />
                                     </div>
                                     <div>
-                                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Shop / Dealership</div>
-                                      <input placeholder={isAdmin ? 'e.g. Firestone, BMW of Dallas...' : '—'} value={task.shop || ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'shop', e.target.value)} style={{ width: '100%', padding: '7px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-text)', fontSize: '13px', fontFamily: "'Barlow', sans-serif" }} />
+                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Shop / Dealership</div>
+                                      <input placeholder={isAdmin ? 'e.g. Firestone, BMW of Dallas...' : '—'} value={task.shop || ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'shop', e.target.value)} style={{ width: '100%', padding: '7px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-text)', fontSize: '13px', fontFamily: "'Space Grotesk', sans-serif" }} />
                                     </div>
                                     <div>
-                                      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Notes</div>
-                                      <textarea placeholder={isAdmin ? 'Add notes, part numbers...' : ''} value={task.notes || ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'notes', e.target.value)} style={{ width: '100%', padding: '7px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-text)', fontSize: '13px', minHeight: '60px', resize: 'none', fontFamily: "'Barlow', sans-serif" }} />
+                                      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.14em', color: 'var(--d-faint)', marginBottom: '5px' }}>Notes</div>
+                                      <textarea placeholder={isAdmin ? 'Add notes, part numbers...' : ''} value={task.notes || ''} readOnly={!isAdmin} onClick={e => e.stopPropagation()} onChange={e => isAdmin && handleFieldChange(task.id, 'notes', e.target.value)} style={{ width: '100%', padding: '7px 10px', borderRadius: '7px', background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-text)', fontSize: '13px', minHeight: '60px', resize: 'none', fontFamily: "'Space Grotesk', sans-serif" }} />
                                     </div>
                                   </div>
-                                  {isAdmin && <div style={{ display: 'flex', gap: '8px' }}><button onClick={e => { e.stopPropagation(); setEditingTask(task) }} style={{ background: 'rgba(129,140,248,0.1)', color: 'var(--purple)', border: '1px solid rgba(129,140,248,0.2)', borderRadius: '7px', padding: '7px 14px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Edit</button>{confirmDelete === task.id ? <span style={{ display: 'flex', gap: '6px', alignItems: 'center' }}><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>Delete?</span><button onClick={() => handleDelete(task.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px', padding: '5px 12px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Yes</button><button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '5px 12px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>No</button></span> : <button onClick={e => { e.stopPropagation(); setConfirmDelete(task.id) }} style={{ background: 'rgba(204,74,15,0.1)', color: 'var(--rust)', border: '1px solid rgba(204,74,15,0.2)', borderRadius: '7px', padding: '7px 14px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Delete</button>}</div>}
+                                  {isAdmin && <div style={{ display: 'flex', gap: '8px' }}><button onClick={e => { e.stopPropagation(); setEditingTask(task) }} style={{ background: 'rgba(129,140,248,0.1)', color: 'var(--purple)', border: '1px solid rgba(129,140,248,0.2)', borderRadius: '7px', padding: '7px 14px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Edit</button>{confirmDelete === task.id ? <span style={{ display: 'flex', gap: '6px', alignItems: 'center' }}><span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>Delete?</span><button onClick={() => handleDelete(task.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px', padding: '5px 12px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Yes</button><button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '5px 12px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>No</button></span> : <button onClick={e => { e.stopPropagation(); setConfirmDelete(task.id) }} style={{ background: 'rgba(204,74,15,0.1)', color: 'var(--rust)', border: '1px solid rgba(204,74,15,0.2)', borderRadius: '7px', padding: '7px 14px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Delete</button>}</div>}
                                 </div>
                               )}
                             </div>
@@ -1192,7 +1192,7 @@ export default function App() {
               </>
             ) : activeTab === 'summary' ? (
               <div>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', padding: '0 20px', marginBottom: '14px' }}>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', padding: '0 20px', marginBottom: '14px' }}>
                   Category Breakdown{vehicleFilter !== 'All' ? ` — ${vehicleFilter}` : ''}
                 </div>
                 {CATEGORIES.map(cat => {
@@ -1206,24 +1206,24 @@ export default function App() {
                     <div key={cat} style={{ margin: '0 20px 8px', background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                         <span>{CAT_ICONS[cat]}</span>
-                        <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '14px', textTransform: 'uppercase', color: 'var(--d-text)' }}>{cat}</span>
-                        <span style={{ marginLeft: 'auto', fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{done}/{catTasks.length}</span>
-                        {catCost > 0 && <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '12px', color: 'var(--purple)' }}>${catCost.toLocaleString()}</span>}
+                        <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '14px', textTransform: 'uppercase', color: 'var(--d-text)' }}>{cat}</span>
+                        <span style={{ marginLeft: 'auto', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{done}/{catTasks.length}</span>
+                        {catCost > 0 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontWeight: 500, fontSize: '12px', color: 'var(--purple)' }}>${catCost.toLocaleString()}</span>}
                       </div>
                       <div style={{ background: 'var(--d-border)', borderRadius: '2px', height: '3px', overflow: 'hidden', marginBottom: '6px' }}>
                         <div style={{ width: `${pct}%`, height: '100%', background: pct === 100 ? 'var(--green)' : 'var(--amber)', borderRadius: '2px', transition: 'width 0.4s' }} />
                       </div>
                       <div style={{ display: 'flex', gap: '12px' }}>
-                        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--green)' }}>✓ {done} done</span>
-                        {inProg > 0 && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--amber)' }}>◐ {inProg} in progress</span>}
-                        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>{catTasks.length - done - inProg} remaining</span>
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--green)' }}>✓ {done} done</span>
+                        {inProg > 0 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--amber)' }}>◐ {inProg} in progress</span>}
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>{catTasks.length - done - inProg} remaining</span>
                       </div>
                     </div>
                   )
                 })}
                 {vehicleFilter === 'All' && vehicles.length > 0 && (
                   <div style={{ margin: '20px 20px 8px' }}>
-                    <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginBottom: '10px' }}>By Vehicle</div>
+                    <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '16px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginBottom: '10px' }}>By Vehicle</div>
                     {[...vehicles, { id: 0, name: null }].map(v => {
                       const vTasks = v.name ? tasks.filter(t => t.vehicle === v.name) : tasks.filter(t => !t.vehicle)
                       if (!vTasks.length) return null
@@ -1233,9 +1233,9 @@ export default function App() {
                       return (
                         <div key={v.id} style={{ marginBottom: '8px', background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '10px 14px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                            <span style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', color: v.name ? 'var(--d-text)' : 'var(--d-faint)' }}>{v.name || '(no vehicle)'}</span>
-                            <span style={{ marginLeft: 'auto', fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{vDone}/{vTasks.length}</span>
-                            {vCost > 0 && <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '12px', color: 'var(--purple)' }}>${vCost.toLocaleString()}</span>}
+                            <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '13px', color: v.name ? 'var(--d-text)' : 'var(--d-faint)' }}>{v.name || '(no vehicle)'}</span>
+                            <span style={{ marginLeft: 'auto', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{vDone}/{vTasks.length}</span>
+                            {vCost > 0 && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontWeight: 500, fontSize: '12px', color: 'var(--purple)' }}>${vCost.toLocaleString()}</span>}
                           </div>
                           <div style={{ background: 'var(--d-border)', borderRadius: '2px', height: '3px', overflow: 'hidden' }}>
                             <div style={{ width: `${vPct}%`, height: '100%', background: vPct === 100 ? 'var(--green)' : 'var(--amber)', borderRadius: '2px', transition: 'width 0.4s' }} />
@@ -1246,7 +1246,7 @@ export default function App() {
                   </div>
                 )}
                 <div style={{ margin: '16px 20px 8px', background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
-                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginBottom: '10px' }}>Cost Summary{vehicleFilter !== 'All' ? ` — ${vehicleFilter}` : ''}</div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginBottom: '10px' }}>Cost Summary{vehicleFilter !== 'All' ? ` — ${vehicleFilter}` : ''}</div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {[
                       { label: 'Total estimated', value: `$${totalCost.toLocaleString()}`, color: 'var(--purple)' },
@@ -1254,8 +1254,8 @@ export default function App() {
                       { label: 'Remaining budget', value: `$${(totalCost - doneCost).toLocaleString()}`, color: 'var(--amber)', border: true },
                     ].map(r => (
                       <div key={r.label} style={{ display: 'flex', justifyContent: 'space-between', paddingTop: r.border ? '8px' : 0, borderTop: r.border ? '1px solid var(--d-border)' : 'none' }}>
-                        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)' }}>{r.label}</span>
-                        <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '12px', color: r.color }}>{r.value}</span>
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)' }}>{r.label}</span>
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontWeight: 500, fontSize: '12px', color: r.color }}>{r.value}</span>
                       </div>
                     ))}
                   </div>
@@ -1263,34 +1263,34 @@ export default function App() {
               </div>
             ) : activeTab === 'garage' ? (
               <div style={{ padding: '0 0 8px' }}>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', padding: '4px 20px 12px' }}>My Garage</div>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', padding: '4px 20px 12px' }}>My Garage</div>
                 <VehiclesPanel vehicles={vehicles} tasks={tasks} isAdmin={isAdmin} onEdit={handleEditVehicle} onDelete={handleDeleteVehicle} />
-                {!isAdmin && vehicles.length > 0 && <div style={{ margin: '0 20px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>Login as admin to add or manage vehicles</div>}
-                {vehicles.length === 0 && !isAdmin && <div style={{ textAlign: 'center', padding: '48px 24px' }}><div style={{ fontSize: '40px', marginBottom: '12px' }}>🏎</div><div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--d-sub)' }}>No Vehicles Yet</div></div>}
+                {!isAdmin && vehicles.length > 0 && <div style={{ margin: '0 20px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>Login as admin to add or manage vehicles</div>}
+                {vehicles.length === 0 && !isAdmin && <div style={{ textAlign: 'center', padding: '48px 24px' }}><div style={{ fontSize: '40px', marginBottom: '12px' }}>🏎</div><div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--d-sub)' }}>No Vehicles Yet</div></div>}
               </div>
             ) : (
               /* Stats tab */
               <div style={{ padding: '0 20px 8px' }}>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginBottom: '14px' }}>Stats{vehicleFilter !== 'All' ? ` — ${vehicleFilter}` : ''}</div>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginBottom: '14px' }}>Stats{vehicleFilter !== 'All' ? ` — ${vehicleFilter}` : ''}</div>
                 {filteredByVehicle.length === 0 ? (
-                  <div style={{ textAlign: 'center', padding: '40px', fontFamily: "'DM Mono', monospace", fontSize: '12px', color: 'var(--d-faint)' }}>No task data to visualize yet</div>
+                  <div style={{ textAlign: 'center', padding: '40px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px', color: 'var(--d-faint)' }}>No task data to visualize yet</div>
                 ) : (
                   <>
                     <div style={{ display: isMobile ? 'block' : 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
                       <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px', marginBottom: isMobile ? '10px' : 0 }}>
-                        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Task Status</div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Task Status</div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <PieChart width={120} height={120}><Pie data={statusPieData} cx={55} cy={55} innerRadius={36} outerRadius={52} dataKey="value" stroke="none">{statusPieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}</Pie></PieChart>
-                          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>{statusPieData.map(d => (<div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><div style={{ width: '8px', height: '8px', borderRadius: '2px', background: d.color, flexShrink: 0 }} /><div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', textTransform: 'uppercase', letterSpacing: '0.08em', flex: 1 }}>{d.name}</div><div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', color: d.color }}>{d.value}</div></div>))}</div>
+                          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>{statusPieData.map(d => (<div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><div style={{ width: '8px', height: '8px', borderRadius: '2px', background: d.color, flexShrink: 0 }} /><div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', textTransform: 'uppercase', letterSpacing: '0.08em', flex: 1 }}>{d.name}</div><div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '20px', color: d.color }}>{d.value}</div></div>))}</div>
                         </div>
                       </div>
                       <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
-                        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Completion by Category</div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Completion by Category</div>
                         <ResponsiveContainer width="100%" height={catBarData.length * 28 + 10}>
                           <BarChart data={catBarData} layout="vertical" margin={{ top: 0, right: 30, bottom: 0, left: 56 }}>
-                            <XAxis type="number" domain={[0, 100]} tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} tickFormatter={v => `${v}%`} axisLine={false} tickLine={false} />
-                            <YAxis type="category" dataKey="name" tick={{ fill: '#9E9894', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} width={56} />
-                            <Tooltip formatter={(v, _, p) => [`${v}%`, p.payload.full]} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
+                            <XAxis type="number" domain={[0, 100]} tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'IBM Plex Mono, monospace' }} tickFormatter={v => `${v}%`} axisLine={false} tickLine={false} />
+                            <YAxis type="category" dataKey="name" tick={{ fill: '#9E9894', fontSize: 8, fontFamily: 'IBM Plex Mono, monospace' }} axisLine={false} tickLine={false} width={56} />
+                            <Tooltip formatter={(v, _, p) => [`${v}%`, p.payload.full]} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'IBM Plex Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
                             <Bar dataKey="pct" radius={[0, 4, 4, 0]}>{catBarData.map((d, i) => <Cell key={i} fill={d.pct === 100 ? '#34D399' : '#E8943A'} />)}</Bar>
                           </BarChart>
                         </ResponsiveContainer>
@@ -1298,12 +1298,12 @@ export default function App() {
                     </div>
                     {costBarData.length > 0 && (
                       <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
-                        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Estimated Cost by Category</div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Estimated Cost by Category</div>
                         <ResponsiveContainer width="100%" height={costBarData.length * 28 + 10}>
                           <BarChart data={costBarData} layout="vertical" margin={{ top: 0, right: 30, bottom: 0, left: 56 }}>
-                            <XAxis type="number" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} tickFormatter={v => `$${v}`} axisLine={false} tickLine={false} />
-                            <YAxis type="category" dataKey="name" tick={{ fill: '#9E9894', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} width={56} />
-                            <Tooltip formatter={v => [`$${v.toLocaleString()}`, 'Estimated']} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
+                            <XAxis type="number" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'IBM Plex Mono, monospace' }} tickFormatter={v => `$${v}`} axisLine={false} tickLine={false} />
+                            <YAxis type="category" dataKey="name" tick={{ fill: '#9E9894', fontSize: 8, fontFamily: 'IBM Plex Mono, monospace' }} axisLine={false} tickLine={false} width={56} />
+                            <Tooltip formatter={v => [`$${v.toLocaleString()}`, 'Estimated']} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'IBM Plex Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
                             <Bar dataKey="cost" fill="#818CF8" radius={[0, 4, 4, 0]} />
                           </BarChart>
                         </ResponsiveContainer>
@@ -1329,7 +1329,7 @@ export default function App() {
             {NAV_TABS.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', opacity: activeTab === tab.id ? 1 : 0.35 }}>
                 <span style={{ fontSize: '17px' }}>{tab.icon}</span>
-                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: activeTab === tab.id ? 'var(--rust)' : 'var(--d-sub)' }}>{tab.label}</span>
+                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: activeTab === tab.id ? 'var(--rust)' : 'var(--d-sub)' }}>{tab.label}</span>
               </button>
             ))}
           </div>

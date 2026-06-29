@@ -11,15 +11,15 @@ const FUEL_URL = import.meta.env.VITE_FUEL_URL || '/'
 const inputStyle = (extra = {}) => ({
   background: 'var(--d-bg)', border: '1px solid var(--d-border)', color: 'var(--d-text)',
   padding: '7px 10px', borderRadius: '4px', fontSize: '13px',
-  fontFamily: "'Barlow', sans-serif", width: '100%', outline: 'none', ...extra,
+  fontFamily: "'Space Grotesk', sans-serif", width: '100%', outline: 'none', ...extra,
 })
 const selectStyle = (extra = {}) => ({
   background: 'var(--d-bg)', border: '1px solid var(--d-border)', color: 'var(--d-muted)',
   padding: '7px 10px', borderRadius: '4px', fontSize: '13px',
-  fontFamily: "'Barlow', sans-serif", width: '100%', cursor: 'pointer', outline: 'none', ...extra,
+  fontFamily: "'Space Grotesk', sans-serif", width: '100%', cursor: 'pointer', outline: 'none', ...extra,
 })
 const labelStyle = {
-  display: 'block', fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)',
+  display: 'block', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-faint)',
   letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '5px',
 }
 
@@ -90,7 +90,7 @@ function Toast({ message, onDone }) {
     <div style={{
       position: 'fixed', bottom: '96px', right: '20px', zIndex: 200,
       background: 'var(--green)', color: '#1A1714', padding: '10px 18px',
-      borderRadius: '8px', fontFamily: "'DM Mono', monospace", fontSize: '12px',
+      borderRadius: '8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px',
       fontWeight: 500, animation: 'toastIn 0.2s ease', letterSpacing: '0.04em',
     }}>
       ✓ {message}
@@ -141,14 +141,14 @@ function LoginPage() {
     flex: 1, padding: '6px', background: active ? 'var(--rust)' : 'none',
     border: `1px solid ${active ? 'var(--rust)' : 'var(--d-border)'}`,
     color: active ? '#fff' : 'var(--d-faint)', borderRadius: '6px',
-    fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase',
+    fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase',
     letterSpacing: '0.08em', cursor: 'pointer',
   })
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--d-bg)' }}>
       <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '28px 32px', width: '320px' }}>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '26px', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '20px' }}>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '26px', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '20px' }}>
           <span style={{ color: 'var(--d-text)' }}>LOG</span><span style={{ color: 'var(--rust)' }}>YARD</span>
         </div>
 
@@ -159,11 +159,11 @@ function LoginPage() {
         </div>
 
         {signupSent ? (
-          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--green)', lineHeight: 1.6 }}>
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: 'var(--green)', lineHeight: 1.6 }}>
             Check your email at <strong>{email}</strong> and click the confirmation link to activate your account.
           </div>
         ) : resetSent ? (
-          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--green)', lineHeight: 1.6 }}>
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: 'var(--green)', lineHeight: 1.6 }}>
             Reset link sent to <strong>{email}</strong>. Check your email and click the link to set a new password.
           </div>
         ) : (
@@ -180,15 +180,15 @@ function LoginPage() {
                   onKeyDown={e => e.key === 'Enter' && handleSignUp()} style={inputStyle()} />
               </>
             )}
-            {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '11px', marginTop: '8px' }}>{error}</div>}
+            {error && <div style={{ color: 'var(--rust)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', marginTop: '8px' }}>{error}</div>}
             <button onClick={mode === 'signin' ? handleSignIn : handleSignUp} disabled={loading} style={{
               width: '100%', marginTop: '20px', background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px',
-              padding: '10px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
+              padding: '10px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
             }}>{loading ? (mode === 'signin' ? 'Signing in...' : 'Creating account...') : (mode === 'signin' ? 'Sign In' : 'Create Account')}</button>
             {mode === 'signin' && (
               <button onClick={handleForgot} disabled={loading} style={{
                 width: '100%', marginTop: '10px', background: 'none', border: 'none',
-                fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em',
+                fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em',
                 color: 'var(--d-faint)', cursor: 'pointer', opacity: loading ? 0.4 : 1,
               }}>Forgot password?</button>
             )}
@@ -222,22 +222,22 @@ function ResetPasswordPage({ onDone }) {
       <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '28px 32px', width: '320px' }}>
         {done ? (
           <>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--green)', marginBottom: '8px' }}>Password Updated</div>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--d-sub)' }}>Taking you to the app...</div>
+            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--green)', marginBottom: '8px' }}>Password Updated</div>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: 'var(--d-sub)' }}>Taking you to the app...</div>
           </>
         ) : (
           <>
-            <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--rust)', marginBottom: '4px' }}>Set New Password</div>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', marginBottom: '24px' }}>Choose a new password</div>
+            <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--rust)', marginBottom: '4px' }}>Set New Password</div>
+            <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', marginBottom: '24px' }}>Choose a new password</div>
             <label style={labelStyle}>New Password</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} style={inputStyle()} autoFocus />
             <label style={{ ...labelStyle, marginTop: '12px' }}>Confirm Password</label>
             <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleReset()} style={inputStyle()} />
-            {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '11px', marginTop: '8px' }}>{error}</div>}
+            {error && <div style={{ color: 'var(--rust)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', marginTop: '8px' }}>{error}</div>}
             <button onClick={handleReset} disabled={loading} style={{
               width: '100%', marginTop: '20px', background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px',
-              padding: '10px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
+              padding: '10px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: loading ? 'default' : 'pointer', opacity: loading ? 0.6 : 1,
             }}>{loading ? 'Updating...' : 'Update Password'}</button>
           </>
         )}
@@ -260,14 +260,14 @@ function RenameVehicleModal({ vehicle, vehicles, onClose, onSave }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '24px 28px', width: '360px' }}>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--amber)', marginBottom: '18px' }}>Rename Vehicle</div>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--amber)', marginBottom: '18px' }}>Rename Vehicle</div>
         <label style={labelStyle}>Vehicle Name</label>
         <input value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handle()} style={inputStyle()} autoFocus />
-        {error && <div style={{ color: 'var(--rust)', fontSize: '12px', marginTop: '6px', fontFamily: "'DM Mono', monospace" }}>{error}</div>}
-        <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--d-sub)', marginTop: '10px', lineHeight: 1.5 }}>All existing fuel log entries will be updated to the new name.</div>
+        {error && <div style={{ color: 'var(--rust)', fontSize: '12px', marginTop: '6px', fontFamily: "'IBM Plex Mono', monospace" }}>{error}</div>}
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '12px', color: 'var(--d-sub)', marginTop: '10px', lineHeight: 1.5 }}>All existing fuel log entries will be updated to the new name.</div>
         <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-          <button onClick={handle} style={{ flex: 1, background: 'var(--amber)', color: '#1A1714', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Save &amp; Update</button>
-          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
+          <button onClick={handle} style={{ flex: 1, background: 'var(--amber)', color: '#1A1714', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Save &amp; Update</button>
+          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
         </div>
       </div>
     </div>
@@ -279,20 +279,20 @@ function DeleteVehicleModal({ vehicle, entryCount, onClose, onConfirm }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '24px 28px', width: '360px' }}>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: '16px' }}>Delete Vehicle</div>
-        <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '14px', color: 'var(--d-text)', marginBottom: '10px' }}>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--rust)', marginBottom: '16px' }}>Delete Vehicle</div>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '14px', color: 'var(--d-text)', marginBottom: '10px' }}>
           Remove <strong style={{ color: 'var(--amber)' }}>{vehicle.name}</strong> from your vehicle list?
         </div>
         {entryCount > 0 ? (
-          <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: 'var(--d-sub)', background: 'var(--d-surf)', border: '1px solid var(--d-border)', borderRadius: '7px', padding: '10px 12px', lineHeight: 1.6 }}>
+          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: 'var(--d-sub)', background: 'var(--d-surf)', border: '1px solid var(--d-border)', borderRadius: '7px', padding: '10px 12px', lineHeight: 1.6 }}>
             This vehicle has <strong style={{ color: 'var(--amber)' }}>{entryCount} fuel log {entryCount === 1 ? 'entry' : 'entries'}</strong>. Those entries will be kept — only the vehicle name is removed from the list.
           </div>
         ) : (
-          <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: 'var(--d-sub)' }}>This vehicle has no log entries.</div>
+          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: 'var(--d-sub)' }}>This vehicle has no log entries.</div>
         )}
         <div style={{ display: 'flex', gap: '8px', marginTop: '18px' }}>
-          <button onClick={onConfirm} style={{ flex: 1, background: 'rgba(204,74,15,0.1)', border: '1px solid var(--rust)', color: 'var(--rust)', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Confirm Delete</button>
-          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
+          <button onClick={onConfirm} style={{ flex: 1, background: 'rgba(204,74,15,0.1)', border: '1px solid var(--rust)', color: 'var(--rust)', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Confirm Delete</button>
+          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
         </div>
       </div>
     </div>
@@ -346,10 +346,10 @@ function FillUpModal({ entry, vehicles, onClose, onSave }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '24px 28px', width: '480px', maxWidth: '95vw', maxHeight: '90vh', overflowY: 'auto' }}>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--amber)', marginBottom: '20px' }}>{entry ? 'Edit Fill-Up' : 'Add Fill-Up'}</div>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--amber)', marginBottom: '20px' }}>{entry ? 'Edit Fill-Up' : 'Add Fill-Up'}</div>
 
         {noVehicles && (
-          <div style={{ color: 'var(--rust)', fontSize: '12px', background: 'rgba(204,74,15,0.08)', border: '1px solid rgba(204,74,15,0.3)', borderRadius: '7px', padding: '10px 14px', marginBottom: '14px', fontFamily: "'DM Mono', monospace" }}>
+          <div style={{ color: 'var(--rust)', fontSize: '12px', background: 'rgba(204,74,15,0.08)', border: '1px solid rgba(204,74,15,0.3)', borderRadius: '7px', padding: '10px 14px', marginBottom: '14px', fontFamily: "'IBM Plex Mono', monospace" }}>
             No vehicles found. Add a vehicle in the My Vehicles panel first.
           </div>
         )}
@@ -407,8 +407,8 @@ function FillUpModal({ entry, vehicles, onClose, onSave }) {
         </div>
 
         <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
-          <button onClick={() => valid && onSave(form)} style={{ flex: 1, background: valid ? 'var(--amber)' : 'var(--d-border)', color: valid ? '#1A1714' : 'var(--d-faint)', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: valid ? 'pointer' : 'default' }}>{entry ? 'Save Changes' : 'Add Fill-Up'}</button>
-          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
+          <button onClick={() => valid && onSave(form)} style={{ flex: 1, background: valid ? 'var(--amber)' : 'var(--d-border)', color: valid ? '#1A1714' : 'var(--d-faint)', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: valid ? 'pointer' : 'default' }}>{entry ? 'Save Changes' : 'Add Fill-Up'}</button>
+          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
         </div>
       </div>
     </div>
@@ -420,7 +420,7 @@ const CustomTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null
   const d = payload[0].payload
   return (
-    <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', padding: '8px 12px', fontFamily: "'DM Mono', monospace", fontSize: '12px' }}>
+    <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', padding: '8px 12px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px' }}>
       <div style={{ color: 'var(--d-sub)', marginBottom: '2px' }}>{fmtDate(d.date)}</div>
       {d.vehicle && <div style={{ color: 'var(--d-muted)', fontSize: '10px', marginBottom: '2px' }}>{d.vehicle}</div>}
       <div style={{ color: 'var(--amber)' }}>{fmt(d.mpg)} MPG</div>
@@ -481,7 +481,7 @@ function VehicleFormModal({ vehicle, vehicles, onClose, onSave }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '24px 28px', width: '480px', maxWidth: '95vw', maxHeight: '90vh', overflowY: 'auto' }}>
-        <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--amber)', marginBottom: '20px' }}>{isEdit ? 'Edit Vehicle' : 'Add Vehicle'}</div>
+        <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--amber)', marginBottom: '20px' }}>{isEdit ? 'Edit Vehicle' : 'Add Vehicle'}</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
           <div style={{ display: 'flex', gap: '12px' }}>
             <div style={{ flex: '0 0 90px' }}>
@@ -519,8 +519,8 @@ function VehicleFormModal({ vehicle, vehicles, onClose, onSave }) {
           </div>
           {composedName && (
             <div style={{ background: 'var(--d-surf)', border: '1px solid var(--d-border)', borderRadius: '7px', padding: '10px 14px' }}>
-              <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '4px' }}>Name Preview</div>
-              <div style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '15px', color: 'var(--d-text)' }}>
+              <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '4px' }}>Name Preview</div>
+              <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '15px', color: 'var(--d-text)' }}>
                 {composedName}
                 {form.color && <span style={{ color: 'var(--d-sub)', fontWeight: 400, fontSize: '13px' }}> · {form.color}</span>}
                 {form.originalMileage && <span style={{ color: 'var(--d-sub)', fontWeight: 400, fontSize: '13px' }}> · orig {parseInt(form.originalMileage).toLocaleString()} mi</span>}
@@ -528,11 +528,11 @@ function VehicleFormModal({ vehicle, vehicles, onClose, onSave }) {
               </div>
             </div>
           )}
-          {error && <div style={{ color: 'var(--rust)', fontFamily: "'DM Mono', monospace", fontSize: '12px' }}>{error}</div>}
+          {error && <div style={{ color: 'var(--rust)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px' }}>{error}</div>}
         </div>
         <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
-          <button onClick={handle} disabled={saving} style={{ flex: 1, background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.6 : 1 }}>{saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Vehicle'}</button>
-          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
+          <button onClick={handle} disabled={saving} style={{ flex: 1, background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.6 : 1 }}>{saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Vehicle'}</button>
+          <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
         </div>
       </div>
     </div>
@@ -554,7 +554,7 @@ function VehiclesPanel({ vehicles, logs, isAdmin, onEdit, onDelete }) {
     <>
       <div style={{ margin: '0 20px 14px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {vehicles.length === 0 && (
-          <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '14px', fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: 'var(--d-faint)' }}>
+          <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '14px', fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: 'var(--d-faint)' }}>
             {isAdmin ? 'No vehicles yet — tap + to add one.' : 'No vehicles configured.'}
           </div>
         )}
@@ -566,34 +566,34 @@ function VehiclesPanel({ vehicles, logs, isAdmin, onEdit, onDelete }) {
             <div key={v.id} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '14px 16px' }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
                 <div>
-                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', color: 'var(--d-text)' }}>{v.name}</div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '20px', color: 'var(--d-text)' }}>{v.name}</div>
                   {(v.make || v.model || v.trim_level) && (
-                    <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', marginTop: '2px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                    <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', marginTop: '2px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                       {[v.make, v.model, v.trim_level].filter(Boolean).join(' · ')}
                     </div>
                   )}
                   {v.color && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
                       <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: colorDot, border: colorDot === '#fff' || colorDot === '#f5f5dc' ? '1px solid var(--d-border)' : 'none', display: 'inline-block' }} />
-                      <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{v.color}</span>
+                      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{v.color}</span>
                     </div>
                   )}
                 </div>
                 {isAdmin && (
                   <div style={{ display: 'flex', gap: '6px', flexShrink: 0 }}>
-                    <button onClick={() => setEditingVehicle(v)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', cursor: 'pointer', padding: '4px 10px', borderRadius: '6px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Edit</button>
-                    <button onClick={() => setDeletingVehicle(v)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--rust)', cursor: 'pointer', padding: '4px 10px', borderRadius: '6px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Del</button>
+                    <button onClick={() => setEditingVehicle(v)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', cursor: 'pointer', padding: '4px 10px', borderRadius: '6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Edit</button>
+                    <button onClick={() => setDeletingVehicle(v)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--rust)', cursor: 'pointer', padding: '4px 10px', borderRadius: '6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Del</button>
                   </div>
                 )}
               </div>
               {lastFillup ? (
                 <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--d-border)' }}>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Last Fill-Up</div>
-                  <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700, fontSize: '14px', color: 'var(--d-text)', marginTop: '2px' }}>{new Date(lastFillup + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Last Fill-Up</div>
+                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '14px', color: 'var(--d-text)', marginTop: '2px' }}>{new Date(lastFillup + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
                 </div>
               ) : (
                 <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--d-border)' }}>
-                  <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', padding: '4px 0' }}>No fill-ups yet</div>
+                  <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)', padding: '4px 0' }}>No fill-ups yet</div>
                 </div>
               )}
             </div>
@@ -782,25 +782,25 @@ export default function App() {
 
   if (authLoading) return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--d-bg)' }}>
-      <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Loading...</div>
+      <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Loading...</div>
     </div>
   )
   if (isRecovery) return <ResetPasswordPage onDone={() => setIsRecovery(false)} />
   if (!user) return <LoginPage />
 
   return (
-    <div style={{ fontFamily: "'Barlow', sans-serif", background: 'var(--d-bg)', minHeight: '100vh', color: 'var(--d-text)', paddingTop: 'env(safe-area-inset-top)' }}>
+    <div style={{ fontFamily: "'Space Grotesk', sans-serif", background: 'var(--d-bg)', minHeight: '100vh', color: 'var(--d-text)', paddingTop: 'env(safe-area-inset-top)' }}>
       <div style={{ maxWidth: isMobile ? '430px' : '1400px', margin: '0 auto', padding: isMobile ? '0' : '0 24px' }}>
         <Nav activeApp="fuel" dashboardUrl={DASHBOARD_URL} fuelUrl={FUEL_URL} user={user} onSignOut={() => supabase.auth.signOut()} />
 
         {/* Stats hero card */}
         <div style={{ margin: '16px 20px', background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '12px', padding: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Stats</span>
-            <select value={statsVehicleFilter} onChange={e => setStatsVehicleFilter(e.target.value)} style={{ background: 'var(--d-surf)', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '3px 8px', borderRadius: '6px', fontFamily: "'DM Mono', monospace", fontSize: '10px', cursor: 'pointer' }}>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Stats</span>
+            <select value={statsVehicleFilter} onChange={e => setStatsVehicleFilter(e.target.value)} style={{ background: 'var(--d-surf)', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '3px 8px', borderRadius: '6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', cursor: 'pointer' }}>
               {vehicleOptions.map(v => <option key={v}>{v}</option>)}
             </select>
-            <button onClick={handleRefresh} style={{ marginLeft: 'auto', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-faint)', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer' }}>↻</button>
+            <button onClick={handleRefresh} style={{ marginLeft: 'auto', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-faint)', padding: '3px 8px', borderRadius: '6px', cursor: 'pointer' }}>↻</button>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
             {[
@@ -810,8 +810,8 @@ export default function App() {
               { label: 'Spent', value: totalSpent != null ? `$${totalSpent.toFixed(0)}` : '—', color: 'var(--purple)' },
             ].map(s => (
               <div key={s.label} style={{ border: '1px solid var(--d-border)', borderRadius: '8px', padding: '12px 14px' }}>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '28px', color: s.color, lineHeight: 1 }}>{s.value}</div>
-                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginTop: '4px' }}>{s.label}</div>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '28px', color: s.color, lineHeight: 1 }}>{s.value}</div>
+                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginTop: '4px' }}>{s.label}</div>
               </div>
             ))}
           </div>
@@ -829,7 +829,7 @@ export default function App() {
                   background: activeTab === tab.id ? 'rgba(204,74,15,0.1)' : 'transparent',
                   border: 'none', borderLeft: `2px solid ${activeTab === tab.id ? 'var(--rust)' : 'transparent'}`,
                   cursor: 'pointer', color: activeTab === tab.id ? 'var(--rust)' : 'var(--d-sub)',
-                  fontFamily: "'DM Mono', monospace", fontSize: '11px', textTransform: 'uppercase',
+                  fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', textTransform: 'uppercase',
                   letterSpacing: '0.08em', textAlign: 'left',
                 }}>
                   <span style={{ fontSize: '15px' }}>{tab.icon}</span>
@@ -841,7 +841,7 @@ export default function App() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
                   width: 'calc(100% - 24px)', margin: '14px 12px 6px', padding: '9px 14px',
                   background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '8px',
-                  cursor: 'pointer', fontFamily: "'DM Mono', monospace", fontSize: '11px',
+                  cursor: 'pointer', fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px',
                   textTransform: 'uppercase', letterSpacing: '0.08em',
                 }}>+ {activeTab === 'fillups' ? 'Add Fill-up' : 'Add Vehicle'}</button>
               )}
@@ -851,15 +851,15 @@ export default function App() {
           {/* ── Main content ── */}
           <div style={{ flex: 1, minWidth: 0 }}>
             {loading ? (
-              <div style={{ textAlign: 'center', padding: '48px', fontFamily: "'DM Mono', monospace", fontSize: '12px', color: 'var(--d-sub)' }}>Loading...</div>
+              <div style={{ textAlign: 'center', padding: '48px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px', color: 'var(--d-sub)' }}>Loading...</div>
             ) : activeTab === 'summary' ? (
               <div style={{ padding: '0 0 8px' }}>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', padding: '4px 20px 12px' }}>Summary by Vehicle</div>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', padding: '4px 20px 12px' }}>Summary by Vehicle</div>
                 {vehicles.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '60px 24px' }}>
                     <div style={{ fontSize: '48px', marginBottom: '16px' }}>⛽</div>
-                    <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--d-sub)' }}>No Vehicles</div>
-                    <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: 'var(--d-faint)', marginTop: '8px' }}>Add vehicles in the Garage tab first</div>
+                    <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '22px', textTransform: 'uppercase', color: 'var(--d-sub)' }}>No Vehicles</div>
+                    <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: 'var(--d-faint)', marginTop: '8px' }}>Add vehicles in the Garage tab first</div>
                   </div>
                 ) : (
                   <div style={{ display: isMobile ? 'flex' : 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', flexDirection: 'column', gap: '10px', padding: '0 20px' }}>
@@ -873,8 +873,8 @@ export default function App() {
                       const lastFillup = [...vLogs].sort((a, b) => b.date?.localeCompare(a.date))[0]?.date || null
                       return (
                         <div key={v.id} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
-                          <div style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '14px', color: 'var(--d-text)' }}>{v.name}</div>
-                          {(v.make || v.model || v.trim_level) && <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', marginTop: '2px', letterSpacing: '0.06em' }}>{[v.make, v.model, v.trim_level].filter(Boolean).join(' · ')}</div>}
+                          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '14px', color: 'var(--d-text)' }}>{v.name}</div>
+                          {(v.make || v.model || v.trim_level) && <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', marginTop: '2px', letterSpacing: '0.06em' }}>{[v.make, v.model, v.trim_level].filter(Boolean).join(' · ')}</div>}
                           <div style={{ display: 'flex', borderTop: '1px solid var(--d-border)', paddingTop: '8px', marginTop: '10px' }}>
                             {[
                               { label: 'Fill-ups', value: vLogs.length, color: '#D9D0C1' },
@@ -883,16 +883,16 @@ export default function App() {
                               { label: 'Spent', value: vSpent > 0 ? `$${vSpent.toFixed(0)}` : '—', color: '#818CF8' },
                             ].map((s, i) => (
                               <div key={s.label} style={{ flex: 1, textAlign: 'center', borderLeft: i > 0 ? '1px solid var(--d-border)' : 'none' }}>
-                                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', color: s.color, lineHeight: 1 }}>{s.value}</div>
-                                <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '7px', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--d-faint)', marginTop: '3px' }}>{s.label}</div>
+                                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '18px', color: s.color, lineHeight: 1 }}>{s.value}</div>
+                                <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '7px', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--d-faint)', marginTop: '3px' }}>{s.label}</div>
                               </div>
                             ))}
                           </div>
-                          {lastFillup && <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '7px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>Last Fill-Up</span><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>{fmtDate(lastFillup)}</span></div>}
+                          {lastFillup && <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}><span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '7px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>Last Fill-Up</span><span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>{fmtDate(lastFillup)}</span></div>}
                         </div>
                       )
                     })}
-                    {logs.length === 0 && <div style={{ textAlign: 'center', padding: '16px', fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: 'var(--d-faint)' }}>No fill-up data yet — record your first fill-up in the Fill-Ups tab</div>}
+                    {logs.length === 0 && <div style={{ textAlign: 'center', padding: '16px', fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: 'var(--d-faint)' }}>No fill-up data yet — record your first fill-up in the Fill-Ups tab</div>}
                   </div>
                 )}
               </div>
@@ -900,20 +900,20 @@ export default function App() {
               <>
                 {/* Filter row */}
                 <div style={{ display: 'flex', gap: '7px', padding: '0 20px 10px', alignItems: 'center', overflowX: isMobile ? 'auto' : 'visible', WebkitOverflowScrolling: 'touch' }} className={isMobile ? 'chip-scroll' : ''}>
-                  <select value={historyVehicleFilter} onChange={e => setHistoryVehicleFilter(e.target.value)} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '6px 10px', borderRadius: '8px', fontFamily: "'DM Mono', monospace", fontSize: '10px', cursor: 'pointer', flexShrink: 0 }}>
+                  <select value={historyVehicleFilter} onChange={e => setHistoryVehicleFilter(e.target.value)} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '6px 10px', borderRadius: '8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', cursor: 'pointer', flexShrink: 0 }}>
                     {vehicleOptions.map(v => <option key={v}>{v}</option>)}
                   </select>
-                  <select value={dateFilter} onChange={e => setDateFilter(e.target.value)} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '6px 10px', borderRadius: '8px', fontFamily: "'DM Mono', monospace", fontSize: '10px', cursor: 'pointer', flexShrink: 0 }}>
+                  <select value={dateFilter} onChange={e => setDateFilter(e.target.value)} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', color: 'var(--d-muted)', padding: '6px 10px', borderRadius: '8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', cursor: 'pointer', flexShrink: 0 }}>
                     {DATE_FILTERS.map(f => <option key={f}>{f}</option>)}
                   </select>
-                  <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', whiteSpace: 'nowrap' }}>{historyLogs.length} {historyLogs.length === 1 ? 'entry' : 'entries'}</span>
+                  <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', whiteSpace: 'nowrap' }}>{historyLogs.length} {historyLogs.length === 1 ? 'entry' : 'entries'}</span>
                 </div>
 
                 {historyLogs.length === 0 ? (
                   <div style={{ textAlign: 'center', padding: '40px 24px' }}>
                     <div style={{ fontSize: '36px', marginBottom: '12px' }}>⛽</div>
-                    <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--d-sub)' }}>No Fill-ups Yet</div>
-                    <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '13px', color: 'var(--d-faint)', marginTop: '8px' }}>Use the + button to record your first fill-up</div>
+                    <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--d-sub)' }}>No Fill-ups Yet</div>
+                    <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: 'var(--d-faint)', marginTop: '8px' }}>Use the + button to record your first fill-up</div>
                   </div>
                 ) : isMobile ? (
                   /* Mobile: card list */
@@ -921,22 +921,22 @@ export default function App() {
                     {historyLogs.map(log => (
                       <div key={log.id} style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '11px 14px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '7px' }}>
-                          <div style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '14px', color: 'var(--d-text)' }}>{log.vehicle || '—'}</div>
+                          <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '14px', color: 'var(--d-text)' }}>{log.vehicle || '—'}</div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{fmtDate(log.date)}</span>
-                            {isAdmin && (confirmDelete === log.id ? <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}><button onClick={() => handleDelete(log.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '5px', padding: '3px 8px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Yes</button><button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '5px', padding: '3px 8px', fontFamily: "'DM Mono', monospace", fontSize: '10px', cursor: 'pointer' }}>No</button></span> : <span style={{ display: 'flex', gap: '4px' }}><button onClick={() => setEditEntry(log)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '5px', padding: '3px 8px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Edit</button><button onClick={() => setConfirmDelete(log.id)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '5px', padding: '3px 8px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Del</button></span>)}
+                            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-faint)' }}>{fmtDate(log.date)}</span>
+                            {isAdmin && (confirmDelete === log.id ? <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}><button onClick={() => handleDelete(log.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '5px', padding: '3px 8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Yes</button><button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '5px', padding: '3px 8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', cursor: 'pointer' }}>No</button></span> : <span style={{ display: 'flex', gap: '4px' }}><button onClick={() => setEditEntry(log)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '5px', padding: '3px 8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Edit</button><button onClick={() => setConfirmDelete(log.id)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '5px', padding: '3px 8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Del</button></span>)}
                           </div>
                         </div>
                         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '4px' }}>
-                          <div><span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '16px', color: log.mpg ? 'var(--amber)' : 'var(--d-faint)' }}>{log.mpg ? fmt(log.mpg) : '—'}</span><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', marginLeft: '3px' }}>mpg</span></div>
-                          <div><span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '16px', color: 'var(--d-muted)' }}>{fmt(log.fuel_amount, 3)}</span><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', marginLeft: '3px' }}>gal</span></div>
-                          {log.fuel_cost != null && <div><span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '16px', color: 'var(--purple)' }}>${log.fuel_cost.toFixed(2)}</span></div>}
-                          {log.price_per_gal != null && <div><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>${fmt(log.price_per_gal, 3)}/gal</span></div>}
-                          <div><span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>{log.odometer?.toLocaleString()} mi</span></div>
-                          {log.fuel_grade && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: gradeColor(log.fuel_grade) }}>{log.fuel_grade}</span>}
+                          <div><span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '16px', color: log.mpg ? 'var(--amber)' : 'var(--d-faint)' }}>{log.mpg ? fmt(log.mpg) : '—'}</span><span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', marginLeft: '3px' }}>mpg</span></div>
+                          <div><span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '16px', color: 'var(--d-muted)' }}>{fmt(log.fuel_amount, 3)}</span><span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-faint)', marginLeft: '3px' }}>gal</span></div>
+                          {log.fuel_cost != null && <div><span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '16px', color: 'var(--purple)' }}>${log.fuel_cost.toFixed(2)}</span></div>}
+                          {log.price_per_gal != null && <div><span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>${fmt(log.price_per_gal, 3)}/gal</span></div>}
+                          <div><span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)' }}>{log.odometer?.toLocaleString()} mi</span></div>
+                          {log.fuel_grade && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: gradeColor(log.fuel_grade) }}>{log.fuel_grade}</span>}
                         </div>
-                        {log.location && <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--d-faint)' }}>{log.location}</div>}
-                        {log.notes && <div style={{ fontFamily: "'Barlow', sans-serif", fontSize: '12px', color: 'var(--d-faint)', marginTop: '2px' }}>{log.notes}</div>}
+                        {log.location && <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '12px', color: 'var(--d-faint)' }}>{log.location}</div>}
+                        {log.notes && <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: '12px', color: 'var(--d-faint)', marginTop: '2px' }}>{log.notes}</div>}
                       </div>
                     ))}
                   </div>
@@ -945,21 +945,21 @@ export default function App() {
                   <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', overflow: 'hidden', margin: '0 20px' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: '100px 1fr 70px 80px 80px 80px 90px 70px', padding: '8px 14px', background: 'var(--d-surf)', borderBottom: '1px solid var(--d-border)' }}>
                       {['Date', 'Vehicle', 'MPG', 'Gallons', 'Cost', '$/gal', 'Odometer', 'Grade'].map(h => (
-                        <span key={h} style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>{h}</span>
+                        <span key={h} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>{h}</span>
                       ))}
                     </div>
                     {historyLogs.map(log => (
                       <div key={log.id} style={{ display: 'grid', gridTemplateColumns: '100px 1fr 70px 80px 80px 80px 90px 70px', alignItems: 'center', padding: '10px 14px', borderBottom: '1px solid var(--d-border)', minHeight: '44px' }}>
-                        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--d-sub)' }}>{fmtDate(log.date)}</span>
-                        <span style={{ fontFamily: "'Barlow', sans-serif", fontWeight: 600, fontSize: '13px', color: 'var(--d-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: '8px' }}>{log.vehicle || '—'}</span>
-                        <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '14px', color: log.mpg ? 'var(--amber)' : 'var(--d-faint)' }}>{log.mpg ? fmt(log.mpg) : '—'}</span>
-                        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--d-muted)' }}>{fmt(log.fuel_amount, 3)}</span>
-                        <span style={{ fontFamily: "'DM Mono', monospace", fontWeight: 500, fontSize: '12px', color: log.fuel_cost != null ? 'var(--purple)' : 'var(--d-faint)' }}>{log.fuel_cost != null ? `$${log.fuel_cost.toFixed(2)}` : '—'}</span>
-                        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--d-sub)' }}>{log.price_per_gal != null ? `$${fmt(log.price_per_gal, 3)}` : '—'}</span>
-                        <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--d-sub)' }}>{log.odometer?.toLocaleString() ?? '—'}</span>
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: 'var(--d-sub)' }}>{fmtDate(log.date)}</span>
+                        <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '13px', color: 'var(--d-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: '8px' }}>{log.vehicle || '—'}</span>
+                        <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '14px', color: log.mpg ? 'var(--amber)' : 'var(--d-faint)' }}>{log.mpg ? fmt(log.mpg) : '—'}</span>
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: 'var(--d-muted)' }}>{fmt(log.fuel_amount, 3)}</span>
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontWeight: 500, fontSize: '12px', color: log.fuel_cost != null ? 'var(--purple)' : 'var(--d-faint)' }}>{log.fuel_cost != null ? `$${log.fuel_cost.toFixed(2)}` : '—'}</span>
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: 'var(--d-sub)' }}>{log.price_per_gal != null ? `$${fmt(log.price_per_gal, 3)}` : '—'}</span>
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: 'var(--d-sub)' }}>{log.odometer?.toLocaleString() ?? '—'}</span>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          {log.fuel_grade && <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', color: gradeColor(log.fuel_grade) }}>{log.fuel_grade}</span>}
-                          {isAdmin && (confirmDelete === log.id ? <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}><button onClick={() => handleDelete(log.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '4px', padding: '2px 6px', fontFamily: "'DM Mono', monospace", fontSize: '9px', cursor: 'pointer' }}>Yes</button><button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '4px', padding: '2px 6px', fontFamily: "'DM Mono', monospace", fontSize: '9px', cursor: 'pointer' }}>No</button></span> : <span style={{ display: 'flex', gap: '3px' }}><button onClick={() => setEditEntry(log)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '4px', padding: '2px 6px', fontFamily: "'DM Mono', monospace", fontSize: '9px', cursor: 'pointer' }}>Edit</button><button onClick={() => setConfirmDelete(log.id)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '4px', padding: '2px 6px', fontFamily: "'DM Mono', monospace", fontSize: '9px', cursor: 'pointer' }}>Del</button></span>)}
+                          {log.fuel_grade && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: gradeColor(log.fuel_grade) }}>{log.fuel_grade}</span>}
+                          {isAdmin && (confirmDelete === log.id ? <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}><button onClick={() => handleDelete(log.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '4px', padding: '2px 6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', cursor: 'pointer' }}>Yes</button><button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '4px', padding: '2px 6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', cursor: 'pointer' }}>No</button></span> : <span style={{ display: 'flex', gap: '3px' }}><button onClick={() => setEditEntry(log)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '4px', padding: '2px 6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', cursor: 'pointer' }}>Edit</button><button onClick={() => setConfirmDelete(log.id)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '4px', padding: '2px 6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', cursor: 'pointer' }}>Del</button></span>)}
                         </div>
                       </div>
                     ))}
@@ -968,27 +968,27 @@ export default function App() {
               </>
             ) : activeTab === 'garage' ? (
               <div style={{ padding: '0 0 8px' }}>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', padding: '4px 20px 12px' }}>My Garage</div>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', padding: '4px 20px 12px' }}>My Garage</div>
                 <VehiclesPanel vehicles={vehicles} logs={logs} isAdmin={isAdmin} onEdit={handleEditVehicle} onDelete={handleDeleteVehicle} />
-                {!isAdmin && vehicles.length > 0 && <div style={{ margin: '0 20px', fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>Login as admin to add or manage vehicles</div>}
-                {vehicles.length === 0 && !isAdmin && <div style={{ textAlign: 'center', padding: '48px 24px' }}><div style={{ fontSize: '40px', marginBottom: '12px' }}>🚗</div><div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--d-sub)' }}>No Vehicles Yet</div></div>}
+                {!isAdmin && vehicles.length > 0 && <div style={{ margin: '0 20px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>Login as admin to add or manage vehicles</div>}
+                {vehicles.length === 0 && !isAdmin && <div style={{ textAlign: 'center', padding: '48px 24px' }}><div style={{ fontSize: '40px', marginBottom: '12px' }}>🚗</div><div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '20px', textTransform: 'uppercase', color: 'var(--d-sub)' }}>No Vehicles Yet</div></div>}
               </div>
             ) : (
               /* Stats tab */
               <div style={{ padding: '0 20px 8px' }}>
-                <div style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginBottom: '14px' }}>Stats</div>
+                <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '18px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-sub)', marginBottom: '14px' }}>Stats</div>
                 {logs.length < 2 ? (
-                  <div style={{ textAlign: 'center', padding: '40px', fontFamily: "'DM Mono', monospace", fontSize: '12px', color: 'var(--d-faint)' }}>Record at least 2 fill-ups to see charts</div>
+                  <div style={{ textAlign: 'center', padding: '40px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px', color: 'var(--d-faint)' }}>Record at least 2 fill-ups to see charts</div>
                 ) : (
                   <>
                     <div style={{ display: isMobile ? 'block' : 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
                       {chartData.length >= 2 && (
                         <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px 8px', marginBottom: isMobile ? '10px' : 0 }}>
-                          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>MPG Trend</div>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>MPG Trend</div>
                           <ResponsiveContainer width="100%" height={130}>
                             <LineChart data={chartData} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
-                              <XAxis dataKey="date" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} tickFormatter={fmtDate} axisLine={false} tickLine={false} />
-                              <YAxis tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} width={32} domain={['auto', 'auto']} />
+                              <XAxis dataKey="date" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'IBM Plex Mono, monospace' }} tickFormatter={fmtDate} axisLine={false} tickLine={false} />
+                              <YAxis tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'IBM Plex Mono, monospace' }} axisLine={false} tickLine={false} width={32} domain={['auto', 'auto']} />
                               <Tooltip content={<CustomTooltip />} />
                               <Line type="monotone" dataKey="mpg" stroke="#E8943A" strokeWidth={2} dot={{ fill: '#E8943A', r: 3 }} activeDot={{ r: 5, fill: '#E8943A' }} />
                             </LineChart>
@@ -997,12 +997,12 @@ export default function App() {
                       )}
                       {mpgByVehicle.length > 0 && (
                         <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px', marginBottom: isMobile ? '10px' : 0 }}>
-                          <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Average MPG by Vehicle</div>
+                          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Average MPG by Vehicle</div>
                           <ResponsiveContainer width="100%" height={mpgByVehicle.length * 36 + 10}>
                             <BarChart data={mpgByVehicle} layout="vertical" margin={{ top: 0, right: 30, bottom: 0, left: 80 }}>
-                              <XAxis type="number" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} domain={[0, 'auto']} />
-                              <YAxis type="category" dataKey="name" tick={{ fill: '#9E9894', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} width={80} />
-                              <Tooltip formatter={v => [`${v} mpg`, 'Avg MPG']} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
+                              <XAxis type="number" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'IBM Plex Mono, monospace' }} axisLine={false} tickLine={false} domain={[0, 'auto']} />
+                              <YAxis type="category" dataKey="name" tick={{ fill: '#9E9894', fontSize: 8, fontFamily: 'IBM Plex Mono, monospace' }} axisLine={false} tickLine={false} width={80} />
+                              <Tooltip formatter={v => [`${v} mpg`, 'Avg MPG']} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'IBM Plex Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
                               <Bar dataKey="mpg" fill="#E8943A" radius={[0, 4, 4, 0]} />
                             </BarChart>
                           </ResponsiveContainer>
@@ -1011,12 +1011,12 @@ export default function App() {
                     </div>
                     {monthlySpendData.length > 1 && (
                       <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', padding: '12px 14px' }}>
-                        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Monthly Fuel Spend</div>
+                        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)', marginBottom: '10px' }}>Monthly Fuel Spend</div>
                         <ResponsiveContainer width="100%" height={120}>
                           <BarChart data={monthlySpendData} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
-                            <XAxis dataKey="month" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} />
-                            <YAxis tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'DM Mono, monospace' }} axisLine={false} tickLine={false} width={36} tickFormatter={v => `$${v}`} />
-                            <Tooltip formatter={v => [`$${v.toFixed(2)}`, 'Spent']} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'DM Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
+                            <XAxis dataKey="month" tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'IBM Plex Mono, monospace' }} axisLine={false} tickLine={false} />
+                            <YAxis tick={{ fill: '#857F7A', fontSize: 8, fontFamily: 'IBM Plex Mono, monospace' }} axisLine={false} tickLine={false} width={36} tickFormatter={v => `$${v}`} />
+                            <Tooltip formatter={v => [`$${v.toFixed(2)}`, 'Spent']} contentStyle={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '6px', fontFamily: 'IBM Plex Mono, monospace', fontSize: '10px', color: 'var(--d-muted)' }} labelStyle={{ color: 'var(--d-text)', fontWeight: 500 }} itemStyle={{ color: 'var(--d-muted)' }} />
                             <Bar dataKey="cost" fill="#818CF8" radius={[4, 4, 0, 0]} />
                           </BarChart>
                         </ResponsiveContainer>
@@ -1042,7 +1042,7 @@ export default function App() {
             {NAV_TABS.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', opacity: activeTab === tab.id ? 1 : 0.35 }}>
                 <span style={{ fontSize: '17px' }}>{tab.icon}</span>
-                <span style={{ fontFamily: "'DM Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: activeTab === tab.id ? 'var(--rust)' : 'var(--d-sub)' }}>{tab.label}</span>
+                <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: activeTab === tab.id ? 'var(--rust)' : 'var(--d-sub)' }}>{tab.label}</span>
               </button>
             ))}
           </div>

@@ -16,7 +16,7 @@ export default function Nav({ activeApp, dashboardUrl, fuelUrl }) {
     borderBottom: activeApp === app ? '2px solid #f59e0b' : '2px solid transparent',
     textDecoration: 'none',
     fontSize: '10px',
-    fontFamily: "'DM Mono', 'Courier New', monospace",
+    fontFamily: "'IBM Plex Mono', 'Courier New', monospace",
     letterSpacing: '0.1em',
     padding: '4px 0',
     cursor: 'pointer',
@@ -51,7 +51,7 @@ export default function Nav({ activeApp, dashboardUrl, fuelUrl }) {
               MINI COOPER REVIVAL
             </div>
             <div style={{
-              fontFamily: "'DM Mono', 'Courier New', monospace",
+              fontFamily: "'IBM Plex Mono', 'Courier New', monospace",
               fontSize: '10px',
               color: '#6b7280',
               letterSpacing: '0.12em',
@@ -111,7 +111,7 @@ export default function Nav({ activeApp, dashboardUrl, fuelUrl }) {
                   display: 'block',
                   padding: '8px 16px',
                   fontSize: '12px',
-                  fontFamily: "'DM Mono', 'Courier New', monospace",
+                  fontFamily: "'IBM Plex Mono', 'Courier New', monospace",
                   letterSpacing: '0.1em',
                   color: activeApp === 'dashboard' ? '#f59e0b' : '#94a3b8',
                   textDecoration: 'none',
@@ -125,7 +125,7 @@ export default function Nav({ activeApp, dashboardUrl, fuelUrl }) {
                   display: 'block',
                   padding: '8px 16px',
                   fontSize: '12px',
-                  fontFamily: "'DM Mono', 'Courier New', monospace",
+                  fontFamily: "'IBM Plex Mono', 'Courier New', monospace",
                   letterSpacing: '0.1em',
                   color: activeApp === 'fuel' ? '#f59e0b' : '#94a3b8',
                   textDecoration: 'none',

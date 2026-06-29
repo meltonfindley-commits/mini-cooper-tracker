@@ -5,7 +5,7 @@
      import '@mini/shared/theme.css'
 ──────────────────────────────────────────────────────────────────────────── */
 
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 /* ── Color & Typography Variables ──────────────────────────────────────── */
 :root {
@@ -47,7 +47,7 @@
      variables so a single change here propagates everywhere.
      WCAG 2.1 AA does not mandate a pixel minimum but 10px for compact
      metadata labels and 12px for body content are our chosen floors.   */
-  --fs-label:  10px;   /* DM Mono uppercase tracking labels             */
+  --fs-label:  10px;   /* IBM Plex Mono uppercase tracking labels             */
   --fs-body:   12px;   /* Barlow body / readable prose                  */
   --fs-chip:   10px;   /* Filter chips, badge text                      */
   --fs-btn:    11px;   /* Button / action text                          */
@@ -121,7 +121,7 @@ input, textarea, select {
    the dark card background used in contentStyle.                        */
 .recharts-tooltip-label {
   color: var(--d-text) !important;
-  font-family: 'DM Mono', monospace !important;
+  font-family: 'IBM Plex Mono', monospace !important;
   font-size: var(--fs-label) !important;
 }
 .recharts-tooltip-item-name,

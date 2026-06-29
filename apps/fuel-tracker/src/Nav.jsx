@@ -28,10 +28,10 @@ export default function Nav({ activeApp, dashboardUrl, fuelUrl, user, onSignOut 
       {/* Logyard wordmark */}
       <a href={dashboardUrl || '/'} style={{ textDecoration: 'none' }}>
         <div style={{ lineHeight: 1, marginBottom: '2px' }}>
-          <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--d-text)' }}>Log</span>
-          <span style={{ fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 900, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--rust)' }}>yard</span>
+          <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 900, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--d-text)' }}>Log</span>
+          <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 900, fontSize: '22px', textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--rust)' }}>yard</span>
         </div>
-        <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--d-sub)' }}>
+        <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.16em', color: 'var(--d-sub)' }}>
           YOUR CARS. THEIR WHOLE STORY.
         </div>
       </a>
@@ -47,14 +47,14 @@ export default function Nav({ activeApp, dashboardUrl, fuelUrl, user, onSignOut 
 
         {/* App switcher */}
         <a href={dashboardUrl || '/'} style={{
-          fontFamily: "'DM Mono', monospace", fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em',
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em',
           color: activeApp === 'dashboard' ? 'var(--rust)' : 'var(--d-sub)',
           textDecoration: 'none', padding: '5px 10px', borderRadius: '6px',
           background: activeApp === 'dashboard' ? 'rgba(204,74,15,0.12)' : 'transparent',
           border: activeApp === 'dashboard' ? '1px solid var(--rust)' : '1px solid var(--d-border)',
         }}>Dashboard</a>
         <a href={fuelUrl || '/fuel'} style={{
-          fontFamily: "'DM Mono', monospace", fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em',
+          fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em',
           color: activeApp === 'fuel' ? 'var(--rust)' : 'var(--d-sub)',
           textDecoration: 'none', padding: '5px 10px', borderRadius: '6px',
           background: activeApp === 'fuel' ? 'rgba(204,74,15,0.12)' : 'transparent',
@@ -66,7 +66,7 @@ export default function Nav({ activeApp, dashboardUrl, fuelUrl, user, onSignOut 
           <div style={{ position: 'relative', marginLeft: '4px' }}>
             <button onClick={() => setShowMenu(m => !m)} style={{
               width: '32px', height: '32px', borderRadius: '50%', border: '1px solid var(--d-border)',
-              background: 'var(--rust)', color: '#fff', fontFamily: "'Barlow Condensed', sans-serif",
+              background: 'var(--rust)', color: '#fff', fontFamily: "'Space Grotesk', sans-serif",
               fontWeight: 700, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>{initials}</button>
             {showMenu && (
@@ -77,12 +77,12 @@ export default function Nav({ activeApp, dashboardUrl, fuelUrl, user, onSignOut 
                   background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '8px',
                   padding: '8px 0', minWidth: '160px', boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
                 }}>
-                  <div style={{ padding: '6px 14px', fontFamily: "'DM Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', borderBottom: '1px solid var(--d-border)', marginBottom: '4px' }}>
+                  <div style={{ padding: '6px 14px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--d-sub)', borderBottom: '1px solid var(--d-border)', marginBottom: '4px' }}>
                     {user.email}
                   </div>
                   <button onClick={onSignOut} style={{
                     width: '100%', textAlign: 'left', padding: '8px 14px', background: 'none', border: 'none',
-                    fontFamily: "'DM Mono', monospace", fontSize: '11px', color: 'var(--rust)', cursor: 'pointer',
+                    fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: 'var(--rust)', cursor: 'pointer',
                   }}>Sign out</button>
                 </div>
               </>
