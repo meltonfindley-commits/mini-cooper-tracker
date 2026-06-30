@@ -956,13 +956,13 @@ export default function App() {
                 ) : (
                   /* Desktop: data table */
                   <div style={{ background: 'var(--d-card)', border: '1px solid var(--d-border)', borderRadius: '10px', overflow: 'hidden', margin: '0 20px' }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '100px 1fr 70px 80px 80px 80px 90px 70px', padding: '8px 14px', background: 'var(--d-surf)', borderBottom: '1px solid var(--d-border)' }}>
-                      {['Date', 'Vehicle', 'MPG', 'Gallons', 'Cost', '$/gal', 'Odometer', 'Grade'].map(h => (
+                    <div style={{ display: 'grid', gridTemplateColumns: '100px 1fr 70px 80px 80px 80px 90px 60px 120px', padding: '8px 14px', background: 'var(--d-surf)', borderBottom: '1px solid var(--d-border)' }}>
+                      {['Date', 'Vehicle', 'MPG', 'Gallons', 'Cost', '$/gal', 'Odometer', 'Grade', ''].map(h => (
                         <span key={h} style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--d-faint)' }}>{h}</span>
                       ))}
                     </div>
                     {historyLogs.map(log => (
-                      <div key={log.id} style={{ display: 'grid', gridTemplateColumns: '100px 1fr 70px 80px 80px 80px 90px 70px', alignItems: 'center', padding: '10px 14px', borderBottom: '1px solid var(--d-border)', minHeight: '44px' }}>
+                      <div key={log.id} style={{ display: 'grid', gridTemplateColumns: '100px 1fr 70px 80px 80px 80px 90px 60px 120px', alignItems: 'center', padding: '10px 14px', borderBottom: '1px solid var(--d-border)', minHeight: '44px' }}>
                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: 'var(--d-sub)' }}>{fmtDate(log.date)}</span>
                         <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 600, fontSize: '13px', color: 'var(--d-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: '8px' }}>{log.vehicle || '—'}</span>
                         <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 800, fontSize: '14px', color: log.mpg ? 'var(--amber)' : 'var(--d-faint)' }}>{log.mpg ? fmt(log.mpg) : '—'}</span>
@@ -970,9 +970,12 @@ export default function App() {
                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontWeight: 500, fontSize: '12px', color: log.fuel_cost != null ? 'var(--purple)' : 'var(--d-faint)' }}>{log.fuel_cost != null ? `$${log.fuel_cost.toFixed(2)}` : '—'}</span>
                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: 'var(--d-sub)' }}>{log.price_per_gal != null ? `$${fmt(log.price_per_gal, 3)}` : '—'}</span>
                         <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', color: 'var(--d-sub)' }}>{log.odometer?.toLocaleString() ?? '—'}</span>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          {log.fuel_grade && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: gradeColor(log.fuel_grade) }}>{log.fuel_grade}</span>}
-                          {isAdmin && (confirmDelete === log.id ? <span style={{ display: 'flex', gap: '4px', alignItems: 'center' }}><button onClick={() => handleDelete(log.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '4px', padding: '2px 6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', cursor: 'pointer' }}>Yes</button><button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '4px', padding: '2px 6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', cursor: 'pointer' }}>No</button></span> : <span style={{ display: 'flex', gap: '3px' }}><button onClick={() => setEditEntry(log)} className="btn-edit" style={{ padding: '2px 6px', fontSize: '9px' }}>Edit</button><button onClick={() => setConfirmDelete(log.id)} className="btn-delete" style={{ padding: '2px 6px', fontSize: '9px' }}>Del</button></span>)}
+                        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: log.fuel_grade ? gradeColor(log.fuel_grade) : 'var(--d-faint)' }}>{log.fuel_grade || '—'}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          {isAdmin && (confirmDelete === log.id
+                            ? <><button onClick={() => handleDelete(log.id)} style={{ background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '4px', padding: '2px 6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', cursor: 'pointer' }}>Yes</button><button onClick={() => setConfirmDelete(null)} style={{ background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '4px', padding: '2px 6px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '9px', cursor: 'pointer' }}>No</button></>
+                            : <><button onClick={() => setEditEntry(log)} className="btn-edit" style={{ padding: '2px 6px', fontSize: '9px' }}>Edit</button><button onClick={() => setConfirmDelete(log.id)} className="btn-delete" style={{ padding: '2px 6px', fontSize: '9px' }}>Del</button></>
+                          )}
                         </div>
                       </div>
                     ))}
