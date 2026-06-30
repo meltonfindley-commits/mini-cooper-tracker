@@ -775,8 +775,8 @@ export default function App() {
 
   const NAV_TABS = [
     { id: 'garage', icon: '🚗', label: 'Garage' },
-    { id: 'summary', icon: '📊', label: 'Summary' },
     { id: 'fillups', icon: '⛽', label: 'Fill-ups' },
+    { id: 'summary', icon: '📊', label: 'Summary' },
     { id: 'stats', icon: '📈', label: 'Stats' },
   ]
 
