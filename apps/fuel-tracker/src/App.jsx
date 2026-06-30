@@ -611,7 +611,7 @@ export default function App() {
   const [logs, setLogs] = useState([])
   const [vehicles, setVehicles] = useState([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('summary')
+  const [activeTab, setActiveTab] = useState('fillups')
   const [isMobile, setIsMobile] = useState(() => window.innerWidth <= 640)
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 640)
