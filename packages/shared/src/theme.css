@@ -73,6 +73,15 @@
   padding: 0;
 }
 
+/* ── Safe area support ──────────────────────────────────────────────────
+   iOS notch/Dynamic Island, iOS home indicator, and Android edge-to-edge
+   displays (Android 15+ enforces edge-to-edge by default).             */
+body {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
 input, textarea, select {
   outline: none;
   font-family: inherit;

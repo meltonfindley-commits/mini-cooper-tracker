@@ -2,7 +2,40 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!-- PWA Manifest — used by both iOS and Android -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- ── iOS SPECIFIC ─────────────────────────────────────── -->
+    <!-- Safari ignores the manifest for these — must be explicit -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Logyard" />
+
+    <!-- iOS Home Screen Icon -->
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+
+    <!-- iOS Splash Screens — one per device size -->
+    <link rel="apple-touch-startup-image" href="/icons/splash-1170x2532.png"
+      media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" />
+    <link rel="apple-touch-startup-image" href="/icons/splash-1284x2778.png"
+      media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" />
+    <link rel="apple-touch-startup-image" href="/icons/splash-750x1334.png"
+      media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" />
+
+    <!-- ── ANDROID SPECIFIC ──────────────────────────────────── -->
+    <!-- Chrome on Android uses theme-color for the address bar -->
+    <meta name="theme-color" content="#1A1714" />
+    <!-- Mobile web app capable for older Android browsers -->
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- ── SHARED ────────────────────────────────────────────── -->
+    <!-- Standard favicon for browser tabs -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16.png" />
+
     <title>Logyard — Fuel</title>
   </head>
   <body>

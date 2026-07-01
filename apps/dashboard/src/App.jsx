@@ -775,6 +775,63 @@ export default function App() {
   const [toast, setToast] = useState(null)
   const [confirmDelete, setConfirmDelete] = useState(null)
 
+  // ── Install Prompt State ──────────────────────────────────
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false)
+  const [installPlatform, setInstallPlatform] = useState(null) // 'android' | 'ios'
+  const deferredPromptRef = useRef(null) // holds the Android BeforeInstallPromptEvent
+
+  useEffect(() => {
+    const hasSeenPrompt = localStorage.getItem('logyard-install-prompt-seen')
+    if (hasSeenPrompt) return
+
+    // Already installed as standalone — don't prompt
+    const isStandalone =
+      window.navigator.standalone === true || // iOS
+      window.matchMedia('(display-mode: standalone)').matches // Android
+    if (isStandalone) return
+
+    // ── Android: capture the install event ──────────────────
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault() // Stop Chrome's default mini-infobar
+      deferredPromptRef.current = e
+      setInstallPlatform('android')
+      setTimeout(() => setShowInstallPrompt(true), 3000)
+    }
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+
+    // ── iOS: detect Safari on iPhone/iPad ───────────────────
+    const isIOS =
+      /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream
+    const isSafari =
+      /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+    if (isIOS && isSafari) {
+      setInstallPlatform('ios')
+      setTimeout(() => setShowInstallPrompt(true), 3000)
+    }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
+    }
+  }, [])
+
+  const handleInstallClick = async () => {
+    if (installPlatform === 'android' && deferredPromptRef.current) {
+      // Trigger the native Android install dialog
+      deferredPromptRef.current.prompt()
+      const { outcome } = await deferredPromptRef.current.userChoice
+      if (outcome === 'accepted') {
+        localStorage.setItem('logyard-install-prompt-seen', 'true')
+      }
+      deferredPromptRef.current = null
+      setShowInstallPrompt(false)
+    }
+  }
+
+  const dismissInstallPrompt = () => {
+    setShowInstallPrompt(false)
+    localStorage.setItem('logyard-install-prompt-seen', 'true')
+  }
+
   const showToast = (msg) => setToast(msg)
 
   const fetchTasks = useCallback(async () => {
@@ -988,7 +1045,7 @@ export default function App() {
         </div>
 
         {/* Desktop sidebar + content, mobile single column */}
-        <div style={{ display: isMobile ? 'block' : 'flex', paddingBottom: isMobile ? '96px' : '32px' }}>
+        <div style={{ display: isMobile ? 'block' : 'flex', paddingBottom: isMobile ? 'calc(96px + env(safe-area-inset-bottom, 0px))' : '32px' }}>
 
           {/* ── Desktop sidebar ── */}
           {!isMobile && (
@@ -1318,7 +1375,7 @@ export default function App() {
 
         {/* FAB — mobile only */}
         {isMobile && isAdmin && (activeTab === 'service' || activeTab === 'garage') && (
-          <div style={{ position: 'fixed', bottom: '88px', left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', pointerEvents: 'none', zIndex: 90 }}>
+          <div style={{ position: 'fixed', bottom: 'calc(88px + env(safe-area-inset-bottom, 0px))', left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', pointerEvents: 'none', zIndex: 90 }}>
             <button onClick={() => activeTab === 'service' ? setShowAddTask(true) : setShowAddVehicle(true)} style={{ position: 'absolute', right: '16px', bottom: '0', width: '56px', height: '56px', borderRadius: '16px', background: 'var(--rust)', color: '#fff', border: 'none', fontSize: '28px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 20px rgba(204,74,15,0.5)', cursor: 'pointer', pointerEvents: 'all' }}>+</button>
           </div>
         )}
@@ -1341,6 +1398,100 @@ export default function App() {
       {editingTask && <TaskModal task={editingTask} vehicles={vehicles} onClose={() => setEditingTask(null)} onSave={handleEditTask} />}
       {showBulkUpload && <BulkUploadModal onClose={() => setShowBulkUpload(false)} onUpload={handleBulkUpload} />}
       {toast && <Toast message={toast} onDone={() => setToast(null)} />}
+
+      {showInstallPrompt && (
+        <div style={{
+          position: 'fixed',
+          bottom: 'calc(84px + env(safe-area-inset-bottom, 0px))',
+          left: '16px',
+          right: '16px',
+          background: '#2C2926',
+          border: '1px solid #CC4A0F',
+          borderRadius: '12px',
+          padding: '14px 16px',
+          zIndex: 1000,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '12px',
+        }}>
+          <div style={{ flex: 1 }}>
+            <div style={{
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontWeight: 700,
+              fontSize: '14px',
+              color: '#F0EBE1',
+              marginBottom: '4px',
+            }}>
+              Add Logyard to your Home Screen
+            </div>
+
+            {/* Android: show a tap-to-install button */}
+            {installPlatform === 'android' && (
+              <>
+                <div style={{
+                  fontFamily: "'IBM Plex Mono', monospace",
+                  fontSize: '10px',
+                  letterSpacing: '0.06em',
+                  color: '#9E9894',
+                  lineHeight: 1.5,
+                  marginBottom: '10px',
+                }}>
+                  Install Logyard as an app for faster access and a full-screen experience.
+                </div>
+                <button
+                  onClick={handleInstallClick}
+                  style={{
+                    background: '#CC4A0F',
+                    border: 'none',
+                    borderRadius: '7px',
+                    padding: '8px 16px',
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontWeight: 700,
+                    fontSize: '13px',
+                    color: '#fff',
+                    cursor: 'pointer',
+                    letterSpacing: '0.02em',
+                  }}
+                >
+                  Install App
+                </button>
+              </>
+            )}
+
+            {/* iOS: manual instructions */}
+            {installPlatform === 'ios' && (
+              <div style={{
+                fontFamily: "'IBM Plex Mono', monospace",
+                fontSize: '10px',
+                letterSpacing: '0.06em',
+                color: '#9E9894',
+                lineHeight: 1.5,
+              }}>
+                Tap <strong style={{ color: '#F0EBE1' }}>Share ↑</strong> then{' '}
+                <strong style={{ color: '#F0EBE1' }}>"Add to Home Screen"</strong> for the
+                full app experience — no App Store needed.
+              </div>
+            )}
+          </div>
+
+          <button
+            onClick={dismissInstallPrompt}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#857F7A',
+              fontSize: '20px',
+              cursor: 'pointer',
+              padding: '0',
+              lineHeight: 1,
+              flexShrink: 0,
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
     </div>
   )
 }
