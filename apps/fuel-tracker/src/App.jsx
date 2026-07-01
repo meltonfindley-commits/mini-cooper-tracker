@@ -544,10 +544,10 @@ function VehiclesPanel({ vehicles, logs, isAdmin, onEdit, onDelete }) {
   const [editingVehicle, setEditingVehicle] = useState(null)
   const [deletingVehicle, setDeletingVehicle] = useState(null)
   const entryCount = (vehicleName) => logs.filter(l => l.vehicle === vehicleName).length
-  const lastFillupDate = (vehicleName) => {
+  const lastFillup = (vehicleName) => {
     const vLogs = logs.filter(l => l.vehicle === vehicleName && l.date)
     if (!vLogs.length) return null
-    return vLogs.sort((a, b) => b.date.localeCompare(a.date))[0].date
+    return vLogs.sort((a, b) => b.date.localeCompare(a.date))[0]
   }
 
   return (
@@ -559,7 +559,7 @@ function VehiclesPanel({ vehicles, logs, isAdmin, onEdit, onDelete }) {
           </div>
         )}
         {vehicles.map(v => {
-          const lastFillup = lastFillupDate(v.name)
+          const fillup = lastFillup(v.name)
           const colorMap = { black: '#333', white: '#fff', silver: '#c0c0c0', gray: '#808080', grey: '#808080', red: '#e53e3e', blue: '#3b82f6', green: '#38a169', yellow: '#ecc94b', orange: '#dd6b20', brown: '#8b4513', gold: '#d4a017', beige: '#f5f5dc', midnight: '#1a1a2e' }
           const colorDot = v.color ? (colorMap[v.color.split(' ')[0].toLowerCase()] || 'var(--d-sub)') : null
           return (
@@ -586,10 +586,13 @@ function VehiclesPanel({ vehicles, logs, isAdmin, onEdit, onDelete }) {
                   </div>
                 )}
               </div>
-              {lastFillup ? (
+              {fillup ? (
                 <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--d-border)' }}>
                   <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '8px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--d-faint)' }}>Last Fill-Up</div>
-                  <div style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '14px', color: 'var(--d-text)', marginTop: '2px' }}>{new Date(lastFillup + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '2px' }}>
+                    <span style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: '14px', color: 'var(--d-text)' }}>{new Date(fillup.date + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                    {fillup.odometer && <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', color: 'var(--amber)' }}>{Number(fillup.odometer).toLocaleString()} mi</span>}
+                  </div>
                 </div>
               ) : (
                 <div style={{ marginTop: '10px', paddingTop: '8px', borderTop: '1px solid var(--d-border)' }}>
