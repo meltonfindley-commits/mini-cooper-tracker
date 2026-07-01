@@ -452,7 +452,7 @@ function VehicleFormModal({ vehicle, vehicles, onClose, onSave }) {
           {error && <div style={{ color: 'var(--rust)', fontFamily: "'IBM Plex Mono', monospace", fontSize: '12px' }}>{error}</div>}
         </div>
         <div style={{ display: 'flex', gap: '8px', marginTop: '20px' }}>
-          <button onClick={handle} disabled={saving} style={{ flex: 1, background: 'var(--rust)', color: '#fff', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: saving ? 'default' : 'pointer', opacity: saving ? 0.6 : 1 }}>{saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Vehicle'}</button>
+          {(() => { const valid = !!(form.year && form.make && form.model); return <button onClick={valid && !saving ? handle : undefined} style={{ flex: 1, background: valid ? 'var(--rust)' : 'var(--d-border)', color: valid ? '#fff' : 'var(--d-faint)', border: 'none', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.08em', cursor: valid && !saving ? 'pointer' : 'default', opacity: saving ? 0.6 : 1 }}>{saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Vehicle'}</button> })()}
           <button onClick={onClose} style={{ flex: 1, background: 'none', border: '1px solid var(--d-border)', color: 'var(--d-sub)', borderRadius: '7px', padding: '9px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textTransform: 'uppercase', cursor: 'pointer' }}>Cancel</button>
         </div>
       </div>
